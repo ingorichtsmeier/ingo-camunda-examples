@@ -47,16 +47,16 @@ public class InMemoryH2Test {
   public void runCompleteProcess() {
     ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
     Task writeTweet = taskQuery().singleResult();
-    assertThat(writeTweet).hasCandidateGroup("marketing");
+    assertThat(writeTweet).hasCandidateGroup("sales");
     complete(writeTweet);
     Task reviewTweet = taskQuery().singleResult();
     complete(reviewTweet, withVariables("approved", "maybe"));
     Task rewriteTweet = taskQuery().singleResult();
-    assertThat(rewriteTweet).hasCandidateGroup("marketing");
+    assertThat(rewriteTweet).hasCandidateGroup("sales");
     complete(rewriteTweet);
     reviewTweet = taskQuery().singleResult();
     complete(reviewTweet, withVariables("approved", "no"));
-    assertThat(pi).hasPassed("UserTask_1", "UserTask_2", "EndEvent_1")
+    assertThat(pi).hasPassed("UserTask_1", "UserTask_2", "EndEvent_2")
       .isEnded();
   }
 
