@@ -1,0 +1,59 @@
+<div>
+  <h1>Deployments</h1>
+    <p>Number of all deployments: <b>{{deploymentCounter.count}}</b>
+    </p>
+    <form class="form-inline" ng-submit="findDeployments();">
+        <div class="control-group">
+           <p class="input-group">
+           Deployment after: 
+            <input type="text" class="form-control" placeholder="deployed after" datepicker-popup="{{format}}" ng-model="deployedAfter" is-open="openedDeployedAfter" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open($event, 'openedDeployedAfter')"><i class="icon-calendar"></i></button>
+              </span>
+            before: 
+            <input type="text" class="form-control" placeholder="deployed before" datepicker-popup="{{format}}" ng-model="deployedBefore" is-open="openedDeployedBefore" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open($event, 'openedDeployedBefore')"><i class="icon-calendar"></i></button>
+              </span>
+            <button type="submit" name="Search" class="btn">Search Deployments</button>
+          </p>
+        </div>
+    </form>
+  <table class="table table-bordered table-hover table-condensed">
+    <thead>
+      <tr>
+        <th>Deployment with Process Definitions</th>
+        <th>Running Process Instances</th>
+        <th>Deployment Time</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-ng-repeat="deployment in deployments">
+        <td>
+        
+
+        <div>
+          {{ deployment.name }}
+	        <div data-ng-repeat="processDefinition in deployment.processDefinitions">
+		      <div><a href="#/process-definition/{{processDefinition.id}}">{{processDefinition.name}}</a></div>
+	        </div>
+        </div>
+
+        </td>
+        <td>{{ deployment.runningInstances }}</td>
+        <td>{{ deployment.deploymentTime }}</td>
+        <td>
+        <!-- ng-click="changeGroups()"
+            ng-model="userTask" -->
+          <a 
+            class="btn action-button"
+            tooltip-placement="left"
+            tooltip="Delete Deployment">
+            <i class="icon-remove-circle"></i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
