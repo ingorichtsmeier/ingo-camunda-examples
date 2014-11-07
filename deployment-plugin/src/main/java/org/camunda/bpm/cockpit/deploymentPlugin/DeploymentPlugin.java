@@ -1,6 +1,6 @@
 package org.camunda.bpm.cockpit.deploymentPlugin;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +27,6 @@ public class DeploymentPlugin extends AbstractCockpitPlugin {
 
   @Override
   public List<String> getMappingFiles() {
-    return Arrays.asList("org.camunda.bpm.cockpit.deploymentPlugin".replace(".", "/") + "/sample-query.xml");
+    return new ArrayList<String>();
   }
 }

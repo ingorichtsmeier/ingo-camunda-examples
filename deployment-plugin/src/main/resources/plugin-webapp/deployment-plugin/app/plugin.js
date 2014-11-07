@@ -1,82 +1,97 @@
 ngDefine('cockpit.plugin.deployment-plugin', function(module) {
 
-	var DeploymentResource = function ($resource, Uri) {
-	  return $resource(Uri.appUri('engine://engine/:engine/deployment'));
-	};
-	module.factory('DeploymentResource', DeploymentResource);
-	
-	var ProcessInstanceCountResource = function ($resource, Uri) {
-		return $resource(Uri.appUri(
-				'engine://engine/:engine/process-instance/count',
-				{processDefinitionId: '@processDefinitionId'},
-				{query: {method: 'GET', isArray: true, params: {processDefinitionId: ''}}}
-		));
-	};
-	module.factory('ProcessInstanceCountResource', ProcessInstanceCountResource);
-	
-	var ProcessDefinitionDeploymentResource = function($resource, Uri) {
-		return $resource(Uri.appUri(
-				'engine://engine/:engine/process-definition', 
-				{deploymentId: '@deploymentId'},
-				{query: {method: 'GET', isArray: true, params: {deploymentId: ''}}}
-		));
-	};
-	module.factory('ProcessDefinitionDeploymentResource', ProcessDefinitionDeploymentResource);
-	
-	var DashboardController = function($scope, $http, Uri, 
-			DeploymentResource, ProcessDefinitionDeploymentResource, ProcessInstanceCountResource) {
-	  // prepare the datepicker
-      var today = new Date();
-	  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-      $scope.format = $scope.formats[0];
-      $scope.deployedAfter = new Date().setDate(today.getDate()-30);
-      $scope.deployedBefore = today;
-      $scope.open = function($event, opened) {
-    	$event.preventDefault();
-    	$event.stopPropagation();
-   	    $scope[opened] = true;    	  
-   	  };
-		  
-      $http.get(Uri.appUri("engine://engine/:engine/deployment/count"))
-	  .success(function(data) {
-		  $scope.deploymentCounter = data;
-	  });
+  var DeploymentResource = function ($resource, Uri) {
+    return $resource(Uri.appUri('engine://engine/:engine/deployment'));
+  };
+  module.factory('DeploymentResource', DeploymentResource);
 
-	  $scope.deployments = null;
+  var ProcessInstanceCountResource = function ($resource, Uri) {
+    return $resource(Uri.appUri(
+        'engine://engine/:engine/process-instance/count',
+        {processDefinitionId: '@processDefinitionId'},
+        {query: {method: 'GET', isArray: true, params: {processDefinitionId: ''}}}
+    ));
+  };
+  module.factory('ProcessInstanceCountResource', ProcessInstanceCountResource);
 
-      $scope.findDeployments = function() {
-	  var deployments = DeploymentResource.query();
-	  console.log(deployments);
-	  deployments.$promise.then(function () {
-		deployments.forEach(function(deployment, i) {
-		  console.log(deployment.id + " " + deployment.name);
-		  deployment.runningInstances = 0;
-		  ProcessDefinitionDeploymentResource.query({deploymentId: deployment.id})
-		  	.$promise.then(function (response) {
-			  console.log(response);
-			  var processDefinitions = response;
-			  deployment.processDefinitions = processDefinitions;
-			  processDefinitions.forEach(function(processDefinition, i) {
-				console.log(processDefinition);
-				ProcessInstanceCountResource.get({processDefinitionId: processDefinition.id})
-				  .$promise.then(function (processInstanceCount) {
-					  console.log(processInstanceCount);
-					  deployment.runningInstances = deployment.runningInstances + processInstanceCount.count;
-				  }); 
-			  });
-		    });
-		});  
-	  });
-	  $scope.deployments = deployments;
-      };
-	  
-	};
-  
+  var ProcessDefinitionDeploymentResource = function($resource, Uri) {
+    return $resource(Uri.appUri(
+        'engine://engine/:engine/process-definition', 
+        {deploymentId: '@deploymentId'},
+        {query: {method: 'GET', isArray: true, params: {deploymentId: ''}}}
+    ));
+  };
+  module.factory('ProcessDefinitionDeploymentResource', ProcessDefinitionDeploymentResource);
+
+  var DashboardController = function($scope, $http, Uri, 
+      DeploymentResource, ProcessDefinitionDeploymentResource, ProcessInstanceCountResource, $modal) {
+
+    // prepare the datepicker
+    var today = new Date();
+    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+    $scope.format = $scope.formats[0];
+    $scope.deployedAfter = new Date().setDate(today.getDate()-30);
+    $scope.deployedBefore = today;
+    $scope.open = function($event, opened) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope[opened] = true;    	  
+    };
+
+    $http.get(Uri.appUri("engine://engine/:engine/deployment/count"))
+    .success(function(data) {
+      $scope.deploymentCounter = data;
+    });
+
+    $scope.deployments = null;
+
+    $scope.findDeployments = function() {
+      var deployments = DeploymentResource.query();
+      console.log(deployments);
+      deployments.$promise.then(function () {
+        deployments.forEach(function(deployment, i) {
+          console.log(deployment.id + " " + deployment.name);
+          deployment.runningInstances = 0;
+          ProcessDefinitionDeploymentResource.query({deploymentId: deployment.id})
+          .$promise.then(function (response) {
+            console.log(response);
+            var processDefinitions = response;
+            deployment.processDefinitions = processDefinitions;
+            processDefinitions.forEach(function(processDefinition, i) {
+              console.log(processDefinition);
+              ProcessInstanceCountResource.get({processDefinitionId: processDefinition.id})
+              .$promise.then(function (processInstanceCount) {
+                console.log(processInstanceCount);
+                processDefinition.runningInstances = processInstanceCount.count;
+                deployment.runningInstances = deployment.runningInstances + processInstanceCount.count;
+              }); 
+            });
+          });
+        });  
+      });
+      $scope.deployments = deployments;
+    };
+    
+    $scope.openDeleteDeploymentDialog = function () {
+      var deployment = this.deployment;
+      console.log("open delete deployment dialog " + deployment.id);
+      $modal.open({
+        resolve: {
+          deployment: function() { return deployment; },
+        },
+        controller: 'DeleteDeploymentController',
+        templateUrl: require.toUrl(Uri.appUri('plugin://deployment-plugin/static/app/delete-deployment-dialog.html'))
+      });
+    }; 
+
+  };
+
 
   DashboardController.$inject = ["$scope", "$http", "Uri", 
                                  "DeploymentResource", 
                                  "ProcessDefinitionDeploymentResource", 
-                                 "ProcessInstanceCountResource"];
+                                 "ProcessInstanceCountResource",
+                                 "$modal"];
 
 
   var Configuration = function Configuration(ViewsProvider) {
@@ -96,6 +111,55 @@ ngDefine('cockpit.plugin.deployment-plugin', function(module) {
 
   module.config(Configuration);
 
-  return module;
+  module.controller('DeleteDeploymentController', ['$scope', '$location', 'Notifications', 'DeploymentResource', '$modalInstance', 'deployment', 
+                                           function($scope,   $location,   Notifications,   DeploymentResource,   $modalInstance,   deployment) {
+
+    console.log("in delete controller " + deployment.id);
+    
+    $scope.deployment = deployment;
+
+    var BEFORE_DELETE = 'beforeDelete',
+    PERFORM_DELETE = 'performDelete',
+    DELETE_SUCCESS = 'deleteSuccess',
+    DELETE_FAILED = 'deleteFailed',
+    LOADING_FAILED = 'loadingFailed';
+
+    $scope.status = BEFORE_DELETE;
+    console.log("status is BEFORE_DELETE");
+
+    $scope.$on('$routeChangeStart', function () {
+      $modalInstance.close($scope.status);
+    });
+
+//    deployment.observe(function () {
+//
+//    });
+
+    $scope.deleteDeployment = function () {
+      $scope.status = PERFORM_DELETE;
+
+      $scope.deployment.$delete(function () {
+        // success
+        $scope.status = DELETE_SUCCESS;
+        Notifications.addMessage({'status': 'Deleted', 'message': 'The deployment was successfully deleted.'});
+
+      }, function () {
+        // failure
+        $scope.status = DELETE_FAILED;
+        Notifications.addError({'status': 'Failed', 'message': 'The deployment could not be deleted.', 'exclusive': ['type']});
+      });
+    };
+
+    $scope.close = function (status) {
+      $modalInstance.close(status);
+
+      // if the cancellation of the process instance was successful,
+      // then redirect to the corresponding process definition overview.
+//    if (status === CANCEL_SUCCESS) {
+//    $location.url('/process-definition/' + processInstance.definitionId);
+//    $location.replace();
+//    }
+    };
+  }]);  return module;
 
 });

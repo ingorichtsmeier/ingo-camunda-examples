@@ -32,7 +32,6 @@
       <tr data-ng-repeat="deployment in deployments">
         <td>
         
-
         <div>
           {{ deployment.name }}
 	        <div data-ng-repeat="processDefinition in deployment.processDefinitions">
@@ -44,10 +43,10 @@
         <td>{{ deployment.runningInstances }}</td>
         <td>{{ deployment.deploymentTime }}</td>
         <td>
-        <!-- ng-click="changeGroups()"
-            ng-model="userTask" -->
           <a 
             class="btn action-button"
+            href ng-click="openDeleteDeploymentDialog()"
+            ng-model="deployment"
             tooltip-placement="left"
             tooltip="Delete Deployment">
             <i class="icon-remove-circle"></i>
