@@ -1,15 +1,17 @@
 ngDefine('cockpit.plugin.deployment-plugin', function(module) {
 
   var DeploymentResource = function ($resource, Uri) {
-    return $resource(Uri.appUri('engine://engine/:engine/deployment'));
+    return $resource(Uri.appUri(
+        'engine://engine/:engine/deployment/:deploymentId',
+        {deploymentId: '@id', before: '@before', after: '@after'}
+    ));
   };
   module.factory('DeploymentResource', DeploymentResource);
 
   var ProcessInstanceCountResource = function ($resource, Uri) {
     return $resource(Uri.appUri(
         'engine://engine/:engine/process-instance/count',
-        {processDefinitionId: '@processDefinitionId'},
-        {query: {method: 'GET', isArray: true, params: {processDefinitionId: ''}}}
+        {processDefinitionId: '@processDefinitionId'}
     ));
   };
   module.factory('ProcessInstanceCountResource', ProcessInstanceCountResource);
@@ -17,8 +19,7 @@ ngDefine('cockpit.plugin.deployment-plugin', function(module) {
   var ProcessDefinitionDeploymentResource = function($resource, Uri) {
     return $resource(Uri.appUri(
         'engine://engine/:engine/process-definition', 
-        {deploymentId: '@deploymentId'},
-        {query: {method: 'GET', isArray: true, params: {deploymentId: ''}}}
+        {deploymentId: '@deploymentId'}
     ));
   };
   module.factory('ProcessDefinitionDeploymentResource', ProcessDefinitionDeploymentResource);
@@ -27,10 +28,15 @@ ngDefine('cockpit.plugin.deployment-plugin', function(module) {
       DeploymentResource, ProcessDefinitionDeploymentResource, ProcessInstanceCountResource, $modal) {
 
     // prepare the datepicker
+    // TODO Check for local date
     var today = new Date();
+    console.log(today);
+    today.setHours(23, 59, 59);
+    console.log(today);
     $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $scope.format = $scope.formats[0];
-    $scope.deployedAfter = new Date().setDate(today.getDate()-30);
+    var deployedAfter = new Date().setDate(today.getDate()-30);
+    $scope.deployedAfter = new Date(deployedAfter).toISOString();
     $scope.deployedBefore = today;
     $scope.open = function($event, opened) {
       $event.preventDefault();
@@ -46,7 +52,12 @@ ngDefine('cockpit.plugin.deployment-plugin', function(module) {
     $scope.deployments = null;
 
     $scope.findDeployments = function() {
-      var deployments = DeploymentResource.query();
+      // TODO: check for ISO String: Its GMT instead of local time 
+      console.log("dates for search: " + new Date($scope.deployedAfter).toISOString() + " " + new Date($scope.deployedBefore).toISOString());
+      var deployments = DeploymentResource.query(
+          {before: new Date($scope.deployedBefore).toISOString(),
+           after: new Date($scope.deployedAfter).toISOString()
+        });
       console.log(deployments);
       deployments.$promise.then(function () {
         deployments.forEach(function(deployment, i) {
@@ -137,14 +148,18 @@ ngDefine('cockpit.plugin.deployment-plugin', function(module) {
 
     $scope.deleteDeployment = function () {
       $scope.status = PERFORM_DELETE;
-
-      $scope.deployment.$delete(function () {
+      console.log($scope.deployment);
+      console.log("delete deployment " + deployment + " with id " + deployment.id);
+      $scope.deployment.$delete({deploymentId: deployment.id}, function () {
+        
         // success
+        console.log("deleted");
         $scope.status = DELETE_SUCCESS;
         Notifications.addMessage({'status': 'Deleted', 'message': 'The deployment was successfully deleted.'});
 
       }, function () {
         // failure
+        console.log("not deleted: " + $scope.deployment);
         $scope.status = DELETE_FAILED;
         Notifications.addError({'status': 'Failed', 'message': 'The deployment could not be deleted.', 'exclusive': ['type']});
       });
