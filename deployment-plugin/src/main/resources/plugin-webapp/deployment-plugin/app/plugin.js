@@ -28,15 +28,14 @@ ngDefine('cockpit.plugin.deployment-plugin', function(module) {
       DeploymentResource, ProcessDefinitionDeploymentResource, ProcessInstanceCountResource, $modal) {
 
     // prepare the datepicker
-    // TODO Check for local date
     var today = new Date();
-    console.log(today);
-    today.setHours(23, 59, 59);
     console.log(today);
     $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
     $scope.format = $scope.formats[0];
-    var deployedAfter = new Date().setDate(today.getDate()-30);
-    $scope.deployedAfter = new Date(deployedAfter).toISOString();
+    var deployedAfter = new Date();
+    deployedAfter.setDate(today.getDate()-30);
+    console.log(deployedAfter);
+    $scope.deployedAfter = deployedAfter;
     $scope.deployedBefore = today;
     $scope.open = function($event, opened) {
       $event.preventDefault();
@@ -52,11 +51,16 @@ ngDefine('cockpit.plugin.deployment-plugin', function(module) {
     $scope.deployments = null;
 
     $scope.findDeployments = function() {
-      // TODO: check for ISO String: Its GMT instead of local time 
-      console.log("dates for search: " + new Date($scope.deployedAfter).toISOString() + " " + new Date($scope.deployedBefore).toISOString());
+      var deployedAfter = new Date($scope.deployedAfter);
+      deployedAfter.setUTCHours(0, 0, 0);
+      var deployedBefore = new Date($scope.deployedBefore);
+      deployedBefore.setUTCHours(23, 59, 59);
+      console.log("dates for search: " + deployedAfter.toISOString() + " " + deployedBefore.toISOString());
       var deployments = DeploymentResource.query(
-          {before: new Date($scope.deployedBefore).toISOString(),
-           after: new Date($scope.deployedAfter).toISOString()
+          {before: deployedBefore.toISOString(),
+           after: deployedAfter.toISOString(),
+           sortBy: "deploymentTime",
+           sortOrder: "asc"
         });
       console.log(deployments);
       deployments.$promise.then(function () {
@@ -168,12 +172,12 @@ ngDefine('cockpit.plugin.deployment-plugin', function(module) {
     $scope.close = function (status) {
       $modalInstance.close(status);
 
-      // if the cancellation of the process instance was successful,
-      // then redirect to the corresponding process definition overview.
-//    if (status === CANCEL_SUCCESS) {
-//    $location.url('/process-definition/' + processInstance.definitionId);
-//    $location.replace();
-//    }
+      // reload deployments
+      if (status === DELETE_SUCCESS) {
+//        $location.url('/process-definition/' + processInstance.definitionId);
+//        $location.replace();
+        console.log("refresh deployments");
+      }
     };
   }]);  return module;
 
