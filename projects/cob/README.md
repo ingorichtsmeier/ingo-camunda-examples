@@ -19,7 +19,7 @@ If you are interested how to do it with the Java API, check out the Counterparty
 
 To do it with the REST-API, you have to call two rest services to create the message event.
 
-The first one: ``POST /execution`` with payload
+The first one: `POST /execution` with payload
 
     {
     "processVariables":
@@ -48,7 +48,7 @@ It returns the list of executions that are expecting a message called 'override'
     "processInstanceId":"72516907-792b-11e4-b932-7ce9d3b8f4dd",
     "ended":false}]
 
-Then you can get the first executionId from the list and use it in the second rest call to send this task the message with the payload: ``POST /execution/{id}/messageSubscriptions/{messageName}/trigger``
+Then you can get the first executionId from the list and use it in the second rest call to send this task the message with the payload: `POST /execution/{id}/messageSubscriptions/{messageName}/trigger`
 
 for example:
 
@@ -79,9 +79,32 @@ In another process the you can do an adhoc approval just assigning the task to s
 
 After changing the assignee the task will immediately appear in the personal task list of the new user.
 
-You have to call ``POST /task/{id}/assignee`` with the new userId as payload. [see the REST API](http://docs.camunda.org/latest/api-references/rest/#task-set-assignee) 
+You have to call `POST /task/{id}/assignee` with the new userId as payload. [see the REST API](http://docs.camunda.org/latest/api-references/rest/#task-set-assignee) 
 
 When the new user completes the task, the process instance will continue with the next task.
+
+### Approval by delegating to another user 
+
+The third possibility to hand the task over to another person is to delegate it to someone else. You can delegate a task with the REST call `POST /task/{id}/delegate` and the userId as payload. [see the REST API](http://docs.camunda.org/latest/api-references/rest/#task-delegate-task) The call will set the delegation state of the task to `PENDING`. 
+
+If the task was claimed by a user before, this user is the assignee of the task. While delegating the task, the assignee will get the owner of the task and the user who gets the task delegated is the new assignee. The delegated user will find the task in his personal tasklist. 
+
+A snippet from the task attributes:
+
+    name: "Review and complete onboarding request"
+    assignee: "mary"
+    delegationState: "PENDING"
+    owner: "demo"
+
+If the delegated user completes the task in the camunda tasklist, the delegation gets resolved and the task is handed back to the assignee (if someone had claimed the task before) or into the group list. This is done with the REST call `POST /task/{id}/resolve` with variables in the payload. The variables will reflect the changes, the user had done on the process instance. [see the REST API](http://docs.camunda.org/latest/api-references/rest/#task-resolve-task). The delegation state of the task is set to `RESOLVED`. 
+
+    name: "Review and complete onboarding request"
+    assignee: "demo"
+    delegationState: "RESOLVED"
+
+If a user claimed the task before delegation, he can now complete the task and perhaps change some data on the form fields before. If the task was delegated from a group-list, a user has to claim the task into his personal task list before completing it.
+
+![History of delegations](readme-images/delegate-task-history-tasklist.png)
 
 How to use it?
 --------------
