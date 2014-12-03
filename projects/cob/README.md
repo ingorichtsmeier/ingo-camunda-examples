@@ -62,6 +62,15 @@ with payload:
 
 After this call the task 'review override request' can be found in the tasklist of management.
 
+Ad Hoc Approval Task
+--------------------
+
+To make an other person approve a request instantly, there are several possible ways.
+
+### Approval in the following task
+
+In this process, if the COB-User wants an instant approval by the tax team, he enters the reason on the form, checks the instant approval and the process will go directly to the 'check for tax rules' task. The tax team can enter some comments and can give it back to the COB to amend the request. After amending the process instance will instantiate the tax 'check for tax rules' again to review the amended data.
+
 How to use it?
 --------------
 
