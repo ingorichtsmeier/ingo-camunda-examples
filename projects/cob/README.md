@@ -116,6 +116,24 @@ With the REST-API the two calls will be `POST /task/{id}/identity-links` ([See t
 
     {"groupId": "accounting", "type": "candidate"}
     
+### Approval in a predefined task
+
+If you can foresee that you will sometimes need an additional approval with another form for a single user task in the process definition, you can add the approval user task and connect it with a boundary message event to the user task. 
+
+![additional approval](readme-images/additional-approval.png)
+
+To send the message with a REST service, call `POST /message` with some process variables as payload to correlate with the process instance. [See the REST API](http://docs.camunda.org/latest/api-references/rest/#message-deliver-a-message)
+
+Example payload may be:
+
+    {"messageName" : "additionalApprovalMessage",
+     "correlationKeys" : {
+       "workId": {"value": 1, "type" : "Long"}
+     }
+    }
+
+And check out the predefinedApproval() test method. 
+
 How to use it?
 --------------
 
