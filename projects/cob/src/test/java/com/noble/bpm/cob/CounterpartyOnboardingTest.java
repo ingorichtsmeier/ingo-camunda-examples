@@ -48,6 +48,36 @@ public class CounterpartyOnboardingTest {
 	}
 	
 	@Test
+	@Deployment(resources = "counterparty-onboarding.bpmn") 
+	public void testConditionsComplianceFineTaxMaybeNot() {
+		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+		Task reviewOnboardingRequest = taskQuery().singleResult();
+		
+		// business rules for compliance will be fine ... 
+		complete(reviewOnboardingRequest, withVariables(
+				"gotoTax", "yes", 
+				"gotoCompliance", "no", 
+				"complianceApproved", "yes"));
+		
+		// ... tax approval says maybe ...
+		Task checkForTaxRules = taskQuery().singleResult();
+		complete(checkForTaxRules, withVariables("taxApproved", "maybe"));
+		
+		// ... amend tax data ...
+		assertThat(pi).isWaitingAt("UserTask_4");
+		Task amendTask = taskQuery().singleResult();
+		complete(amendTask);
+		
+		// ... amended data approval will fail ...
+		assertThat(pi).isWaitingAt("UserTask_3");
+		checkForTaxRules = taskQuery().singleResult();
+		complete(checkForTaxRules, withVariables("taxApproved", "no"));
+		
+		// ... request has been rejected cause of failing tax approval
+		assertThat(pi).isEnded().hasPassed("EndEvent_2");
+	}
+
+	@Test
 	@Deployment(resources = "counterparty-onboarding.bpmn")
 	public void overrideRequest() {
 		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, 
