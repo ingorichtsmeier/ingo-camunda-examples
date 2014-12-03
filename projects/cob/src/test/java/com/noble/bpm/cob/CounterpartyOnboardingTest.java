@@ -4,9 +4,12 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.*;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
+import org.camunda.bpm.engine.history.HistoricTaskInstance;
+import org.camunda.bpm.engine.impl.persistence.entity.TaskEntity;
 import org.camunda.bpm.engine.impl.util.LogUtil;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -102,4 +105,62 @@ public class CounterpartyOnboardingTest {
 		assertThat(pi2).isWaitingFor("additionalApprovalMessage").isWaitingAt("Task_1");
 	}
 
+	@Test
+	@Deployment(resources = "counterparty-onboarding.bpmn")
+	public void handleSubTask() {
+		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
+				withVariables("CPTYNumber", new Long(345)));
+		Task reviewCounterpartyRequest = taskQuery().singleResult();
+		
+		// Create a new task with current task as parent
+		Task newSubTask = taskService().newTask();
+		TaskEntity newSubTaskEntity = (TaskEntity) newSubTask;
+		newSubTaskEntity.setName("Additional review of counterparty");
+		newSubTaskEntity.setParentTaskId(reviewCounterpartyRequest.getId());
+		newSubTaskEntity.setDescription("This is an example for a subtask");
+		newSubTaskEntity.setProcessInstanceId(reviewCounterpartyRequest.getProcessInstanceId());
+		taskService().saveTask(newSubTaskEntity);
+		
+		// put it into a group list
+		taskService().addCandidateGroup(newSubTask.getId(), "management");
+
+		// give him a from key as a variable
+		taskService().setVariable(newSubTask.getId(), "my form key", "helloWorldForm");
+
+		newSubTask = taskQuery().taskId(newSubTask.getId()).singleResult();
+		assertThat(newSubTask.getProcessInstanceId()).isEqualTo(pi.getId());
+
+		// access process variable with the process instance id 
+		Map<String, Object> variables = runtimeService().getVariables(newSubTask.getProcessInstanceId());
+		assertThat(variables).containsEntry("CPTYNumber", new Long(345));
+
+		Map<String, Object> subTaskVars = taskService().getVariables(newSubTask.getId());
+		assertThat(subTaskVars).containsEntry("my form key", "helloWorldForm");
+		
+		// work on the subtask
+		newSubTask = taskQuery().taskName("Additional review of counterparty").singleResult();
+		taskService().claim(newSubTask.getId(), "peter");
+		
+		// return the variables directly to the process instance
+		Map<String, Object> taskResults = withVariables("additionalApproval", "yes");
+		runtimeService().setVariables(newSubTask.getProcessInstanceId(), taskResults);
+		taskService().complete(newSubTask.getId());
+
+		Map<String, Object> procVars = runtimeService().getVariables(pi.getId());
+		assertThat(procVars).containsEntry("additionalApproval", "yes");
+
+		// the task apprears in the history of the process instance
+		List<HistoricTaskInstance> passedTask = historyService().createHistoricTaskInstanceQuery().processInstanceId(pi.getId()).list();
+		assertThat(passedTask).extracting("name").contains("Additional review of counterparty", "Review and complete onboarding request");
+		
+		// work on the origin task
+		taskService().complete(reviewCounterpartyRequest.getId(), 
+				withVariables(
+						"gotoTax", "no", 
+						"gotoCompliance", "no", 
+						"taxApproved", "yes",
+						"complianceApproved", "yes"));
+		
+		assertThat(pi).isEnded();
+	}
 }

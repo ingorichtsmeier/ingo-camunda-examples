@@ -15,7 +15,7 @@ Fast Track user task
 ------------------------
 In the process definition, the user tasks have an attached non-canceling message receive event called override. If the process instance receives an override message, it will create an additional task 'Review Override Request' for Management. In this task, the user can approve the Override and the original request and decide to publish the counterparty immediately or reject the override.
 
-If you are interested how to do it with the Java API, check out the CounterpartyOnboardingTest.java, method overrideRequest().
+If you are interested how to do it with the Java API, check out the `CounterpartyOnboardingTest.java`, method `overrideRequest()`.
 
 To do it with the REST-API, you have to call two rest services to create the message event.
 
@@ -132,7 +132,17 @@ Example payload may be:
      }
     }
 
-And check out the predefinedApproval() test method. 
+And check out the `predefinedApproval()` test method. 
+
+### Approval in a new subtask
+
+The most flexible but also the most challenging way to hand the work to another user is to create a new task. Here you have to manually set in the code the name, the parent task and some more attributes. The new task has no connection via sequence flows to other tasks. If you would like to connect it to the process instance, you have to deal in your Java code with the TaskEntity instead of Task to set the processInstanceId. 
+
+The task has no form key, because it is set in process definition and the new sub task doesn't appear in a process diagram. You have to use a task variable to store a form key and handle this variable in your task list application.
+
+And because the new task is no token on the process instance you have to manage the process variables directly on the process instance. You can't pass them in the `taskService.complete(taskId, variables)` method.  
+
+The REST API doesn't support dealing with the process instance. So have a look into the `handleSubTask()` test method for an example.
 
 How to use it?
 --------------
