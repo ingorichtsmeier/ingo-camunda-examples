@@ -106,6 +106,16 @@ If a user claimed the task before delegation, he can now complete the task and p
 
 ![History of delegations](readme-images/delegate-task-history-tasklist.png)
 
+### Approval by another team
+
+The fourth possibility to give the task to another team to work on it is to change the candidate-groups behind the scene. In the camunda tasklist this can be done by clicking on the groups on the top of the from and add another group and delete the old one. Because there is a one to many relationship between task and groups you always have to add a group and delete the existing to hand over the task to a single group.
+
+![managing groups](readme-images/manage-groups-camunda-tasklist.png)
+ 
+With the REST-API the two calls will be `POST /task/{id}/identity-links` ([See the REST API](http://docs.camunda.org/latest/api-references/rest/#task-add-identity-link)) and `POST /task/{id}/identity-links/delete` ([See the REST API](http://docs.camunda.org/latest/api-references/rest/#task-delete-identity-link)) with the payload of the new identity link. An identity link can either be a user or a group. An example is
+
+    {"groupId": "accounting", "type": "candidate"}
+    
 How to use it?
 --------------
 
