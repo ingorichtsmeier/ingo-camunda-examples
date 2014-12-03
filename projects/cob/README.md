@@ -11,9 +11,56 @@ Show me the important parts!
 ----------------------------
 
 
-How does it work?
------------------
+Fast Track user task
+------------------------
+In the process definition, the user tasks have an attached non-canceling message receive event called override. If the process instance receives an override message, it will create an additional task 'Review Override Request' for Management. In this task, the user can approve the Override and the original request and decide to publish the counterparty immediately or reject the override.
 
+If you are interested how to do it with the Java API, check out the CounterpartyOnboardingTest.java, method overrideRequest().
+
+To do it with the REST-API, you have to call two rest services to create the message event.
+
+The first one: ``POST /execution`` with payload
+
+    {
+    "processVariables":
+    [{"name": "aVariableName", "operator": "eq", "value": aValue}],
+    "messageEventSubscriptionName": "theMessageName"}
+    }
+
+for example:
+
+    http://localhost:8080/camunda/api/engine/engine/default/execution
+
+with payload:
+
+    {
+    "processVariables":
+    [{"name":"CPTYNumber", "operator":"eq", "value": 6}],
+    "messageEventSubscriptionName": "override"}
+    }  
+
+It returns the list of executions that are expecting a message called 'override'. It is a list because there could be possibly more than one task available, if the process instance has tasks in the compliance and tax branch.
+
+    [{"id":"885628f4-792b-11e4-b932-7ce9d3b8f4dd",
+    "processInstanceId":"72516907-792b-11e4-b932-7ce9d3b8f4dd",
+    "ended":false},
+    {"id":"8856c53c-792b-11e4-b932-7ce9d3b8f4dd",
+    "processInstanceId":"72516907-792b-11e4-b932-7ce9d3b8f4dd",
+    "ended":false}]
+
+Then you can get the first executionId from the list and use it in the second rest call to send this task the message with the payload: ``POST /execution/{id}/messageSubscriptions/{messageName}/trigger``
+
+for example:
+
+    http://localhost:8080/camunda/api/engine/engine/default/execution/885628f4-792b-11e4-b932-7ce9d3b8f4dd/messageSubscriptions/override/trigger
+    
+with payload:
+
+    {"variables":
+    {"overrideReason" : {"value": "I want to trade with this counterparty today"}}
+    }
+
+After this call the task 'review override request' can be found in the tasklist of management.
 
 How to use it?
 --------------
@@ -40,15 +87,6 @@ Environment Restrictions
 Built and tested against Camunda BPM version 7.2.0.
 
 
-Known Issues
-------------
-
-
 Improvements Backlog
 --------------------
 
-
-License
--------
-
-[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
