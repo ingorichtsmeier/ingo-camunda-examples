@@ -71,6 +71,18 @@ To make an other person approve a request instantly, there are several possible 
 
 In this process, if the COB-User wants an instant approval by the tax team, he enters the reason on the form, checks the instant approval and the process will go directly to the 'check for tax rules' task. The tax team can enter some comments and can give it back to the COB to amend the request. After amending the process instance will instantiate the tax 'check for tax rules' again to review the amended data.
 
+### Approval by another assignee
+
+In another process the you can do an adhoc approval just assigning the task to somebody else. In the camunda tasklist you enter another userid in the assignee box on the upper right site of the task form.
+
+![tasklist](readme-images/reassign-task-camunda-tasklist.png)
+
+After changing the assignee the task will immediately appear in the personal task list of the new user.
+
+You have to call ``POST /task/{id}/assignee`` with the new userId as payload. [see the REST API](http://docs.camunda.org/latest/api-references/rest/#task-set-assignee) 
+
+When the new user completes the task, the process instance will continue with the next task.
+
 How to use it?
 --------------
 
