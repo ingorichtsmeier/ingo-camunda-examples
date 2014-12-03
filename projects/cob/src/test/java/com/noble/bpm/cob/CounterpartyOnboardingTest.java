@@ -6,6 +6,7 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 import java.util.List;
 
 import org.apache.ibatis.logging.LogFactory;
+import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.impl.util.LogUtil;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -76,4 +77,29 @@ public class CounterpartyOnboardingTest {
 		assertThat(pi).isWaitingAt("UserTask_3", "UserTask_1", "Task_1");
 		assertThat(pi2).isNotWaitingAt("Task_1");
 	}
+	
+	@Test
+	@Deployment(resources = "additional-approval.bpmn")
+	public void predefinedApproval() {
+		// start two process instances ... 
+		ProcessInstance pi1 = runtimeService().startProcessInstanceByKey("additionalApproval", 
+				withVariables("workId", 1));
+		ProcessInstance pi2 = runtimeService().startProcessInstanceByKey("additionalApproval", 
+				withVariables("workId", 2));
+		// ... send just a message will fail ...
+		try {
+			runtimeService().correlateMessage("additionalApprovalMessage");
+		} catch (MismatchingMessageCorrelationException e) {
+			// ... because 2 instances are waiting for it.
+			assertThat(e).hasMessageEndingWith("2 executions match the correlation keys. Should be one or zero.");
+		}
+		// Send a message to the process containing the variable workId=1 ...
+		runtimeService().correlateMessage("additionalApprovalMessage", 
+				withVariables("workId", 1));
+		// ... will move the first process instance to the new approval task ... 
+		assertThat(pi1).hasPassed("Task_1", "BoundaryEvent_1").isWaitingAt("UserTask_2");
+		// ... and the other process instance is still in the first task.
+		assertThat(pi2).isWaitingFor("additionalApprovalMessage").isWaitingAt("Task_1");
+	}
+
 }
