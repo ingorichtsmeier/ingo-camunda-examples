@@ -42,7 +42,7 @@
         <bpmn2:flowNodeRef>Task_2</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>BoundaryEvent_5</bpmn2:flowNodeRef>
       </bpmn2:lane>
-      <bpmn2:lane id="Lane_4" name="Management">
+      <bpmn2:lane id="Lane_4" name="Platform Head">
         <bpmn2:flowNodeRef>ExclusiveGateway_8</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>EndEvent_3</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>Task_1</bpmn2:flowNodeRef>
