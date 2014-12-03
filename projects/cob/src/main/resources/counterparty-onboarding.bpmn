@@ -141,7 +141,7 @@
     </bpmn2:parallelGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="ParallelGateway_1" targetRef="BusinessRuleTask_1"/>
     <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="ParallelGateway_1" targetRef="BusinessRuleTask_3"/>
-    <bpmn2:userTask id="UserTask_4" name="Amend Tax data">
+    <bpmn2:userTask id="UserTask_4" camunda:formKey="embedded:app:forms/amend-tax-data-form.html" name="Amend Tax data">
       <bpmn2:incoming>SequenceFlow_29</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_31</bpmn2:outgoing>
     </bpmn2:userTask>
@@ -229,7 +229,7 @@
       <bpmn2:outgoing>SequenceFlow_15</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_15" name="" sourceRef="ExclusiveGateway_11" targetRef="ParallelGateway_2"/>
-    <bpmn2:userTask id="UserTask_3" name="check for tax rules">
+    <bpmn2:userTask id="UserTask_3" camunda:formKey="embedded:app:forms/check-for-tax-rules-form.html" name="check for tax rules">
       <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_28</bpmn2:outgoing>
     </bpmn2:userTask>
@@ -249,11 +249,11 @@
       <bpmn2:messageEventDefinition id="_MessageEventDefinition_4" messageRef="Message_1"/>
     </bpmn2:boundaryEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_34" name="" sourceRef="BoundaryEvent_3" targetRef="Task_1"/>
-    <bpmn2:startEvent id="StartEvent_1" name="Counterparty &#xD;&#xA;requested">
+    <bpmn2:startEvent id="StartEvent_1" camunda:formKey="embedded:app:forms/start-cob-form.html" name="Counterparty &#xD;&#xA;requested">
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
     </bpmn2:startEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="StartEvent_1" targetRef="Task_2"/>
-    <bpmn2:userTask id="Task_2" name="Review and complete onboarding request">
+    <bpmn2:userTask id="Task_2" camunda:formKey="embedded:app:forms/review-request-cob-form.html" name="Review and complete onboarding request">
       <bpmn2:documentation>Review the Request if it is complete. Select  tax and/or compliance review if needed.</bpmn2:documentation>
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_39</bpmn2:outgoing>
