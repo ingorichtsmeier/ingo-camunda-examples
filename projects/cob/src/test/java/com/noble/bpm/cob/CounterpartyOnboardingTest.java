@@ -1,0 +1,39 @@
+package com.noble.bpm.cob;
+
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.*;
+import org.apache.ibatis.logging.LogFactory;
+import org.camunda.bpm.engine.impl.util.LogUtil;
+import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.ProcessEngineRule;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+public class CounterpartyOnboardingTest {
+
+	@Rule
+	public ProcessEngineRule rule = new ProcessEngineRule();
+
+	private static final String PROCESS_DEFINITION_KEY = "counterparty-onboarding";
+
+	// enable more detailed logging
+	static {
+		LogUtil.readJavaUtilLoggingConfigFromClasspath(); // process engine
+		LogFactory.useJdkLogging(); // MyBatis
+	}
+
+	@Before
+	public void setup() {
+		init(rule.getProcessEngine());
+	}
+
+	/**
+	 * Just tests if the process definition is deployable.
+	 */
+	@Test
+	@Deployment(resources = "counterparty-onboarding.bpmn")
+	public void testParsingAndDeployment() {
+		// nothing is done here, as we just want to check for exceptions during deployment
+	}
+	
+}
