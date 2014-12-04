@@ -2,6 +2,8 @@ package com.noble.bpm.cob;
 
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.*;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
+import static org.mockito.Mockito.*;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +11,16 @@ import java.util.Map;
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.camunda.bpm.engine.impl.interceptor.CommandContext;
+import org.camunda.bpm.engine.impl.jobexecutor.JobHandler;
+import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.TaskEntity;
+import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.impl.util.LogUtil;
+import org.camunda.bpm.engine.impl.util.LogUtil.ThreadLogMode;
 import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.Deployment;
@@ -197,11 +206,64 @@ public class CounterpartyOnboardingTest {
 	@Test
 	@Deployment(resources = "counterparty-onboarding.bpmn")
 	public void testDueDate() {
+		// due date is set to PT2H, two hours
 		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
 		Task reviewRequest = taskQuery().singleResult();
-		System.out.println("Due date:" + reviewRequest.getDueDate());
-		assertThat(reviewRequest.getDueDate()).isAfter(new Date(System.currentTimeMillis() + 7000000L))
-			.isBefore(new Date(System.currentTimeMillis() + 75000000L));
+		assertThat(reviewRequest.getDueDate()).isAfter(new Date(System.currentTimeMillis() + 115 * 60 * 1000L))
+			.isBefore(new Date(System.currentTimeMillis() + 125 * 60 * 1000L));
+	}
+	
+	@Test
+	@Deployment(resources = "counterparty-onboarding.bpmn")
+	public void testEscalationJobCreated() {
+		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+		List<Job> jobList = jobQuery().list();
+		assertThat(jobList).hasSize(1);
+		Job job = jobList.get(0);
+		String deploymentId = ((ExecutionEntity)pi).getProcessDefinition().getDeploymentId();
+		assertThat(job)
+			.hasProcessInstanceId(pi.getId())
+			.hasDeploymentId(deploymentId)
+			.hasExecutionId(taskQuery().singleResult().getExecutionId());
+		assertThat(job.getProcessDefinitionId()).isEqualTo(pi.getProcessDefinitionId());
+		assertThat(job.getProcessDefinitionKey()).isEqualTo(PROCESS_DEFINITION_KEY);
+		// handlerCfg can transport some data
+	}
+	
+	@Test
+	@Deployment(resources = "counterparty-onboarding.bpmn")
+	public void deleteTimerWithCompletion() {
+		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+		Task reviewRequest = taskQuery().singleResult();
+		complete(reviewRequest, withVariables("gotoTax", "yes", "gotoCompliance", "no"));
+		List<Job> jobList = jobQuery().list();
+		assertThat(jobList).isEmpty();
+	}
+	
+	@Test
+	@Deployment(resources = "counterparty-onboarding.bpmn")
+	public void testTaskEscalated() throws InterruptedException {
+		// Prepare the test engine 
+		EscalationJobHandler mockedHandler =  mock(EscalationJobHandler.class);
+		// show threads on the console output
+		LogUtil.setThreadLogMode(ThreadLogMode.INDENT);
+		// register the jobHandler in the engine
+		ProcessEngineConfigurationImpl processEngineConfiguration = (ProcessEngineConfigurationImpl) rule.getProcessEngine().getProcessEngineConfiguration();
+		Map<String, JobHandler> jobHandlers = processEngineConfiguration.getJobHandlers();
+		jobHandlers.put(EscalationJobHandler.ESCALATION_JOB_HANDLER_TYPE, mockedHandler);
+		processEngineConfiguration.setJobHandlers(jobHandlers);
+		
+		// start the process instance
+		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+		// move 2 hours and 5 minutes ahead
+		ClockUtil.setCurrentTime(new Date(System.currentTimeMillis() + 75000000L));
+		
+		// start the job executor on the test engine 
+		processEngineConfiguration.getJobExecutor().start();
+		Thread.sleep(1000L);
+		
+		// check if the jobHandler was called
+		verify(mockedHandler).execute(anyString(), any(ExecutionEntity.class), any(CommandContext.class));
 	}
 	
 }

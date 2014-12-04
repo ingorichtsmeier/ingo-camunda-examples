@@ -9,7 +9,7 @@ Built and tested against Camunda BPM version 7.2.0.
 
 Show me the important parts!
 ----------------------------
-
+Have a look at the commits of the repository to find the snippet to build the single feature.
 
 Fast Track user task
 ------------------------
@@ -156,6 +156,18 @@ The due date is evaluated to the end of the period and is available as an attrib
 ![due date in the task list](readme-images/due-date-camunda-tasklist.png)  
 
 See the [user guide](http://docs.camunda.org/latest/api-references/bpmn20/#tasks-user-task-due-date) for more information. The same can be done with a follow up date. Check the `testDueDate()` method of the test class.
+
+### Escalate on overdue
+
+if you want to escalate your task if it gets over due, first think about what this ecalation should be from the organizational point of view. For example, a manager should receive an email the a task in the group list of his team is not finished in time. 
+
+To implement it, you have to register a task listener on the task and start a timer with the due date and a new jobHandlerConfigruation to handle the timer. 
+
+The jobhandler will be called, if the timer fires.
+
+If you complete the task on time, you have to delete the timer from the job list. 
+
+See the jUnit test with the methods `testEscalationJobCreated()`, `deleteTimerWithCompletion()`, `testTaskEscalated()` and the `EscalationTaskListener` and `EscalationJobHandler` classes for more details. 
 
 How to use it?
 --------------
