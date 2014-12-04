@@ -1,0 +1,29 @@
+<strong>Here you would put the actual form to work on the task</strong>
+
+<p>You can invoke this form through the camunda tasklist
+  by setting the formKey of a User Task to 'embedded:app:forms/task-form.html'.</p>
+
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label">Name</label>
+    <div class="controls">
+      <input form-field cam-variable-type="String" cam-variable-name="name" readonly="true" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">Approved?</label>
+    <div class="controls">
+      <select cam-variable-type="String" cam-variable-name="approved">
+        <option value="no">No</option>
+        <option value="maybe">Maybe</option>
+        <option value="yes">Yes</option>
+      </select>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">Approve?</label>
+    <div class="controls">
+      <input form-field ng-model="approved" readonly/>
+    </div>
+  </div>
+</form>

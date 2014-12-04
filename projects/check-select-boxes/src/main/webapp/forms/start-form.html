@@ -1,0 +1,23 @@
+<strong>Here you would put the actual form to start the process</strong>
+
+<p>You can invoke this form through the camunda tasklist
+  by setting the formKey of a Start Event to 'embedded:app:forms/start-form.html'.</p>
+
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label">Your Name</label>
+    <div class="controls">
+      <input form-field cam-variable-type="String" cam-variable-name="name" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">Approved?</label>
+    <div class="controls">
+      <select cam-variable-type="String" cam-variable-name="approved">
+        <option value="no">No</option>
+        <option value="maybe">Maybe</option>
+        <option value="yes">Yes</option>
+      </select>
+    </div>
+  </div>
+</form>
