@@ -141,7 +141,7 @@
     </bpmn2:parallelGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_2" name="" sourceRef="ParallelGateway_1" targetRef="BusinessRuleTask_1"/>
     <bpmn2:sequenceFlow id="SequenceFlow_4" name="" sourceRef="ParallelGateway_1" targetRef="BusinessRuleTask_3"/>
-    <bpmn2:userTask id="UserTask_4" camunda:formKey="embedded:app:forms/amend-tax-data-form.html" name="Amend Tax data">
+    <bpmn2:userTask id="UserTask_4" camunda:formKey="embedded:app:forms/amend-tax-data-form.html" camunda:dueDate="PT3H" name="Amend Tax data">
       <bpmn2:incoming>SequenceFlow_29</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_31</bpmn2:outgoing>
     </bpmn2:userTask>
@@ -198,7 +198,7 @@
       <bpmn2:outgoing>SequenceFlow_18</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_18" name="" sourceRef="ServiceTask_1" targetRef="EndEvent_1"/>
-    <bpmn2:userTask id="UserTask_1" name="check for compliance rules">
+    <bpmn2:userTask id="UserTask_1" camunda:dueDate="P2D" name="check for compliance rules">
       <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_9</bpmn2:outgoing>
     </bpmn2:userTask>
@@ -207,7 +207,7 @@
       <bpmn2:outgoing>SequenceFlow_40</bpmn2:outgoing>
       <bpmn2:messageEventDefinition id="_MessageEventDefinition_2" messageRef="Message_1"/>
     </bpmn2:boundaryEvent>
-    <bpmn2:userTask id="Task_1" name="Review Override Request">
+    <bpmn2:userTask id="Task_1" camunda:dueDate="PT2H" name="Review Override Request">
       <bpmn2:incoming>SequenceFlow_33</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_35</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_34</bpmn2:incoming>
@@ -229,7 +229,7 @@
       <bpmn2:outgoing>SequenceFlow_15</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_15" name="" sourceRef="ExclusiveGateway_11" targetRef="ParallelGateway_2"/>
-    <bpmn2:userTask id="UserTask_3" camunda:formKey="embedded:app:forms/check-for-tax-rules-form.html" name="check for tax rules">
+    <bpmn2:userTask id="UserTask_3" camunda:formKey="embedded:app:forms/check-for-tax-rules-form.html" camunda:dueDate="P1D" name="check for tax rules">
       <bpmn2:incoming>SequenceFlow_23</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_28</bpmn2:outgoing>
     </bpmn2:userTask>
@@ -239,7 +239,7 @@
       <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
     </bpmn2:businessRuleTask>
     <bpmn2:sequenceFlow id="SequenceFlow_5" name="" sourceRef="BusinessRuleTask_3" targetRef="BusinessRuleTask_4"/>
-    <bpmn2:userTask id="UserTask_2" name="Amend Compliance data">
+    <bpmn2:userTask id="UserTask_2" camunda:dueDate="PT5H" name="Amend Compliance data">
       <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
     </bpmn2:userTask>
@@ -253,7 +253,7 @@
       <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
     </bpmn2:startEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="StartEvent_1" targetRef="Task_2"/>
-    <bpmn2:userTask id="Task_2" camunda:formKey="embedded:app:forms/review-request-cob-form.html" camunda:dueDate="PT2H" name="Review and complete onboarding request">
+    <bpmn2:userTask id="Task_2" camunda:formKey="embedded:app:forms/review-request-cob-form.html" camunda:dueDate="PT5H" name="Review and complete onboarding request">
       <bpmn2:documentation>Review the Request if it is complete. Select  tax and/or compliance review if needed.</bpmn2:documentation>
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_39</bpmn2:outgoing>
