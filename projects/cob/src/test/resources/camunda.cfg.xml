@@ -8,7 +8,14 @@
     <property name="expressionManager">
         <bean class="org.camunda.bpm.engine.test.mock.MockExpressionManager"/>
     </property>
-    <!--
+    
+	<property name="processEnginePlugins">
+		<list>
+			<bean class="com.noble.bpm.cob.ProcessEnginePlugin"/>
+		</list>
+	</property>    
+	
+	<!--
     <property name="mailServerHost" value="localhost" />
     <property name="mailServerUsername" value="camunda" />
     <property name="mailServerPassword" value="camunda" />

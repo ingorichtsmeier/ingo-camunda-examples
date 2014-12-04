@@ -265,5 +265,5 @@ public class CounterpartyOnboardingTest {
 		// check if the jobHandler was called
 		verify(mockedHandler).execute(anyString(), any(ExecutionEntity.class), any(CommandContext.class));
 	}
-	
+
 }

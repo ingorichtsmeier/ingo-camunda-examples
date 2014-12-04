@@ -159,7 +159,7 @@ See the [user guide](http://docs.camunda.org/latest/api-references/bpmn20/#tasks
 
 ### Escalate on overdue
 
-if you want to escalate your task if it gets over due, first think about what this ecalation should be from the organizational point of view. For example, a manager should receive an email the a task in the group list of his team is not finished in time. 
+If you want to escalate your task if it gets over due, first think about what this escalation should be from the organizational point of view. For example, a manager should receive an email the a task in the group list of his team is not finished in time. 
 
 To implement it, you have to register a task listener on the task and start a timer with the due date and a new jobHandlerConfigruation to handle the timer. 
 
@@ -168,6 +168,14 @@ The jobhandler will be called, if the timer fires.
 If you complete the task on time, you have to delete the timer from the job list. 
 
 See the jUnit test with the methods `testEscalationJobCreated()`, `deleteTimerWithCompletion()`, `testTaskEscalated()` and the `EscalationTaskListener` and `EscalationJobHandler` classes for more details. 
+
+### Escalate all tasks with due date 
+
+If you want that all tasks in all process definitions with a due date should be escalated on overdue, you have to register the task listener as a preParseListener in the engine configuration. Check out the [example for a detailed description](https://github.com/camunda/camunda-bpm-examples/tree/master/process-engine-plugin/bpmn-parse-listener) on bpmn parse listener.
+
+Have a look at `TaskBpmnParseListener` to register the listener on all user tasks. The class `ProcessEnginePlugin` registers the bpmn parse listener in the engine. The Plugin is configured in `camunda.cfg.xml`.
+
+Now you can delete the task listener on single tasks from the bpmn diagram. 
 
 How to use it?
 --------------
