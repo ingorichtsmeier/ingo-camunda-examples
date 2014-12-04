@@ -144,6 +144,10 @@ And because the new task is no token on the process instance you have to manage 
 
 The REST API doesn't support dealing with the process instance. So have a look into the `handleSubTask()` test method for an example.
 
+### Approval with case management
+
+To be done: Approve with a case, called from a process instance
+
 Service Level Agreement
 -----------------------
 
