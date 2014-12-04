@@ -24,11 +24,12 @@ public class EscalationTaskListener implements TaskListener {
 	public void notify(DelegateTask delegateTask) {
 		log.info("notify");
 		if (TaskListener.EVENTNAME_CREATE.equals(delegateTask.getEventName())) {
-			createJobForEscalation(delegateTask);
+			if (delegateTask.getDueDate() != null) {
+				createJobForEscalation(delegateTask);
+			}
 		} else if (TaskListener.EVENTNAME_COMPLETE.equals(delegateTask.getEventName())) {
 			deleteJobForEscalation(delegateTask);
 		}
-
 	}
 
 	private void createJobForEscalation(DelegateTask delegateTask) {

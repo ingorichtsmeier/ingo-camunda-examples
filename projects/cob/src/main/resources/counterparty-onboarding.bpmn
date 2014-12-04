@@ -255,10 +255,6 @@
     <bpmn2:sequenceFlow id="SequenceFlow_1" name="" sourceRef="StartEvent_1" targetRef="Task_2"/>
     <bpmn2:userTask id="Task_2" camunda:formKey="embedded:app:forms/review-request-cob-form.html" camunda:dueDate="PT2H" name="Review and complete onboarding request">
       <bpmn2:documentation>Review the Request if it is complete. Select  tax and/or compliance review if needed.</bpmn2:documentation>
-      <bpmn2:extensionElements>
-        <camunda:taskListener class="com.noble.bpm.cob.EscalationTaskListener" event="create"/>
-        <camunda:taskListener class="com.noble.bpm.cob.EscalationTaskListener" event="complete"/>
-      </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_39</bpmn2:outgoing>
     </bpmn2:userTask>
