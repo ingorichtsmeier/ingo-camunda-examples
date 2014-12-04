@@ -144,6 +144,19 @@ And because the new task is no token on the process instance you have to manage 
 
 The REST API doesn't support dealing with the process instance. So have a look into the `handleSubTask()` test method for an example.
 
+Service Level Agreement
+-----------------------
+
+First you have to specify the value of the due date for a task in the property Due Date on the user task. The value can be any period defined in the [ISO 8601 standard](http://en.wikipedia.org/wiki/ISO_8601), for example `P2D` for two days or `PT3H` for three hours of time (T). Or a combination like `P3Y6M4DT12H30M5S` representing a duration of "three years, six months, four days, twelve hours, thirty minutes, and five seconds".
+
+The period begins as the user tasks is created.
+
+The due date is evaluated to the end of the period and is available as an attribute in task, also in the REST-Service.
+
+![due date in the task list](readme-images/due-date-camunda-tasklist.png)  
+
+See the [user guide](http://docs.camunda.org/latest/api-references/bpmn20/#tasks-user-task-due-date) for more information. The same can be done with a follow up date. Check the `testDueDate()` method of the test class.
+
 How to use it?
 --------------
 

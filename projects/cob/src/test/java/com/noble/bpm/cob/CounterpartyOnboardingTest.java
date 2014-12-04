@@ -2,7 +2,7 @@ package com.noble.bpm.cob;
 
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.*;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
-
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -179,7 +179,7 @@ public class CounterpartyOnboardingTest {
 		Map<String, Object> procVars = runtimeService().getVariables(pi.getId());
 		assertThat(procVars).containsEntry("additionalApproval", "yes");
 
-		// the task apprears in the history of the process instance
+		// the task appears in the history of the process instance
 		List<HistoricTaskInstance> passedTask = historyService().createHistoricTaskInstanceQuery().processInstanceId(pi.getId()).list();
 		assertThat(passedTask).extracting("name").contains("Additional review of counterparty", "Review and complete onboarding request");
 		
@@ -193,4 +193,15 @@ public class CounterpartyOnboardingTest {
 		
 		assertThat(pi).isEnded();
 	}
+	
+	@Test
+	@Deployment(resources = "counterparty-onboarding.bpmn")
+	public void testDueDate() {
+		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+		Task reviewRequest = taskQuery().singleResult();
+		System.out.println("Due date:" + reviewRequest.getDueDate());
+		assertThat(reviewRequest.getDueDate()).isAfter(new Date(System.currentTimeMillis() + 7000000L))
+			.isBefore(new Date(System.currentTimeMillis() + 75000000L));
+	}
+	
 }
