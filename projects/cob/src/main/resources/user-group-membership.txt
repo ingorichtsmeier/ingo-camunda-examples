@@ -1,0 +1,26 @@
+POST /user/create {"profile": {"id": "michelle", "firstName":"Michelle", "lastName":"Wahlgren", "email":"aNewEmailAddress"},"credentials": {"password":"michelle"}}
+POST /user/create {"profile": {"id": "joyce", "firstName":"Joyce", "lastName":"Li", "email":"aNewEmailAddress"},"credentials": {"password":"joyce"}}
+POST /user/create {"profile": {"id": "eddy", "firstName":"Eddy", "lastName":"Beltif", "email":"aNewEmailAddress"},"credentials": {"password":"eddy"}}
+POST /user/create {"profile": {"id": "reggie", "firstName":"Reggie", "lastName":"Wong", "email":"aNewEmailAddress"},"credentials": {"password":"reggie"}}
+POST /user/create {"profile": {"id": "robert", "firstName":"Robert", "lastName":"Luo", "email":"aNewEmailAddress"},"credentials": {"password":"robert"}}
+POST /user/create {"profile": {"id": "raymond", "firstName":"Raymond", "lastName":"Tong", "email":"aNewEmailAddress"},"credentials": {"password":"raymond"}}
+#POST /user/create {"profile": {"id": "", "firstName":"", "lastName":"", "email":"aNewEmailAddress"},"credentials": {"password":""}}
+#POST /user/create {"profile": {"id": "", "firstName":"", "lastName":"", "email":"aNewEmailAddress"},"credentials": {"password":""}}
+#POST /user/create {"profile": {"id": "", "firstName":"", "lastName":"", "email":"aNewEmailAddress"},"credentials": {"password":""}}
+
+POST /group/create {"id":"APP_COB", "name":"Counterparty Onboarding", "type":"Organizational Unit"}
+POST /group/create {"id":"APP_TAX", "name":"Tax", "type":"Organizational Unit"}
+POST /group/create {"id":"APP_COMPLIANCE", "name":"Compliance", "type":"Organizational Unit"}
+POST /group/create {"id":"APP_MANAGEMENT", "name":"Platform Head", "type":"Organizational Unit"}
+POST /group/create {"id":"APP_TREASURY", "name":"Treasury", "type":"Organizational Unit"}
+#POST /group/create {"id":"", "name":"", "type":""}
+#POST /group/create {"id":"", "name":"", "type":""}
+#POST /group/create {"id":"", "name":"", "type":""}
+
+PUT /group/APP_COB/members/joyce
+PUT /group/APP_COB/members/eddy
+PUT /group/APP_TAX/members/reggie
+PUT /group/APP_COMPLIANCE/members/robert
+PUT /group/APP_MANAGEMENT/members/michelle
+PUT /group/APP_TREASURY/members/raymond
+
