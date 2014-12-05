@@ -16,6 +16,7 @@ import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.jobexecutor.JobHandler;
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.TaskEntity;
+import org.camunda.bpm.engine.impl.persistence.entity.TimerEntity;
 import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.impl.util.LogUtil;
 import org.camunda.bpm.engine.impl.util.LogUtil.ThreadLogMode;
@@ -51,13 +52,13 @@ public class CounterpartyOnboardingTest {
 	 * Just tests if the process definition is deployable.
 	 */
 	@Test
-	@Deployment(resources = "counterparty-onboarding.bpmn")
+	@Deployment(resources = { "counterparty-onboarding.bpmn", "ssi-approval.bpmn" })
 	public void testParsingAndDeployment() {
 		// nothing is done here, as we just want to check for exceptions during deployment
 	}
 	
 	@Test
-	@Deployment(resources = "counterparty-onboarding.bpmn") 
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"}) 
 	public void testConditionsComplianceFineTaxMaybeNot() {
 		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
 		Task reviewOnboardingRequest = taskQuery().singleResult();
@@ -69,25 +70,29 @@ public class CounterpartyOnboardingTest {
 				"complianceApproved", "yes"));
 		
 		// ... tax approval says maybe ...
-		Task checkForTaxRules = taskQuery().singleResult();
+		Task checkForTaxRules = taskQuery().processInstanceId(pi.getId()).singleResult();
 		complete(checkForTaxRules, withVariables("taxApproved", "maybe"));
 		
 		// ... amend tax data ...
 		assertThat(pi).isWaitingAt("UserTask_4");
-		Task amendTask = taskQuery().singleResult();
+		Task amendTask = taskQuery().processInstanceId(pi.getId()).singleResult();
 		complete(amendTask);
 		
 		// ... amended data approval will fail ...
 		assertThat(pi).isWaitingAt("UserTask_3");
-		checkForTaxRules = taskQuery().singleResult();
+		checkForTaxRules = taskQuery().processInstanceId(pi.getId()).singleResult();
 		complete(checkForTaxRules, withVariables("taxApproved", "no"));
 		
+		// complete the async service task
+		Job continuation = jobQuery().messages().singleResult();
+		execute(continuation);
+		
 		// ... request has been rejected cause of failing tax approval
-		assertThat(pi).isEnded().hasPassed("EndEvent_2");
+		assertThat(pi).isEnded().hasPassed("EndEvent_2");		
 	}
 
 	@Test
-	@Deployment(resources = "counterparty-onboarding.bpmn")
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
 	public void overrideRequest() {
 		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, 
 				withVariables(
@@ -145,7 +150,7 @@ public class CounterpartyOnboardingTest {
 	}
 
 	@Test
-	@Deployment(resources = "counterparty-onboarding.bpmn")
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
 	public void handleSubTask() {
 		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
 				withVariables("CPTYNumber", new Long(345)));
@@ -189,8 +194,8 @@ public class CounterpartyOnboardingTest {
 		assertThat(procVars).containsEntry("additionalApproval", "yes");
 
 		// the task appears in the history of the process instance
-		List<HistoricTaskInstance> passedTask = historyService().createHistoricTaskInstanceQuery().processInstanceId(pi.getId()).list();
-		assertThat(passedTask).extracting("name").contains("Additional review of counterparty", "Review and complete onboarding request");
+		List<HistoricTaskInstance> passedTasks = historyService().createHistoricTaskInstanceQuery().processInstanceId(pi.getId()).list();
+		assertThat(passedTasks).extracting("name").contains("Additional review of counterparty", "Review and complete onboarding request");
 		
 		// work on the origin task
 		taskService().complete(reviewCounterpartyRequest.getId(), 
@@ -209,8 +214,8 @@ public class CounterpartyOnboardingTest {
 		// due date is set to PT2H, two hours
 		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
 		Task reviewRequest = taskQuery().singleResult();
-		assertThat(reviewRequest.getDueDate()).isAfter(new Date(System.currentTimeMillis() + 115 * 60 * 1000L))
-			.isBefore(new Date(System.currentTimeMillis() + 125 * 60 * 1000L));
+		assertThat(reviewRequest.getDueDate()).isAfter(new Date(System.currentTimeMillis() + 295 * 60 * 1000L))
+			.isBefore(new Date(System.currentTimeMillis() + 305 * 60 * 1000L));
 	}
 	
 	@Test
@@ -231,13 +236,15 @@ public class CounterpartyOnboardingTest {
 	}
 	
 	@Test
-	@Deployment(resources = "counterparty-onboarding.bpmn")
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
 	public void deleteTimerWithCompletion() {
 		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
 		Task reviewRequest = taskQuery().singleResult();
 		complete(reviewRequest, withVariables("gotoTax", "yes", "gotoCompliance", "no"));
 		List<Job> jobList = jobQuery().list();
-		assertThat(jobList).isEmpty();
+		assertThat(jobList).hasSize(1); // the timer for compliance
+		TimerEntity timer = (TimerEntity) jobList.get(0);
+		assertThat(timer.getJobHandlerType()).isEqualTo(EscalationJobHandler.ESCALATION_JOB_HANDLER_TYPE);
 	}
 	
 	@Test
@@ -264,6 +271,48 @@ public class CounterpartyOnboardingTest {
 		
 		// check if the jobHandler was called
 		verify(mockedHandler).execute(anyString(), any(ExecutionEntity.class), any(CommandContext.class));
+		processEngineConfiguration.getJobExecutor().shutdown();
+	}
+	
+	@Test
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn" })
+	public void startSSIProcess() {
+		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, 
+				withVariables("CPTYNumber", new Long(345)));
+		Task reviewRequest = taskQuery().singleResult();
+		complete(reviewRequest, withVariables(
+				"gotoTax", "yes", 
+				"gotoCompliance", "no"));
+		List<ProcessInstance> procInsts = runtimeService().createProcessInstanceQuery().list();
+		assertThat(procInsts).hasSize(2);
+		assertThat(pi).hasVariables("ssiApprovalInstanceId");
+		String ssiApprovalProcessInstanceId = (String) runtimeService().getVariable(pi.getId(), "ssiApprovalInstanceId");
+		ProcessInstance ssiApproval = runtimeService().createProcessInstanceQuery().processInstanceId(ssiApprovalProcessInstanceId).singleResult();
+		assertThat(ssiApproval).hasVariables("CPTYNumber");
+	}
+	
+	@Test
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
+	public void cancelSSIProcess() {
+		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+		Task reviewRequest = taskQuery().singleResult();
+		complete(reviewRequest, withVariables(
+				"gotoTax", "no",
+				"taxApproved", "no", 
+				"gotoCompliance", "no",
+				"complianceApproved", "no"));
+		Job continuation = jobQuery().messages().singleResult();
+		execute(continuation);
+		List<ProcessInstance> procInsts = runtimeService().createProcessInstanceQuery().list();
+		assertThat(procInsts).isEmpty();
+		assertThat(historyService()
+				.createHistoricVariableInstanceQuery()
+				.variableName("ssiApprovalInstanceId")
+				.singleResult()).isNotNull();
+		assertThat(historyService()
+				.createHistoricVariableInstanceQuery()
+				.variableName("cancelReason")
+				.singleResult().getValue()).isEqualTo("original counterparty request is rejected");
 	}
 
 }

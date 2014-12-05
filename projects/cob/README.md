@@ -188,6 +188,22 @@ If you want to add users, groups and memberships with the REST api, check out th
 
 You find the rest calls with methods, resource and payload in `user-group-membership.txt`.
 
+Start independent subprocess
+----------------------------
+
+To start an independent sub process, which is a new process instance that access the same counterparty request, you need a service task that calls the engine api to start a new process instance. After starting the process instance id will be saved in a process variable for further access.
+
+The service task is implemented in the class `StartProcessDelegate`.
+
+Cancel independent subprocess
+-----------------------------
+
+If you want to cancel the subprocess, because the request was rejected, you need another service task that calls the engine service to delete a process instance. 
+
+This service task is implemented in the class `CancelProcessDelegate`.
+
+And for the reason, that the process can reach the cancel service directly from the complete of the review bypassing the tax and compliance review, you have to make the service call asynchronous. The transaction will be committed before the process will be canceled.   
+
 How to use it?
 --------------
 
