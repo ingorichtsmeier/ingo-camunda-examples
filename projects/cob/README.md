@@ -181,6 +181,13 @@ Have a look at `TaskBpmnParseListener` to register the listener on all user task
 
 Now you can delete the task listener on single tasks from the bpmn diagram. 
 
+Add users, groups and memberships
+---------------------------------
+
+If you want to add users, groups and memberships with the REST api, check out the `CreateUserGroupMembership` class. It reads a file from the classpath and sends http requests to the http server with the rest api of camunda. You can start it from the command line.
+
+You find the rest calls with methods, resource and payload in `user-group-membership.txt`.
+
 How to use it?
 --------------
 
