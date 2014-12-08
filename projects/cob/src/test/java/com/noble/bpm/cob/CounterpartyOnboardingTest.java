@@ -314,5 +314,30 @@ public class CounterpartyOnboardingTest {
 				.variableName("cancelReason")
 				.singleResult().getValue()).isEqualTo("original counterparty request is rejected");
 	}
+	
+	@Test
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
+	public void completeSSiProcess() {
+		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, 
+				withVariables("CPTYNumber", new Long(345)));
+		Task reviewRequest = taskQuery().singleResult();
+		complete(reviewRequest, withVariables(
+				"gotoTax", "yes", 
+				"gotoCompliance", "no",
+				"complianceApproved", "no"));
+		// ssi process started
+		ProcessInstance ssi = runtimeService().createProcessInstanceQuery().processDefinitionKey("ssi-approval").singleResult();
+		Task approveSsi = taskQuery().processDefinitionKey("ssi-approval").singleResult();
+		complete(approveSsi, withVariables("ssiApproved", "yes"));
+		assertThat(ssi).isEnded().hasPassed("EndEvent_1");
+		
+		// contine the counterparty process
+		Task checkForTaxRules = taskQuery().singleResult();
+		complete(checkForTaxRules, withVariables("taxApproved", "no"));
+		
+		Job continuation = jobQuery().singleResult();
+		execute(continuation);
+		assertThat(pi).isEnded();
+	}
 
 }
