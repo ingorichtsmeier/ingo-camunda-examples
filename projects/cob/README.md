@@ -87,6 +87,8 @@ When the new user completes the task, the process instance will continue with th
 
 The third possibility to hand the task over to another person is to delegate it to someone else. You can delegate a task with the REST call `POST /task/{id}/delegate` and the userId as payload. [see the REST API](http://docs.camunda.org/latest/api-references/rest/#task-delegate-task) The call will set the delegation state of the task to `PENDING`. 
 
+Delegation in the camunda way can be imagined that a user with higher user authorization hands the task over to a second user with less user authorization to work on it. For instance a manager gives the task to an assistant to do the ground work. The assistant hands it back to manager by resolving the task and the manager now can do his approval and complete the task and push the process instance to the next activity.  
+
 If the task was claimed by a user before, this user is the assignee of the task. While delegating the task, the assignee will get the owner of the task and the user who gets the task delegated is the new assignee. The delegated user will find the task in his personal tasklist. 
 
 A snippet from the task attributes:
@@ -202,7 +204,9 @@ If you want to cancel the subprocess, because the request was rejected, you need
 
 This service task is implemented in the class `CancelProcessDelegate`.
 
-And for the reason, that the process can reach the cancel service directly from the complete of the review bypassing the tax and compliance review, you have to make the service call asynchronous. The transaction will be committed before the process will be canceled.   
+And for the reason, that the process can reach the cancel service directly from the complete of the review bypassing the tax and compliance review, you have to make the service call asynchronous. The transaction will be committed so the ssi process will be saved in the database. Then the process can be canceled. 
+
+See the methods `startSsiProcess()`, `cancelSsiProcess()`, `completeSsiProcess()` from the JUnit test.   
 
 How to use it?
 --------------

@@ -276,7 +276,7 @@ public class CounterpartyOnboardingTest {
 	
 	@Test
 	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn" })
-	public void startSSIProcess() {
+	public void startSsiProcess() {
 		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, 
 				withVariables("CPTYNumber", new Long(345)));
 		Task reviewRequest = taskQuery().singleResult();
@@ -293,7 +293,7 @@ public class CounterpartyOnboardingTest {
 	
 	@Test
 	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
-	public void cancelSSIProcess() {
+	public void cancelSsiProcess() {
 		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
 		Task reviewRequest = taskQuery().singleResult();
 		complete(reviewRequest, withVariables(
@@ -317,7 +317,7 @@ public class CounterpartyOnboardingTest {
 	
 	@Test
 	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
-	public void completeSSiProcess() {
+	public void completeSsiProcess() {
 		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, 
 				withVariables("CPTYNumber", new Long(345)));
 		Task reviewRequest = taskQuery().singleResult();
