@@ -208,6 +208,51 @@ And for the reason, that the process can reach the cancel service directly from 
 
 See the methods `startSsiProcess()`, `cancelSsiProcess()`, `completeSsiProcess()` from the JUnit test.   
 
+Business Rules with Drools
+--------------------------
+
+You can implement Business Rules which can be changed by a business user with Drools. [Drools](http://www.drools.org) is a Business Rules Management System (BRMS) solution and provides a core Business Rules Engine (BRE).
+
+To show how it can be integrated with the Counterparty workflow, there is a decision table created as an excel spreadsheet for the high risk country check (HighRiskCountries.xls). The excel sheet contains all countries in the world and the high risk countries are marked in the column C with "true".
+
+![High Risk Country Decision Table](readme-images/high-risk-country-decision-table.png)
+
+The lines 2-9 set up the rules to interact with the drools business rule engine. 
+Background information how to build a decision Table can be found in the drools documentation in the [user guide](http://docs.jboss.org/drools/release/6.1.0.Final/drools-docs/html/ch06.html#d0e4509).
+
+The rules itself follow from line 10 to the end.
+
+The test class HighRiskCountryDroolsTest shows how to interact with the decision table. You have to create a knowledge base from the decision table and insert the fact as a java pojo (DroolsCountry) into the working memory. Then you can fire all rules and get the result from the working memory. The result will be found in the attributes that are filled be the actions in the decision table.
+
+The test shows how to fill and examine the fact pojo with reflection.
+
+The next step is to get the fact data from the process instance and call the rule engine in a business rule task. The implementation of the task is in the class DroolsDelegate. It will pick up the decision table and the class of the fact from the extensions tab of the process diagram.
+
+![Extension elements business rules tasks](readme-images/extension-elements-business-rules-task-camunda-modeler.png)
+
+You fill in the values in the Extension tab of the properties of a business rules task.
+
+The values from the Extensions tab will be picked up in the delegate class with a call to the model api:
+
+	CamundaProperties camundaProperties = execution
+		.getBpmnModelElementInstance()
+		.getExtensionElements()
+		.getElementsQuery()
+		.filterByType(CamundaProperties.class)
+		.singleResult();
+
+	Collection<CamundaProperty> properties = camundaProperties.getCamundaProperties();
+	for (CamundaProperty property : properties) {
+		String propertyName = property.getCamundaName();
+		String propertyValue = property.getCamundaValue();
+		...
+	} 
+
+### ToDo: Mapping process variables to rules fact
+
+Now it has to be worked out, how to model the mapping to the process variables into the fields of the pojo and the results from the pojo back into process variables. A  first hard coded example is in the DroolsDelegate.
+
+
 How to use it?
 --------------
 

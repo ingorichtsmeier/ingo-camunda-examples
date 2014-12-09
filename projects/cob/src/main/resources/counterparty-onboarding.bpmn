@@ -216,7 +216,7 @@
       <bpmn2:outgoing>SequenceFlow_13</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_8" name="yes" sourceRef="ExclusiveGateway_1" targetRef="UserTask_1">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${gotoCompliance == 'yes'}</bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${gotoCompliance == 'yes' || isHighRiskCountry == 'yes'}</bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_13" name="no" sourceRef="ExclusiveGateway_1" targetRef="ExclusiveGateway_11"/>
     <bpmn2:userTask id="UserTask_1" camunda:dueDate="P2D" camunda:candidateGroups="APP_COMPLIANCE" name="check for compliance rules">
