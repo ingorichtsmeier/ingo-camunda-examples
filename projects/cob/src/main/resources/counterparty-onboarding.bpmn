@@ -189,7 +189,13 @@
       <bpmn2:messageEventDefinition id="_MessageEventDefinition_6" messageRef="Message_1"/>
     </bpmn2:boundaryEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_41" name="" sourceRef="BoundaryEvent_5" targetRef="Task_1"/>
-    <bpmn2:businessRuleTask id="BusinessRuleTask_3" camunda:class="com.noble.bpm.cob.LoggerDelegate" name="High Risk Country">
+    <bpmn2:businessRuleTask id="BusinessRuleTask_3" camunda:class="com.noble.bpm.cob.businessRules.DroolsDelegate" name="High Risk Country">
+      <bpmn2:extensionElements>
+        <camunda:properties>
+          <camunda:property value="businessRules/HighRiskCountries.xls" name="decisionTable"/>
+          <camunda:property value="com.noble.bpm.cob.businessRules.DroolsCountry" name="factClass"/>
+        </camunda:properties>
+      </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
     </bpmn2:businessRuleTask>

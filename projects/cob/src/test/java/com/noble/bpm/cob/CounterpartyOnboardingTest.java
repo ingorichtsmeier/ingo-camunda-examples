@@ -339,5 +339,20 @@ public class CounterpartyOnboardingTest {
 		execute(continuation);
 		assertThat(pi).isEnded();
 	}
+	
+	@Test
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
+	public void callHighRiskCountryCheck() {
+		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, withVariables(
+				"CPTYNumber", new Long(789), 
+				"CPTYName", "aCounterParty", 
+				"country", "Nigeria"));
+		Task reviewRequest = taskQuery().singleResult();
+		complete(reviewRequest, withVariables("gotoTax", "yes", "gotoCompliance", "no"));
+		// user task check for compliance rules
+		assertThat(pi).hasVariables("isHighRiskCountry");
+		String highRiskCountry = (String) runtimeService().getVariable(pi.getId(), "isHighRiskCountry");
+		assertThat(highRiskCountry).isEqualTo("yes");
+	}
 
 }
