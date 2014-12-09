@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
+import org.camunda.bpm.engine.identity.User;
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.jobexecutor.JobHandler;
@@ -26,6 +27,7 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,6 +48,12 @@ public class CounterpartyOnboardingTest {
 	@Before
 	public void setup() {
 		init(rule.getProcessEngine());
+		createUsersWithRegion();
+	}
+	
+	@After
+	public void cleanup() {
+		cleanupUsers();
 	}
 
 	/**
@@ -365,6 +373,40 @@ public class CounterpartyOnboardingTest {
 		Task reviewRequest = taskQuery().singleResult();
 		complete(reviewRequest, withVariables("gotoTax", "no", "gotoCompliance", "no"));
 		assertThat(pi).isWaitingAt("UserTask_1").hasVariables("highRiskCountryHint");
+	}
+	
+	@Test
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
+	public void refineRegionOfCandidateFromInitiator() {
+		identityService().setAuthenticatedUserId("peter");
+		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+		Task reviewRequest = taskQuery().singleResult();
+		assertThat(reviewRequest).hasCandidateGroup("APP_COB_EUROPE");
+		List<Task> cob_task_without_region = taskQuery().taskCandidateGroup("APP_COB").list();
+		assertThat(cob_task_without_region).isEmpty();
+	}
+	
+	@Test
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
+	public void refineRegionOfCandidateForLaterTask() {
+		identityService().setAuthenticatedUserId("peter");
+		ProcessInstance pi = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+		Task reviewRequest = taskQuery().singleResult();
+		complete(reviewRequest, withVariables("gotoTax", "yes", "gotoCompliance", "no"));
+		Task checkTaxRules = taskQuery().processInstanceId(pi.getId()).singleResult();
+		assertThat(checkTaxRules).hasCandidateGroup("APP_TAX_EUROPE");
+		List<Task> cob_task_without_region = taskQuery().taskCandidateGroup("APP_COB").list();
+		assertThat(cob_task_without_region).isEmpty();
+	}
+
+	private void createUsersWithRegion() {
+		User peter = identityService().newUser("peter");
+		peter.setEmail("EUROPE");
+		identityService().saveUser(peter);
+	}
+
+	private void cleanupUsers() {
+		identityService().deleteUser("peter");
 	}
 
 }

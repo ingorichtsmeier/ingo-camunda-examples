@@ -222,7 +222,11 @@ Background information how to build a decision Table can be found in the drools 
 
 The rules itself follow from line 10 to the end.
 
-The test class HighRiskCountryDroolsTest shows how to interact with the decision table. You have to create a knowledge base from the decision table and insert the fact as a java pojo (DroolsCountry) into the working memory. Then you can fire all rules and get the result from the working memory. The result will be found in the attributes that are filled be the actions in the decision table.
+You will find alternatives to store the decision tables in excel sheets in the drools documentation. With [templates](http://docs.jboss.org/drools/release/6.1.0.Final/drools-docs/html/ch06.html#d0e5185) you may store the data in a database. And they offer some [user interface](http://docs.jboss.org/drools/release/6.1.0.Final/drools-docs/html/drools.AuthoringAssets.html#drools.GuidedDecisionTableEditor) to change the rules from a browser.
+
+But lets concentrate on calling the rules in the   
+
+The test class `HighRiskCountryDroolsTest` shows how to interact with the decision table. You have to create a knowledge base from the decision table and insert the fact as a java pojo (DroolsCountry) into the working memory. Then you can fire all rules and get the result from the working memory. The result will be found in the attributes that are filled be the actions in the decision table.
 
 The test shows how to fill and examine the fact pojo with reflection.
 
@@ -252,6 +256,18 @@ The values from the Extensions tab will be picked up in the delegate class with 
 
 Now it has to be worked out, how to model the mapping to the process variables into the fields of the pojo and the results from the pojo back into process variables. A  first hard coded example is in the DroolsDelegate.
 
+Refine the candidate group
+--------------------------
+
+In the process diagram you define a candidate group for a task on the top level. The groups entered here are APP_COB, APP_TAX or APP_COMPLIANCE. To refine the candidates you have to add a region which you get either from the trader who started a request or from the counterparty that is requested.
+
+This change of the candidate can be done by a task listener that listens to the creation of new tasks. The hook into the system for this listener is the same as for the escalation of service level agreements.
+
+In the real system you will be able to get the region of a user from the active directory. In this test you will get the region from the email-field of the user. See the jUnit-test for details. 
+
+To change the groupId of the identity link (The link from the task to the task lists where the task appears) check out the `AdjustRegionCandidateTaskListener`.
+
+If the task listener is notified for the first task of the process, the startUserId is still in the thread and not in the database. For every other task, which is assigned later, the userId has to be read from the history service. 
 
 How to use it?
 --------------
