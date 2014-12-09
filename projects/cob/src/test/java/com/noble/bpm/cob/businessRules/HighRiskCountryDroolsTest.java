@@ -56,18 +56,27 @@ public class HighRiskCountryDroolsTest {
 			NoSuchFieldException {
 		Class<?> clazz = Class.forName("com.noble.bpm.cob.businessRules.DroolsCountry");
 		Object country = clazz.newInstance();
-		Field setName = clazz.getDeclaredField("name");
-		setName.setAccessible(true);
-		setName.set(country, "Luxembourg");
+		Field name = clazz.getDeclaredField("name");
+		name.setAccessible(true);
+		name.set(country, "Luxembourg");
 		
 		StatefulKnowledgeSession workingMemory = createWorkingMemory();
 		workingMemory.insert(country);
 		int numberOfRules = workingMemory.fireAllRules();
 		assertEquals(1, numberOfRules);
 		
-		assertTrue("Rules should evaluate Luxembourg", ((DroolsCountry) country).getName().equals("Luxembourg"));
-		assertTrue("Luxembourg is a high risk country", ((DroolsCountry) country).isHighRisk());
-		assertEquals("counterparty is in a high risk country", ((DroolsCountry) country).getHint());
+		String countryNameAfterRules = (String) name.get(country);
+		assertTrue("Rules should evaluate Luxembourg", countryNameAfterRules.equals("Luxembourg"));
+		
+		Field highRisk = clazz.getDeclaredField("highRisk");
+		highRisk.setAccessible(true); 
+		boolean isHighRiskCountry = highRisk.getBoolean(country);
+		assertTrue("Luxembourg is a high risk country", isHighRiskCountry);
+		
+		Field hint = clazz.getDeclaredField("hint");
+		hint.setAccessible(true);
+		String hintFromRules = (String) hint.get(country);
+		assertEquals("counterparty is in a high risk country", hintFromRules);
 	}
 	
 	private StatefulKnowledgeSession createWorkingMemory() {
