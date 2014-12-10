@@ -269,6 +269,15 @@ To change the groupId of the identity link (The link from the task to the task l
 
 If the task listener is notified for the first task of the process, the startUserId is still in the thread and not in the database. For every other task, which is assigned later, the userId has to be read from the history service. 
 
+Save History in the Elasticsearch
+---------------------------------
+
+The Camunda BPM elastic search extension is a community extension which allows you to use Elasticsearch as data store for Camunda history and audit data.
+
+The Camunda process engine produces a continuous event stream of auditing data (Read Userguide: [History](http://docs.camunda.org/latest/guides/user-guide/#process-engine-history-and-audit-event-log)). This event stream contains events about process instances being started, tasks being completed, variables being modified and so forth (check the Camunda BPM Userguide for a complete list of supported events). The Camunda Elasticsearch Extension implements the HistoryEventHandler SPI and stores all history events in Elastic search. Once the history data is stored in Elasticsearch, it can be queried in a flexible way.
+
+You will find it on [GitHub](https://github.com/camunda/camunda-bpm-elasticsearch).
+
 How to use it?
 --------------
 
