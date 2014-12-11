@@ -32,6 +32,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.noble.bpm.cob.businessRules.DroolsCountry;
+
 public class CounterpartyOnboardingTest {
 
 	@Rule
@@ -358,9 +360,9 @@ public class CounterpartyOnboardingTest {
 		Task reviewRequest = taskQuery().singleResult();
 		complete(reviewRequest, withVariables("gotoTax", "yes", "gotoCompliance", "no"));
 		// user task check for compliance rules
-		assertThat(pi).hasVariables("isHighRiskCountry");
-		String highRiskCountry = (String) runtimeService().getVariable(pi.getId(), "isHighRiskCountry");
-		assertThat(highRiskCountry).isEqualTo("yes");
+		assertThat(pi).hasVariables("droolsCountry");
+		DroolsCountry droolsCountry = (DroolsCountry) runtimeService().getVariable(pi.getId(), "droolsCountry");
+		assertThat(droolsCountry.isHighRisk());
 	}
 	
 	@Test
@@ -372,7 +374,7 @@ public class CounterpartyOnboardingTest {
 				"country", "Nigeria"));
 		Task reviewRequest = taskQuery().singleResult();
 		complete(reviewRequest, withVariables("gotoTax", "no", "gotoCompliance", "no"));
-		assertThat(pi).isWaitingAt("UserTask_1").hasVariables("highRiskCountryHint");
+		assertThat(pi).isWaitingAt("UserTask_1").hasVariables("droolsCountry");
 	}
 	
 	@Test

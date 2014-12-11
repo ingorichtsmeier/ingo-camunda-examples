@@ -25,6 +25,7 @@ public class DroolsDelegate implements JavaDelegate {
 		Object countryName = execution.getVariable("country");
 		String decisionTablePath = null; 
 		String factClassName = null;
+		String factResultVariableName = null;
 		
 		CamundaProperties camundaProperties = execution.getBpmnModelElementInstance().getExtensionElements().getElementsQuery()
 		        .filterByType(CamundaProperties.class).singleResult();
@@ -37,35 +38,38 @@ public class DroolsDelegate implements JavaDelegate {
 				decisionTablePath = propertyValue;
 			} else if (propertyName.equals("factClass")) {
 				factClassName = propertyValue;
+			} else if (propertyName.equals("factResultVariableName")) {
+				factResultVariableName = propertyValue;
 			}
 		} 
 		
 		Class<?> clazz = Class.forName(factClassName);
-		Object country = clazz.newInstance();
+		Object fact = clazz.newInstance();
 		Field setName = clazz.getDeclaredField("name");
 		setName.setAccessible(true);
-		setName.set(country, countryName);
+		setName.set(fact, countryName);
 		
 		StatefulKnowledgeSession workingMemory = createWorkingMemory(decisionTablePath);
-		workingMemory.insert(country);
+		workingMemory.insert(fact);
 		int numberOfRules = workingMemory.fireAllRules();
 		
 		log.info("Number of Rules fired from the decisionTable " + decisionTablePath + ": " + numberOfRules);
+		
+		execution.setVariable(factResultVariableName, fact);
 
-		Field hint = clazz.getDeclaredField("hint");
-		hint.setAccessible(true);
-		String hintFromRules = (String) hint.get(country);
-		execution.setVariable("highRiskCountryHint", hintFromRules);
-
-		Field highRisk = clazz.getDeclaredField("highRisk");
-		highRisk.setAccessible(true); 
-		boolean isHighRiskCountry = highRisk.getBoolean(country);
-		if (isHighRiskCountry) {
-			execution.setVariable("isHighRiskCountry", "yes");
-		} else {
-			execution.setVariable("isHighRiskCountry", "no");
-		}
-
+//		Field hint = clazz.getDeclaredField("hint");
+//		hint.setAccessible(true);
+//		String hintFromRules = (String) hint.get(country);
+//		execution.setVariable("highRiskCountryHint", hintFromRules);
+//
+//		Field highRisk = clazz.getDeclaredField("highRisk");
+//		highRisk.setAccessible(true); 
+//		boolean isHighRiskCountry = highRisk.getBoolean(country);
+//		if (isHighRiskCountry) {
+//			execution.setVariable("isHighRiskCountry", "yes");
+//		} else {
+//			execution.setVariable("isHighRiskCountry", "no");
+//		}
 	}
 	
 	private StatefulKnowledgeSession createWorkingMemory(String decisionTablePath) {

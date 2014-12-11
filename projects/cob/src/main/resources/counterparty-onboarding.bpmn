@@ -194,6 +194,7 @@
         <camunda:properties>
           <camunda:property value="businessRules/HighRiskCountries.xls" name="decisionTable"/>
           <camunda:property value="com.noble.bpm.cob.businessRules.DroolsCountry" name="factClass"/>
+          <camunda:property value="droolsCountry" name="factResultVariableName"/>
         </camunda:properties>
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
@@ -216,7 +217,7 @@
       <bpmn2:outgoing>SequenceFlow_13</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:sequenceFlow id="SequenceFlow_8" name="yes" sourceRef="ExclusiveGateway_1" targetRef="UserTask_1">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${gotoCompliance == 'yes' || isHighRiskCountry == 'yes'}</bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${gotoCompliance == 'yes' || droolsCountry.isHighRisk() == true}</bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_13" name="no" sourceRef="ExclusiveGateway_1" targetRef="ExclusiveGateway_11"/>
     <bpmn2:userTask id="UserTask_1" camunda:dueDate="P2D" camunda:candidateGroups="APP_COMPLIANCE" name="check for compliance rules">
@@ -380,11 +381,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_8" bpmnElement="SequenceFlow_8" sourceElement="_BPMNShape_ExclusiveGateway_10" targetElement="_BPMNShape_UserTask_29">
         <di:waypoint xsi:type="dc:Point" x="944.0" y="529.0"/>
-        <di:waypoint xsi:type="dc:Point" x="974.0" y="528.0"/>
-        <di:waypoint xsi:type="dc:Point" x="974.0" y="529.0"/>
         <di:waypoint xsi:type="dc:Point" x="1005.0" y="529.0"/>
         <bpmndi:BPMNLabel>
-          <dc:Bounds height="22.0" width="27.0" x="950.0" y="528.0"/>
+          <dc:Bounds height="22.0" width="27.0" x="950.0" y="529.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_InclusiveGateway_2" bpmnElement="ExclusiveGateway_9" isMarkerVisible="true">

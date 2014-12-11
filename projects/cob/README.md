@@ -256,6 +256,22 @@ The values from the Extensions tab will be picked up in the delegate class with 
 
 Now it has to be worked out, how to model the mapping to the process variables into the fields of the pojo and the results from the pojo back into process variables. A  first hard coded example is in the DroolsDelegate.
 
+### Store the rules fact as typed variable
+
+Get easier generic access to the results of the rules, you can store the complete fact as a process variable, which can be serialized as a JSON object. 
+
+It is described in the [user guide](http://docs.camunda.org/latest/guides/user-guide/#process-engine-process-variables-typed-value-api) how to save the variables in a typed way with a special serialization format, maybe JSON, XML, or JAVA.
+
+To prepare to use it, check the [user guide in the data format section](http://docs.camunda.org/latest/guides/user-guide/#data-formats-xml-json-other-configuring-spin-integration) 
+
+Background information about using JSON formated variables are in the [user guide on the JSON section](http://docs.camunda.org/latest/guides/user-guide/#data-formats-xml-json-other-json).
+
+The default serialization format is set to `application/json` in the `ProcessEnginePlugin`. Now every object saved in a variable will be saved in JSON format. 
+
+The plugin is activated for the JUnit-tests in the camunda.cfg.xml configuration file. In a camunda distribution it is activated by default. See the [installation guide](http://docs.camunda.org/latest/guides/installation-guide/tomcat/#bpm-platform-install-optional-camunda-dependencies-install-camunda-spin) how to activate it for a production system.
+
+In the DroolsDelegate you save the object as a process variable, the value in the database is a JSON object. Because of the default serialization you can access the variable either in the java notation like `droolsCountry.isHighRisk()` or get the type information and deserialize it in your code as described in the user task. 
+
 Refine the candidate group
 --------------------------
 
