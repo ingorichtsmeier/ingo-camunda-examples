@@ -117,7 +117,13 @@
     	<artifactId>slf4j-jdk14</artifactId>
     	<version>1.7.2</version>
     </dependency>
-
+    
+	<dependency>
+		<groupId>com.icegreen</groupId>
+		<artifactId>greenmail</artifactId>
+		<version>1.4.0</version>
+	</dependency>
+	
   </dependencies>
 
   <repositories>

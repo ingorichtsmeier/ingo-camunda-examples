@@ -4,13 +4,23 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.*;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 import static org.mockito.Mockito.*;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
+import org.camunda.bpm.engine.history.HistoricProcessInstance;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
+import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.camunda.bpm.engine.identity.Group;
 import org.camunda.bpm.engine.identity.User;
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
@@ -33,12 +43,19 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.icegreen.greenmail.user.GreenMailUser;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
 import com.noble.bpm.cob.businessRules.DroolsCountry;
 
 public class CounterpartyOnboardingTest {
 
 	@Rule
 	public ProcessEngineRule rule = new ProcessEngineRule();
+	
+	private GreenMail mailServer;
+	private GreenMailUser mailUser;
 
 	private static final String PROCESS_DEFINITION_KEY = "counterparty-onboarding";
 
@@ -52,10 +69,14 @@ public class CounterpartyOnboardingTest {
 	public void setup() {
 		init(rule.getProcessEngine());
 		createUsersWithRegion();
+		mailServer = new GreenMail(ServerSetup.ALL);
+		mailServer.start();
+		mailUser = mailServer.setUser("myUser@localhost", "myUser", "noPassword");
 	}
 	
 	@After
 	public void cleanup() {
+		mailServer.stop();
 		cleanupUsers();
 	}
 
@@ -407,11 +428,58 @@ public class CounterpartyOnboardingTest {
 	public void notifyByEmail() {
 		identityService().setAuthenticatedUserId("peter");
 		createUsersForCOB_EUROPE();
-		// TODO: mock the MailNotification correctly
-		
+		// create a process instance which sends a notification mail in the first task
 		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
-		// TODO: assert the mock, check the console in the meantime
+
+		assertThat(mailServer.getReceivedMessages()).isNotEmpty();
+		try {
+			MimeMessage mimeMessage = mailServer.getReceivedMessages()[0];
+			System.out.println(mimeMessage.getSubject());
+			System.out.println(mimeMessage.getContent().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
 		deleteUsersAndCOB_EUROPE();
+		
+	}
+	
+	@Test
+	@Deployment(resources = "complete-tasks-from-emails.bpmn")
+	public void processCompletionEmails() {
+		String msg = "please send the message from the link below\n\n"
+				+ "example\n"
+				+ "----------------\n"
+				+ "**taskId=fakeTaskId\n"
+				+ "##gotoCompliance=no\n"
+				+ "##gotoTax=yes\n";
+        try {
+			Address[] tos = new InternetAddress[]{new InternetAddress("myUser@localhost")};
+			Address[] froms = new InternetAddress[]{new InternetAddress("theSystem@localhost")};
+			MimeMessage mimeMessage = new MimeMessage(GreenMailUtil.getSession(ServerSetup.SMTP));
+			mimeMessage.setSubject("complete task");
+			mimeMessage.setFrom(froms[0]);
+			mimeMessage.setRecipients(Message.RecipientType.TO, tos);
+
+			mimeMessage.setText(msg);
+			mailUser.deliver(mimeMessage);
+		} catch (AddressException e) {
+			fail("AddressExcaption " + e.getMessage());
+		} catch (MessagingException e) {
+			fail("MessagingException " + e.getMessage());
+		}
+		
+		ClockUtil.setCurrentTime(new Date(System.currentTimeMillis() + 5*60*1000));
+		Job startTimer = jobQuery().singleResult();
+		execute(startTimer);
+		
+		HistoricProcessInstance histProcInst = historyService().createHistoricProcessInstanceQuery().processDefinitionKey("complete-tasks-from-emails").singleResult();
+		assertThat(histProcInst).isNotNull();
+		HistoricVariableInstance numberOfMessages = historyService().createHistoricVariableInstanceQuery().processInstanceId(histProcInst.getId()).variableName("numberOfMessages").singleResult();
+		assertThat(numberOfMessages.getValue()).isEqualTo(new Integer(1));
+		List<HistoricVariableInstance> histVars = historyService().createHistoricVariableInstanceQuery().processInstanceId(histProcInst.getId()).list();
+		assertThat(histVars).extracting("value").contains("Task with Id fakeTaskId could not be found");
 	}
 
 	private void createUsersForCOB_EUROPE() {

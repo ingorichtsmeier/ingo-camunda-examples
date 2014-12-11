@@ -305,6 +305,21 @@ The MailNotoficationListener sends an email to all group members with a ddep lin
 
 You can add more information on the email message if you like.
 
+Complete task by email
+----------------------
+
+To complete a task by email, you have to send a mail with the task id and the process variables to a designated email adress. A process definition with a timer event runs every minute and the service task checks for new emails in the inbox of this recipient, parse the message bodys for the task id and the variables and call taskService.complete(taskId, variables) to complete the task.
+
+![Configuration of the multi instance task](readme-images/multi-instance-configuration-modeler.png)
+
+The first service tasks use `FetchEmailsDelegate` as implementation class. It connects to a mail server gets all emails from a designated post box. It puts all mails into a list, which is stored as a process variable named `messages`
+
+The second service task is a multi-instance task. It iterates over the elements of `messages` and puts the actual message in a variable `message`.
+
+This variable is picked in the class `CompleteTaskFromEmailDelegate`. The body is parsed for a task Id and the variable values and the ask gets completed, if its already there. If no task with the id is found, then it saves a message in the variables.  
+
+The process definition is tested by the method `processCompletionEmails` and uses [GreenMail](http://www.icegreen.com/greenmail/) as a local mail server for non-communication. It's configured in the pom.xml.
+
 How to use it?
 --------------
 

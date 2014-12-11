@@ -10,13 +10,15 @@ import org.apache.commons.mail.SimpleEmail;
 import org.camunda.bpm.engine.delegate.DelegateTask;
 import org.camunda.bpm.engine.delegate.TaskListener;
 import org.camunda.bpm.engine.identity.User;
-import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
-import org.camunda.bpm.engine.impl.context.Context;
 import org.camunda.bpm.engine.task.IdentityLink;
 
 public class MailNotificationListener implements TaskListener {
 	
 	private static final Logger log = Logger.getLogger(MailNotificationListener.class.getName());
+
+	String smtpHost = "localhost";
+	String user = "myUser";
+	String password = "noPassword";
 
 	@Override
 	public void notify(DelegateTask delegateTask) {
@@ -32,20 +34,23 @@ public class MailNotificationListener implements TaskListener {
 	}
 
 	public void sendNotificationEmail(List<User> usersToNotify, DelegateTask delegateTask) {
-		
-		ProcessEngineConfigurationImpl processEngineConfiguration = Context.getProcessEngineConfiguration();
-
 		Email email = new SimpleEmail();
 		email.setCharset("utf-8");
-		email.setHostName(processEngineConfiguration.getMailServerHost());
-		email.setAuthentication(processEngineConfiguration.getMailServerUsername(), processEngineConfiguration.getMailServerPassword());
+		email.setHostName(smtpHost);
+		email.setAuthentication(user, password);
 		try {
-			email.setFrom("noreply@camunda.org");
+			email.setFrom("noreply@thisisnoble.com");
 			email.setSubject("Task assigned: " + delegateTask.getName());
 			email.setMsg("Please complete: " + 
 					delegateTask.getName() + 
 					" at  http://localhost:8080/camunda/app/tasklist/default/#/task/" + 
-					delegateTask.getId());
+					delegateTask.getId() + 
+					"\n\nmailto:" + user+"@localhost?subject=complete task now&body=please send message now\n\n"
+							+ "possible input:\n"
+							+ "---------------------\n"
+							+ "**taskid=" + delegateTask.getId() + "\n"
+							+ "##gotoTax=yes\n"
+							+ "##gotoCompliance=no");
 			for (User user : usersToNotify) {
 				String completeName = user.getFirstName() + " " + user.getLastName();
 				String recipient = user.getEmail();
