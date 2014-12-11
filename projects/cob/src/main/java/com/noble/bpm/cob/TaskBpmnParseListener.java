@@ -10,6 +10,7 @@ import org.camunda.bpm.engine.impl.pvm.process.ScopeImpl;
 import org.camunda.bpm.engine.impl.task.TaskDefinition;
 import org.camunda.bpm.engine.impl.util.xml.Element;
 
+import com.noble.bpm.cob.mailNotification.MailNotificationListener;
 import com.noble.bpm.cob.region.AdjustRegionCandidateTaskListener;
 
 public class TaskBpmnParseListener extends AbstractBpmnParseListener {
@@ -28,5 +29,9 @@ public class TaskBpmnParseListener extends AbstractBpmnParseListener {
 		log.info("register AdjustRegionCandidateTaskListener");
 		AdjustRegionCandidateTaskListener adjustRegionCandidateTaskListener = new AdjustRegionCandidateTaskListener();
 		taskDefinition.addTaskListener(TaskListener.EVENTNAME_CREATE, adjustRegionCandidateTaskListener);
+		
+		log.info("register MailNotificationHandler");
+		MailNotificationListener mailNotificationListener = new MailNotificationListener();
+		taskDefinition.addTaskListener(TaskListener.EVENTNAME_CREATE, mailNotificationListener);
 	}
 }

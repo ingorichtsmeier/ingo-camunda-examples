@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.MismatchingMessageCorrelationException;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
+import org.camunda.bpm.engine.identity.Group;
 import org.camunda.bpm.engine.identity.User;
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
@@ -399,6 +400,59 @@ public class CounterpartyOnboardingTest {
 		assertThat(checkTaxRules).hasCandidateGroup("APP_TAX_EUROPE");
 		List<Task> cob_task_without_region = taskQuery().taskCandidateGroup("APP_COB").list();
 		assertThat(cob_task_without_region).isEmpty();
+	}
+	
+	@Test
+	@Deployment(resources = {"counterparty-onboarding.bpmn", "ssi-approval.bpmn"})
+	public void notifyByEmail() {
+		identityService().setAuthenticatedUserId("peter");
+		createUsersForCOB_EUROPE();
+		// TODO: mock the MailNotification correctly
+		
+		runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+		// TODO: assert the mock, check the console in the meantime
+		deleteUsersAndCOB_EUROPE();
+	}
+
+	private void createUsersForCOB_EUROPE() {
+		User user1 = identityService().newUser("user1");
+		user1.setFirstName("User");
+		user1.setLastName("One");
+		user1.setEmail("user1@example.com");
+		identityService().saveUser(user1);
+		
+		User user2 = identityService().newUser("user2");
+		user2.setFirstName("User");
+		user2.setLastName("Two");
+		user2.setEmail("user2@example.com");
+		identityService().saveUser(user2);
+		
+		User user3 = identityService().newUser("user3");
+		user3.setFirstName("User");
+		user3.setLastName("Three");
+		user3.setEmail("user3@exapmle.com");
+		identityService().saveUser(user3);
+		
+		Group cob_europe = identityService().newGroup("APP_COB_EUROPE");
+		cob_europe.setName("COB Europe");
+		identityService().saveGroup(cob_europe);
+		
+		Group cob_us = identityService().newGroup("APP_COB_US");
+		cob_us.setName("COB US");
+		identityService().saveGroup(cob_us);
+		
+		identityService().createMembership(user1.getId(), cob_europe.getId());
+		identityService().createMembership(user2.getId(), cob_us.getId());
+		identityService().createMembership(user3.getId(), cob_europe.getId());
+	}
+	
+	private void deleteUsersAndCOB_EUROPE() {
+		identityService().deleteUser("user1");
+		identityService().deleteUser("user2");
+		identityService().deleteUser("user3");
+		
+		identityService().deleteGroup("APP_COB_EUROPE");
+		identityService().deleteGroup("APP_COB_US");
 	}
 
 	private void createUsersWithRegion() {

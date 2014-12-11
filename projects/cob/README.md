@@ -294,6 +294,17 @@ The Camunda process engine produces a continuous event stream of auditing data (
 
 You will find it on [GitHub](https://github.com/camunda/camunda-bpm-elasticsearch).
 
+Mail Notification to all users of a group
+-----------------------------------------
+
+There is an example how to notify a user by email if a task is assigned to him by email in the [camunda-bpm-example github](https://github.com/camunda/camunda-bpm-examples/tree/master/usertask/task-assignment-email). Here is an example how to notify all users of the group, which has been refined by the region before.
+
+Checkout the method `notifyByEmail()` in the JUnit test.  
+
+The MailNotoficationListener sends an email to all group members with a ddep link into the camunda tasklist.
+
+You can add more information on the email message if you like.
+
 How to use it?
 --------------
 
