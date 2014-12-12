@@ -30,7 +30,7 @@ public class TaskBpmnParseListener extends AbstractBpmnParseListener {
 		AdjustRegionCandidateTaskListener adjustRegionCandidateTaskListener = new AdjustRegionCandidateTaskListener();
 		taskDefinition.addTaskListener(TaskListener.EVENTNAME_CREATE, adjustRegionCandidateTaskListener);
 		
-		log.info("register MailNotificationHandler");
+		log.info("register MailNotificationListener");
 		MailNotificationListener mailNotificationListener = new MailNotificationListener();
 		taskDefinition.addTaskListener(TaskListener.EVENTNAME_CREATE, mailNotificationListener);
 	}
