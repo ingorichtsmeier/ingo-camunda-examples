@@ -41,7 +41,12 @@ public class CompleteTaskFromEmailDelegate implements JavaDelegate {
 				TaskService taskService = execution.getProcessEngineServices().getTaskService();
 				List<Task> listOfTasks = taskService.createTaskQuery().taskId(taskId).list();
 				if (listOfTasks.size() == 1) {
+					// example for authentication in the engine. 
+					// You have to get the userId out of the from: part of the mail. 
+					String userId = "user1";
+					execution.getProcessEngineServices().getIdentityService().setAuthenticatedUserId(userId);
 					taskService.complete(taskId, variables);
+					execution.getProcessEngineServices().getIdentityService().clearAuthentication();
 					execution.setVariable("message" + execution.getId(), "Task with Id " + taskId + " completed by mail");
 				} else {
 					execution.setVariable("message" + execution.getId(), "Task with Id " + taskId + " could not be found");
