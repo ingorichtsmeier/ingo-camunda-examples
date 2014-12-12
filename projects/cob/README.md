@@ -224,7 +224,9 @@ The rules itself follow from line 10 to the end.
 
 You will find alternatives to store the decision tables in excel sheets in the drools documentation. With [templates](http://docs.jboss.org/drools/release/6.1.0.Final/drools-docs/html/ch06.html#d0e5185) you may store the data in a database. And they offer some [user interface](http://docs.jboss.org/drools/release/6.1.0.Final/drools-docs/html/drools.AuthoringAssets.html#drools.GuidedDecisionTableEditor) to change the rules from a browser.
 
-But lets concentrate on calling the rules in the   
+But let's concentrate on calling the rules in the business rules task.  
+
+The interaction with the rules engine is done in a java class implementing the `JavaDelegate` interface. If you have several tasks calling several decision tables you will think about generalizing the implementation and fill it with configuration to avoid repetitions in the code. But it is always possible to use a new Delegate implementation for each business rule task and avoid the configuration. This example shows the first approach. 
 
 The test class `HighRiskCountryDroolsTest` shows how to interact with the decision table. You have to create a knowledge base from the decision table and insert the fact as a java pojo (DroolsCountry) into the working memory. Then you can fire all rules and get the result from the working memory. The result will be found in the attributes that are filled be the actions in the decision table.
 
