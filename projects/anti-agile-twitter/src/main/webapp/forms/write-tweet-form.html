@@ -6,19 +6,31 @@
   <div class="control-group">
     <label class="control-label">Subject</label>
     <div class="controls">
-      <input form-field type="string" name="subject" readonly="true" />
+      <input type="text" 
+             cam-variable-name="subject"
+             cam-variable-type="String"
+             readonly="true"
+             class="form-control" />
     </div>
   </div>
   <div class="control-group">
     <label class="control-label">Email</label>
     <div class="controls">
-      <input form-field type="string" name="email" />
+      <input type="text" 
+             cam-variable-name="email"
+             cam-variable-type="String"
+             required
+             class="form-control" />
     </div>
   </div>
   <div class="control-group">
     <label class="control-label">Content</label>
     <div class="controls">
-      <input form-field type="string" name="content" />
+      <input type="text" 
+             cam-variable-name="content"
+             cam-variable-type="String"
+             required
+             class="form-control" />
     </div>
   </div>
 </form>

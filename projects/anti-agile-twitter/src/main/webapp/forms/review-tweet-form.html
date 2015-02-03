@@ -6,19 +6,31 @@
   <div class="control-group">
     <label class="control-label">Subject:</label>
     <div class="controls">
-      <input form-field type="string" name="subject" />
+      <input type="text" 
+             cam-variable-name="subject"
+             cam-variable-type="String"
+             required
+             class="form-control" />
     </div>
   </div>
   <div class="control-group">
     <label class="control-label">Email</label>
     <div class="controls">
-      <input form-field type="string" name="email" readonly="true"/>
+      <input type="text" 
+             cam-variable-name="email"
+             cam-variable-type="String"
+             readonly="true"
+             class="form-control" />
     </div>
   </div>
   <div class="control-group">
     <label class="control-label">Content:</label>
     <div class="controls">
-      <input form-field type="string" name="content" readonly="true"/>
+      <input type="text" 
+             cam-variable-name="content"
+             cam-variable-type="String"
+             readonly="true"
+             class="form-control" />
     </div>
   </div>
   <!-- <div class="control-group">
@@ -38,7 +50,7 @@
   <div class="control-group">
     <label class="control-label">Approved:</label>
     <div class="controls">    
-      <select form-field type="string" name="approved">
+      <select cam-variable-type="String" cam-variable-name="approved">
   		<option value="yes">yes</option>
   		<option value="no">no</option>
   		<option value="maybe">maybe</option>
@@ -48,7 +60,11 @@
   <div class="control-group">
     <label class="control-label">Comments:</label>
     <div class="controls">
-      <textarea form-field name="comments" ></textarea>
+      <textarea type="text" 
+             cam-variable-name="comments"
+             cam-variable-type="String"
+             required
+             class="form-control" ></textarea>
     </div>
   </div>
 </form>
