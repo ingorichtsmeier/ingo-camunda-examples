@@ -46,7 +46,7 @@ The ear file is controlled by the pom.xml. It includes the engine libraries in a
         </configuration>
       </plugin>
 
-The connector to access the thread pool:
+* The connector to access the thread pool:
 
     <dependency>
       <groupId>org.camunda.bpm.javaee</groupId>
@@ -55,13 +55,36 @@ The connector to access the thread pool:
       <type>rar</type>
     </dependency>
 
-Configuration of the connector: glassfish-resources.xml 
+* Configuration of the connector: glassfish-resources.xml 
 
-The engine startup services with a message driven bean to access the connector. It is shaded from the camunda-glassfish-service project to insert a glassfish-ejb-jar.xml   
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN" "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
+ 
+    <resources>
+        <resource-adapter-config
+          resource-adapter-name="embedded-jee-ear#camunda-jobexecutor-rar-7.2.2-ee"
+          thread-pool-ids="embedded-platform-jobexecutor-tp" >
+        </resource-adapter-config>
 
-jndi-printer-ear as a helper project to list all jndi names in the engine.
+        <connector-connection-pool
+            name="platformJobExecutorPool"
+            resource-adapter-name="embedded-jee-ear#camunda-jobexecutor-rar-7.2.2-ee"
+            connection-definition-name=
+            "org.camunda.bpm.container.impl.threading.jca.outbound.JcaExecutorServiceConnectionFactory">
+        </connector-connection-pool>
 
-a process application with a test process and some jsf-pages to start process instances. 
+        <connector-resource
+            enabled="true"
+            pool-name="platformJobExecutorPool"
+            jndi-name="eis/embedded/JcaExecutorServiceConnectionFactory">
+        </connector-resource>        
+    </resources>
+
+* The engine startup services with a message driven bean to access the connector. It is shaded from the camunda-glassfish-service project to insert a glassfish-ejb-jar.xml   
+
+* jndi-printer-ear as a helper project to list all jndi names in the engine.
+
+* A process application with a test process and some jsf-pages to start process instances. 
 
 Deployment
 ----------
