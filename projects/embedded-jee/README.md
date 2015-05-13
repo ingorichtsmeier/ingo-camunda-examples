@@ -101,3 +101,21 @@ Known Issues
 ------------
 
 The executorConnectionFactory can not be injected into the ExecutorServiceBean.   
+
+<h3>Useful Links</h3>
+
+* Content of glassfish deployment files [Oracle GlassFish Server 3.1 Application Deployment Guide](http://docs.oracle.com/cd/E18930_01/html/821-2417/toc.html)
+* Application-scoped resources, section naming, mapping of JNDI names [Oracle GlassFish Server 3.1 Application Deployment Guide](http://docs.oracle.com/cd/E18930_01/html/821-2417/giydj.html)
+* Embedded Resource adapters [Oracle GlassFish Server 3.1 Application Deployment Guide](http://docs.oracle.com/cd/E18930_01/html/821-2417/gilxc.html#bealq)
+* Camunda installation guide for glassfish [Install the platform on a vanilla GlassFish](http://docs.camunda.org/7.2/guides/installation-guide/glassfish/#bpm-platform-install-the-platform-on-a-vanilla-glassfish)
+* Camunda WebSphere configuration [ibm-ejb-jar-bnd.xml](https://github.com/camunda/camunda-bpm-platform-ee/blob/8835d15199535745240b710af86aa526104878e5/distro/ibmWs8/service/src/main/resources/META-INF/ibm-ejb-jar-bnd.xml)
+* Glassfish logging configuration [Oracle GlassFish Server 3.1 Administration Guide](http://docs.oracle.com/cd/E18930_01/html/821-2416/abluk.html#scrolltoc)
+* EJB resource lookup [5 Ways to Get Resources in EJB 3](http://javahowto.blogspot.ch/2006/06/5-ways-to-get-resources-in-ejb-3.html)
+* Packaging application [The Java EE 6 Tutorial](http://docs.oracle.com/javaee/6/tutorial/doc/bnaby.html)
+* Deploying JCA Resource Adapter in an application [Tutorial: Deploying a JCA Resource Adapter for an EJB Application](http://www.pramati.com/docstore/1270006/pramati_jca.htm)
+* [Difference between resource-ref & resource-env-ref](http://www.coderanch.com/t/157993/java-EJB-SCBCD/certification/Difference-resource-ref-resource-env)
+* Mapping references [Oracle GlassFish Server 3.1 Application Development Guide](http://docs.oracle.com/cd/E18930_01/html/821-2418/beaoa.html#scrolltoc)
+* [DPL8007: Unsupported deployment descriptors element message-destination?](https://community.oracle.com/thread/2222105) 
+* EJB3.1 Injection and Lookup [References to EJBs Outside Your Application With Oracle WebLogic](http://thegreyblog.blogspot.ch/2010/09/references-to-ejbs-outside-your.html)
+* [How to create and look up thread pool resource in GlassFish](http://javahowto.blogspot.de/2011/02/how-to-create-and-look-up-thread-pool.html)
+* Resource Injection [The Java EE 6 Tutorial](http://docs.oracle.com/javaee/6/tutorial/doc/bncjk.html)
