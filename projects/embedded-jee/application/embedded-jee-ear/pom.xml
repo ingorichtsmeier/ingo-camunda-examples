@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>application</artifactId>
+    <groupId>com.camunda.consulting</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.camunda.consulting</groupId>
+  <artifactId>embedded-jee-ear</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>ear</packaging>
+
+  <name>embedded-jee-ear</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <glassfish.directory>C:/Arbeit/glassfish3</glassfish.directory>
+  </properties>
+  
+  <dependencies>
+  
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine</artifactId>
+      <version>${camunda.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.camunda.bpm.javaee</groupId>
+      <artifactId>camunda-jobexecutor-rar</artifactId>
+      <version>${camunda.version}</version>
+      <type>rar</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.camunda.consulting</groupId>
+      <artifactId>jndi-printer-ejb</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.camunda.consulting</groupId>
+      <artifactId>engine-service-ejb</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+    
+    <!-- 
+    <dependency>
+      <groupId>com.camunda.consulting</groupId>
+      <artifactId>process-application-war</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>war</type>
+    </dependency> -->
+    
+  </dependencies>
+  
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ear-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <version>6</version>
+          <defaultLibBundleDir>lib</defaultLibBundleDir>
+          <initializeInOrder>true</initializeInOrder>
+        </configuration>
+      </plugin>
+      
+      <!-- Glassfish App Server -->
+      <plugin>
+        <groupId>org.glassfish.maven.plugin</groupId>
+        <artifactId>maven-glassfish-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <id>gf-undeploy</id>
+            <goals>
+              <goal>undeploy</goal>
+            </goals>
+            <phase>clean</phase>
+          </execution>
+          <execution>
+            <id>gf-deploy</id>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <user>admin</user>
+          <glassfishDirectory>${glassfish.directory}</glassfishDirectory>
+          <domainDirectory>${glassfish.directory}/glassfish/domains/</domainDirectory>
+          <!-- <passwordFile>${basedir}/glassfishpasswordfile</passwordFile>  -->
+          <adminPassword>admin</adminPassword>
+          <domain>
+            <name>domain1</name>
+            <adminPort>4848</adminPort>
+            <httpPort>8080</httpPort>
+            <httpsPort>8443</httpsPort>
+          </domain>
+          <components>
+            <component>
+              <name>embedded-jee-ear</name>
+              <artifact>target/embedded-jee-ear.ear</artifact>
+            </component>
+          </components>
+         <debug>true</debug>
+         <echo>true</echo>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>camunda-bpm-nexus</id>
+      <name>camunda BPM Maven Repository</name>
+      <url>https://app.camunda.com/nexus/content/groups/private</url>
+    </repository>
+  </repositories>
+
+</project>
