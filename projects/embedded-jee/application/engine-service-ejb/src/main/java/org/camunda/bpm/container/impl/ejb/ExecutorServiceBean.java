@@ -24,7 +24,8 @@ public class ExecutorServiceBean implements ExecutorService {
 
   @Resource(
 //      name="java:app/eis/ingo/JcaExecutorServiceConnectionFactory", 
-      mappedName="java:app/eis/embedded/JcaExecutorServiceConnectionFactory")
+//      mappedName="eis/embedded/JcaExecutorServiceConnectionFactory"
+      lookup="java:app/eis/embedded/JcaExecutorServiceConnectionFactory")
   protected JcaExecutorServiceConnectionFactory executorConnectionFactory;
   
   protected JcaExecutorServiceConnection executorConnection;

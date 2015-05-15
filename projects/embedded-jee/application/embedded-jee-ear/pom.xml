@@ -92,7 +92,7 @@
             <goals>
               <goal>undeploy</goal>
             </goals>
-            <phase>clean</phase>
+            <!-- <phase>clean</phase> -->
           </execution>
           <execution>
             <id>gf-deploy</id>

@@ -95,12 +95,15 @@ go to the main-folder of the project `embedded-jee`. Run
 
 It deploys the ear to a running glassfish server into the domain `domain1` (it comes with the default installation). The maven glassfish plugin binds the deployment to the `package` phase.
 
-The undeployment is bind to the `clean` phase. If the ear was not deployed sucessfully before, `mvn clean` fails at undeploying.
+The undeployment is bind to the `clean` phase. **disabled now, see pom.xml: plugin/executions/execution/phase** 
+(If the ear was not deployed sucessfully before, `mvn clean` fails at undeploying.)
 
 Known Issues
 ------------
 
-The executorConnectionFactory can not be injected into the ExecutorServiceBean.   
+The executorConnectionFactory can not be injected into the ExecutorServiceBean.  
+
+Reason must be resource-adapter-config in glassfish-resources.xml. The ExecutorServiceBean finds the reference to the connector-resource, the connector-resource gets the reference to the connector-connection-pool. (checked by changing the jndi-names).  
 
 <h3>Useful Links</h3>
 
@@ -119,3 +122,4 @@ The executorConnectionFactory can not be injected into the ExecutorServiceBean.
 * EJB3.1 Injection and Lookup [References to EJBs Outside Your Application With Oracle WebLogic](http://thegreyblog.blogspot.ch/2010/09/references-to-ejbs-outside-your.html)
 * [How to create and look up thread pool resource in GlassFish](http://javahowto.blogspot.de/2011/02/how-to-create-and-look-up-thread-pool.html)
 * Resource Injection [The Java EE 6 Tutorial](http://docs.oracle.com/javaee/6/tutorial/doc/bncjk.html)
+* JNDI Background [What is the relationship between java:comp/env and java:global?](http://stackoverflow.com/questions/7458114/what-is-the-relationship-between-javacomp-env-and-javaglobal)
