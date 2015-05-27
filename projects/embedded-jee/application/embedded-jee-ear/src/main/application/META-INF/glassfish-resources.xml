@@ -15,10 +15,9 @@
         jndi-name="eis/embedded/JcaExecutorServiceConnectionFactory">
     </connector-resource>        
 
-<!-- 
     <resource-adapter-config
       resource-adapter-name="embedded-jee-ear#camunda-jobexecutor-rar-7.2.2-ee"
       thread-pool-ids="embedded-platform-jobexecutor-tp" >
     </resource-adapter-config>
- -->
+
 </resources>

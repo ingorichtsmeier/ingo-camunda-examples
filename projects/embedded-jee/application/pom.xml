@@ -16,5 +16,7 @@
     <module>jndi-printer-ejb</module>
     <module>engine-service-ejb</module>
     <module>embedded-jee-ear</module>
+    <module>embedded-oracle-weblogic-rar</module>
+    <module>embedded-oracle-weblogic-service</module>
   </modules>
 </project>

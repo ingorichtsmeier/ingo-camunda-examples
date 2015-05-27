@@ -5,7 +5,12 @@ These projects include a process application with an embedded engine for a JEE a
 
 The ear includes the libraries for the engine, the connection adapter to access the thread pool for the job executor and an ejb library with the process engine services.
 
-Goal
+New Goal
+--------
+
+Deploy the ear file on a plain vanilla Oracle Weblogic Server. The Server must only be prepared with a datasource for the process engine. 
+
+Old Goal
 ----
 
 Deploy the ear file on a plain vanilla glassfish server. The thread pool for job executor of the process engine must be prepared. Use the asadmin command from the command line:
@@ -14,7 +19,7 @@ Deploy the ear file on a plain vanilla glassfish server. The thread pool for job
 
 See [Oracle GlassFish Server 3.1 Administration Guide](http://docs.oracle.com/cd/E18930_01/html/821-2416/ablud.html#ggkwj) for further details.
 
-Preparation for automatic deployment
+Old Preparation for automatic deployment
 ------------------------------------  
 
 You can deploy the ear with maven (see [Maven Glassfish Plugin](https://maven-glassfish-plugin.java.net/)). The plugin is used in the ear. 
@@ -101,6 +106,12 @@ The undeployment is bind to the `clean` phase. **disabled now, see pom.xml: plug
 Known Issues
 ------------
 
+* The Bean resolver gets not resolved.
+* The engine-rest application answers 404 to each request
+
+Known Issues for glassfish
+--------------------------
+
 The executorConnectionFactory can not be injected into the ExecutorServiceBean.  
 
 Reason must be resource-adapter-config in glassfish-resources.xml. The ExecutorServiceBean finds the reference to the connector-resource, the connector-resource gets the reference to the connector-connection-pool. (checked by changing the jndi-names).  
@@ -123,3 +134,5 @@ Reason must be resource-adapter-config in glassfish-resources.xml. The ExecutorS
 * [How to create and look up thread pool resource in GlassFish](http://javahowto.blogspot.de/2011/02/how-to-create-and-look-up-thread-pool.html)
 * Resource Injection [The Java EE 6 Tutorial](http://docs.oracle.com/javaee/6/tutorial/doc/bncjk.html)
 * JNDI Background [What is the relationship between java:comp/env and java:global?](http://stackoverflow.com/questions/7458114/what-is-the-relationship-between-javacomp-env-and-javaglobal)
+* Easy example for using thread pools in JEE[Thread pool configuration for inbound resource adapters on TomEE](http://www.tomitribe.com/blog/2014/10/thread-pool-configuration-for-inbound-resource-adapters-on-tomee/)
+* [Building and Deploying Java EE EAR with Maven to Java EE Application Server](http://www.developerscrappad.com/1177/java/java-ee/maven/building-and-deploying-java-ee-ear-with-maven-to-java-ee-application-server-part-1-project-directory-structure-amp-module-generation-through-archetype-generate/)

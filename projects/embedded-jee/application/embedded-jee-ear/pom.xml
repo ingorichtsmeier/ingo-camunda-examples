@@ -28,6 +28,19 @@
     </dependency>
     
     <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-spring</artifactId>
+      <version>${camunda.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.fasterxml.uuid</groupId>
+      <artifactId>java-uuid-generator</artifactId>
+      <version>3.1.2</version>
+    </dependency>
+    
+    <!-- 
+    <dependency>
       <groupId>org.camunda.bpm.javaee</groupId>
       <artifactId>camunda-jobexecutor-rar</artifactId>
       <version>${camunda.version}</version>
@@ -35,9 +48,39 @@
     </dependency>
     
     <dependency>
+      <groupId>org.camunda.bpm.weblogic</groupId>
+      <artifactId>camunda-oracle-weblogic-rar</artifactId>
+      <version>${camunda.version}</version>
+      <type>rar</type>
+    </dependency>  -->
+    
+    <dependency>
+      <groupId>com.camunda.consulting</groupId>
+      <artifactId>embedded-oracle-weblogic-rar</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>rar</type>
+    </dependency>
+
+    <dependency>
       <groupId>com.camunda.consulting</groupId>
       <artifactId>jndi-printer-ejb</artifactId>
       <version>1.0-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+
+    <!--   -->
+    <dependency>
+      <groupId>com.camunda.consulting</groupId>
+      <artifactId>embedded-oracle-weblogic-service</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+
+    <!-- 
+    <dependency>
+      <groupId>org.camunda.bpm.weblogic</groupId>
+      <artifactId>camunda-oracle-weblogic-service</artifactId>
+      <version>${camunda.version}</version>
       <type>ejb</type>
     </dependency>
     
@@ -46,15 +89,28 @@
       <artifactId>engine-service-ejb</artifactId>
       <version>1.0-SNAPSHOT</version>
       <type>ejb</type>
-    </dependency>
+    </dependency> -->
     
-    <!-- 
     <dependency>
       <groupId>com.camunda.consulting</groupId>
       <artifactId>process-application-war</artifactId>
       <version>1.0-SNAPSHOT</version>
       <type>war</type>
-    </dependency> -->
+    </dependency>
+    
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-rest </artifactId>
+      <version>7.2.2-ee </version>
+      <type>war</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.camunda.bpm.webapp </groupId>
+      <artifactId>camunda-webapp-ee-wls</artifactId>
+      <version>7.2.2-ee </version>
+      <type>war</type>
+    </dependency>
     
   </dependencies>
   
@@ -78,6 +134,34 @@
           <version>6</version>
           <defaultLibBundleDir>lib</defaultLibBundleDir>
           <initializeInOrder>true</initializeInOrder>
+          <modules>
+            <rarModule>
+              <groupId>com.camunda.consulting</groupId>
+              <artifactId>embedded-oracle-weblogic-rar</artifactId>
+            </rarModule>
+            <ejbModule>
+              <groupId>com.camunda.consulting</groupId>
+              <artifactId>jndi-printer-ejb</artifactId>
+            </ejbModule>
+            <ejbModule>
+              <groupId>com.camunda.consulting</groupId>
+              <artifactId>embedded-oracle-weblogic-service</artifactId>
+            </ejbModule>
+            <webModule>
+              <groupId>com.camunda.consulting</groupId>
+              <artifactId>process-application-war</artifactId>
+            </webModule>
+            <webModule>
+              <groupId>org.camunda.bpm</groupId>
+              <artifactId>camunda-engine-rest</artifactId>
+              <contextRoot>/engine-rest</contextRoot>
+            </webModule>
+            <webModule>
+              <groupId>org.camunda.bpm.webapp</groupId>
+              <artifactId>camunda-webapp-ee-wls</artifactId>
+              <contextRoot>/camunda</contextRoot>
+            </webModule>
+          </modules>
         </configuration>
       </plugin>
       
@@ -99,7 +183,7 @@
             <goals>
               <goal>deploy</goal>
             </goals>
-            <phase>package</phase>
+            <!-- <phase>package</phase>  -->
           </execution>
         </executions>
         <configuration>
