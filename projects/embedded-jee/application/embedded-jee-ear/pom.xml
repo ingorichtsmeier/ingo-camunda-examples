@@ -100,15 +100,16 @@
     
     <dependency>
       <groupId>org.camunda.bpm</groupId>
-      <artifactId>camunda-engine-rest </artifactId>
-      <version>7.2.2-ee </version>
+      <artifactId>camunda-engine-rest</artifactId>
+      <version>${camunda.version}</version>
+      <classifier>wls</classifier>
       <type>war</type>
     </dependency>
     
     <dependency>
       <groupId>org.camunda.bpm.webapp </groupId>
       <artifactId>camunda-webapp-ee-wls</artifactId>
-      <version>7.2.2-ee </version>
+      <version>${camunda.version}</version>
       <type>war</type>
     </dependency>
     
