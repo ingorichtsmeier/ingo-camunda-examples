@@ -17,6 +17,8 @@
       <property name="databaseSchemaUpdate">true</property>
       <property name="authorizationEnabled">true</property>
       <property name="jobExecutorDeploymentAware">true</property>
+      
+      <property name="defaultSerializationFormat">application/json</property>
     </properties>
 
       <!-- plugin enabling Process Application event listener support -->
@@ -26,12 +28,13 @@
       <!-- 
       <plugin>
         <class>org.camunda.bpm.application.impl.event.ProcessApplicationEventListenerPlugin</class>
-      </plugin>
+      </plugin> -->
 
       <plugin>
         <class>org.camunda.spin.plugin.impl.SpinProcessEnginePlugin</class>
       </plugin>
-
+     
+      <!-- 
       <plugin>
         <class>org.camunda.connect.plugin.impl.ConnectProcessEnginePlugin</class>
       </plugin>  -->

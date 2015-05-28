@@ -7,9 +7,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.camunda.consulting</groupId>
   <artifactId>embedded-jee-ear</artifactId>
-  <version>1.0-SNAPSHOT</version>
   <packaging>ear</packaging>
 
   <name>embedded-jee-ear</name>
@@ -19,41 +17,46 @@
     <glassfish.directory>C:/Arbeit/glassfish3</glassfish.directory>
   </properties>
   
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.camunda.bpm</groupId>
+        <artifactId>camunda-bom</artifactId>
+        <version>${camunda.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
-  
+    <!-- libraries -->
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-engine</artifactId>
-      <version>${camunda.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-engine-spring</artifactId>
-      <version>${camunda.version}</version>
     </dependency>
     
     <dependency>
       <groupId>com.fasterxml.uuid</groupId>
       <artifactId>java-uuid-generator</artifactId>
-      <version>3.1.2</version>
-    </dependency>
-    
-    <!-- 
-    <dependency>
-      <groupId>org.camunda.bpm.javaee</groupId>
-      <artifactId>camunda-jobexecutor-rar</artifactId>
-      <version>${camunda.version}</version>
-      <type>rar</type>
     </dependency>
     
     <dependency>
-      <groupId>org.camunda.bpm.weblogic</groupId>
-      <artifactId>camunda-oracle-weblogic-rar</artifactId>
-      <version>${camunda.version}</version>
-      <type>rar</type>
-    </dependency>  -->
+      <groupId>org.camunda.spin</groupId>
+      <artifactId>camunda-spin-dataformat-json-jackson</artifactId>
+    </dependency>
     
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-plugin-spin</artifactId>
+    </dependency>
+    
+    <!-- modules -->
     <dependency>
       <groupId>com.camunda.consulting</groupId>
       <artifactId>embedded-oracle-weblogic-rar</artifactId>
@@ -68,28 +71,12 @@
       <type>ejb</type>
     </dependency>
 
-    <!--   -->
     <dependency>
       <groupId>com.camunda.consulting</groupId>
       <artifactId>embedded-oracle-weblogic-service</artifactId>
       <version>1.0-SNAPSHOT</version>
       <type>ejb</type>
     </dependency>
-
-    <!-- 
-    <dependency>
-      <groupId>org.camunda.bpm.weblogic</groupId>
-      <artifactId>camunda-oracle-weblogic-service</artifactId>
-      <version>${camunda.version}</version>
-      <type>ejb</type>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.camunda.consulting</groupId>
-      <artifactId>engine-service-ejb</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <type>ejb</type>
-    </dependency> -->
     
     <dependency>
       <groupId>com.camunda.consulting</groupId>
