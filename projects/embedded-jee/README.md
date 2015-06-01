@@ -10,8 +10,39 @@ New Goal
 
 Deploy the ear file on a plain vanilla Oracle Weblogic Server. The Server must only be prepared with a datasource for the process engine. 
 
+Important steps to pack the process engine into an ear-file together with the process application:
+
+1. repackage the camunda-oracle-weblogic-rar
+2. repackage the camunda-oracle-weblogic-service
+3. repackage the camunda-engine-spring
+4. configure the ear file
+5. use the camunda-bpm-jee-archetype to build the process application 
+
+Configure the job executor rar
+------------------------------
+
+To use the job executor rar in an embedded engine in a weblogic ear file, you have to add the classpath entries pointing to the engine libraries into the rar-file. Have a look at the pom.xml to see how the shading of artifact adds a new MANIFEST.MF with a Class-Path entry.
+
+Configure the services jar
+--------------------------
+
+The service jar starts the process engine and uses the job executor rar. It has to include a MANIFEST.MF with a Class-Path entry.
+
+Configure camunda-engine-spring.jar
+-----------------------------------
+
+The camunda-engine-spring.jar has a SPI to the ProcessApplicationElResolver. This entry must be removed and the remaining jar must be part of the process engine library. Have a look at the pom.xml.
+
+Configure the ear file
+----------------------
+
+The ear file includes the libraries in a lib folder and the modules for the jobexecution rar, service jar, the rest api war, the camunda webapp war and the process application war.
+
+All the modules are configured in the maven-ear-plugin element of the pom.xml.       
+The camunda-engine-spring.jar is excluded from the lib-folder. We use the shaded jar instead.
+
 Old Goal
-----
+-----
 
 Deploy the ear file on a plain vanilla glassfish server. The thread pool for job executor of the process engine must be prepared. Use the asadmin command from the command line:
 
