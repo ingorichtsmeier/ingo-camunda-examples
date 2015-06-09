@@ -1,13 +1,21 @@
 package com.camunda.consulting.webserviceExample.nonarquillian;
 
+import java.util.Date;
+
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.impl.util.LogUtil;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import com.camunda.consulting.webservice.offertantrag.Basispaket;
+import com.camunda.consulting.webservice.offertantrag.Offertantrag;
+import com.camunda.consulting.webservice.offertantrag.VersicherungsdauerEnum;
+import com.camunda.consulting.webservice.offertantrag.VersicherungsdeckungEnum;
 
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 import static org.junit.Assert.*;
@@ -24,8 +32,8 @@ public class InMemoryH2Test {
 
   // enable more detailed logging
   static {
-//    LogUtil.readJavaUtilLoggingConfigFromClasspath(); // process engine
-//    LogFactory.useJdkLogging(); // MyBatis
+    LogUtil.readJavaUtilLoggingConfigFromClasspath(); // process engine
+    LogFactory.useJdkLogging(); // MyBatis
   }
   
   @Before
@@ -48,6 +56,12 @@ public class InMemoryH2Test {
     ProcessInstance pi = runtimeService().startProcessInstanceByKey("offerterstellung");
     
     assertThat(pi).isWaitingAt("offertantrag_erfassen");
+    
+    Offertantrag offertantrag = new Offertantrag(VersicherungsdeckungEnum.Einzelperson, new Date(), VersicherungsdauerEnum.Kurzfristversicherung31Tage, new Basispaket());
+    Task offertantragErfassen = taskQuery().singleResult();
+    complete(offertantragErfassen, withVariables("offertantrag", offertantrag));
+    
+    
   }
 
 }
