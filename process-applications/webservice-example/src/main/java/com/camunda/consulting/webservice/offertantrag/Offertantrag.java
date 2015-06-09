@@ -17,6 +17,10 @@ public class Offertantrag {
     this.versicherungsDauer = versicherungsDauer;
     this.enthaltenesPaket = enthaltenesPaket;
   }
+  
+  public Offertantrag() {
+    super();
+  }
 
   public VersicherungsdeckungEnum getAnzahlreiseTeilnehmer() {
     return anzahlreiseTeilnehmer;
