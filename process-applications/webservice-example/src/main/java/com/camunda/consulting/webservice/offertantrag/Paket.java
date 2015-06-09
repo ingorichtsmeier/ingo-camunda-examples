@@ -1,8 +1,9 @@
 package com.camunda.consulting.webservice.offertantrag;
 
-import spinjar.com.fasterxml.jackson.annotation.JsonSubTypes;
-import spinjar.com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import spinjar.com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 
 @JsonTypeInfo(  
     use = JsonTypeInfo.Id.NAME,  

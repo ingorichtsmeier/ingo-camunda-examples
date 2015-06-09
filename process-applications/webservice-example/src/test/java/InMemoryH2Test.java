@@ -1,4 +1,4 @@
-package com.camunda.consulting.webserviceExample.nonarquillian;
+
 
 import java.util.Date;
 
@@ -8,6 +8,7 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.camunda.bpm.engine.variable.value.TypedValue;
 import org.junit.Before;
@@ -65,10 +66,17 @@ public class InMemoryH2Test {
     
     ObjectValue variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", false);
     System.out.println("Offerte als XML? " + variableTyped.getValueSerialized());
-    
     variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", true);
     Offertantrag offertantragAusgelesen = (Offertantrag) variableTyped.getValue();
     assertThat(offertantragAusgelesen.getEnthaltenesPaket()).isInstanceOf(Basispaket.class);
+
+    String string = "{\"enthaltenesPaket\":{\"type\":\"basispaket\"},\"versicherungsbeginn\":\"2015-06-10T22:00:00.000Z\"}";
+    ObjectValue foo = Variables.serializedObjectValue(string)
+      .serializationDataFormat("application/json")
+      .objectTypeName(Offertantrag.class.getName())
+      .create();
+    runtimeService().setVariable(pi.getId(), "foo", foo);
+    Offertantrag bar = (Offertantrag) runtimeService().getVariable(pi.getId(), "foo");
   }
 
 }

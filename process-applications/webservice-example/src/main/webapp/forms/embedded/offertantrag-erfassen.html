@@ -1,0 +1,75 @@
+<strong>Here you would put the actual form to work on the task</strong>
+
+<p>You can invoke this form through the camunda tasklist
+  by setting the formKey of a User Task to 'embedded:app:forms/embedded/task-form.html'.</p>
+
+<form class="form-horizontal">
+
+  <script cam-script type="text/form-script">
+
+    // {"anzahlreiseTeilnehmer":"Einzelperson",
+    //  "versicherungsbeginn":1433883862583,
+    //  "versicherungsDauer":"Kurzfristversicherung31Tage",
+    //  "enthaltenesPaket":{"type":"basispaket","paketTyp":"Basispaket-Type"}}
+
+    var offertantrag = $scope.offertantrag = { "enthaltenesPaket":{} };
+
+    camForm.on('form-loaded', function() {
+
+      // declare variable 'offertantrag' incuding metadata for serialization
+      camForm.variableManager.createVariable({
+        name: 'offertantrag',
+        type: 'Object',
+        value: offertantrag,
+        valueInfo: {
+          // indicate that object is serialized as json
+          serializationDataFormat: 'application/json',
+          // provide classname of java object
+          objectTypeName: 'com.camunda.consulting.webservice.offertantrag.Offertantrag'
+        }
+      });
+
+    });
+
+  $scope.open = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+
+    $scope.dateFieldOpened = true;
+  };
+
+  </script>
+
+  <div class="control-group">
+    <label class="control-label">Versicherungsbeginn</label>
+    <div class="controls">
+      <input type="text" 
+             ng-model="offertantrag.versicherungsbeginn"
+             datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
+             is-open="dateFieldOpened"
+             />
+	  <span class="input-group-btn">
+	    <button type="button"
+	            class="btn btn-default"
+	            ng-click="open($event)">
+	      <i class="glyphicon glyphicon-calendar"></i>
+	    </button>
+	  </span>      
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">Paketvarianten</label>
+    <div class="controls">
+    <label>
+        <input type="radio" name="project"
+               value="basispaket" ng-model="offertantrag.enthaltenesPaket.type" />
+        Basis-Paket
+    </label>
+    <label>
+        <input type="radio" name="project"
+               value="sorglospaket" ng-model="offertantrag.enthaltenesPaket.type"  />
+        Sorglos-Paket
+    </label>
+    </div>
+  </div>
+</form>

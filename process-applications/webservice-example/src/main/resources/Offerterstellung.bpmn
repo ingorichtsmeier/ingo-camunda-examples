@@ -41,7 +41,7 @@
         <flowNodeRef>sid-1186CC93-D397-4BDC-BC94-8EB372F09A55</flowNodeRef>
       </lane>
     </laneSet>
-    <userTask id="offertantrag_erfassen" name="Offertantrag erfassen" implementation="##WebService">
+    <userTask id="offertantrag_erfassen" camunda:formKey="embedded:app:forms/embedded/offertantrag-erfassen.html" camunda:assignee="demo" name="Offertantrag erfassen" implementation="##WebService">
       <extensionElements>
         <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffcc"/>
         <signavio:signavioMetaData metaKey="adaptereventtype" metaValue=""/>
@@ -157,7 +157,7 @@
       </extensionElements>
       <outgoing>sid-9C6C5CF8-7AE4-4DC5-9F8B-C81158916726</outgoing>
     </startEvent>
-    <serviceTask id="sid-1186CC93-D397-4BDC-BC94-8EB372F09A55" camunda:class="com.camunda.consulting.webserviceExample.LoggerDelegate" name="Offerte erstellen" implementation="##WebService">
+    <serviceTask id="sid-1186CC93-D397-4BDC-BC94-8EB372F09A55" camunda:class="com.camunda.consulting.OfferteErstellenDelegate" name="Offerte erstellen" implementation="##WebService">
       <extensionElements>
         <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffcc"/>
         <signavio:signavioMetaData metaKey="adaptereventtype" metaValue=""/>

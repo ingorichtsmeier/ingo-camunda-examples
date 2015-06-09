@@ -1,15 +1,21 @@
 package com.camunda.consulting.webserviceExample;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.task.Task;
+import org.camunda.bpm.engine.variable.Variables;
+import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -19,6 +25,11 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.camunda.consulting.webservice.offertantrag.Basispaket;
+import com.camunda.consulting.webservice.offertantrag.Offertantrag;
+import com.camunda.consulting.webservice.offertantrag.VersicherungsdauerEnum;
+import com.camunda.consulting.webservice.offertantrag.VersicherungsdeckungEnum;
 
 @RunWith(Arquillian.class)
 public class ArquillianTest {
@@ -44,12 +55,9 @@ public class ArquillianTest {
             // boot JPA persistence unit
             .addAsResource("META-INF/persistence.xml", "META-INF/persistence.xml")
             // add your own classes (could be done one by one as well)
-            .addPackages(false, "com.camunda.consulting.webserviceExample") // not recursive to skip package 'nonarquillian'
+            .addPackages(true, "com.camunda.consulting") // not recursive to skip package 'nonarquillian'
             // add process definition
-            .addAsResource("process.bpmn")
-            // add process image for visualizations
-            .addAsResource("process.png")
-            // now you can add additional stuff required for your test case
+            .addAsResource("Offerterstellung.bpmn")
     ;
   }
 
@@ -66,21 +74,27 @@ public class ArquillianTest {
    */
   @Test
   public void testProcessExecution() throws Exception {
-    cleanUpRunningProcessInstances();
+    ProcessInstance pi = runtimeService().startProcessInstanceByKey("offerterstellung");
     
-    ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+    assertThat(pi).isWaitingAt("offertantrag_erfassen");
+    
+//    Offertantrag offertantrag = new Offertantrag(VersicherungsdeckungEnum.Einzelperson, new Date(), VersicherungsdauerEnum.Kurzfristversicherung31Tage, new Basispaket());
+//    Task offertantragErfassen = taskQuery().processInstanceId(pi.getId()).singleResult();
+//    complete(offertantragErfassen, withVariables("offertantrag", offertantrag));
+    
+//    ObjectValue variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", false);
+//    System.out.println("Offerte als XML? " + variableTyped.getValueSerialized());
+//    variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", true);
+//    Offertantrag offertantragAusgelesen = (Offertantrag) variableTyped.getValue();
+//    assertThat(offertantragAusgelesen.getEnthaltenesPaket()).isInstanceOf(Basispaket.class);
 
-    assertThat(processInstance).isEnded();
+    String string = "{\"enthaltenesPaket\":{\"type\":\"basispaket\"},\"versicherungsbeginn\":\"2015-06-10T22:00:00.000Z\"}";
+    ObjectValue foo = Variables.serializedObjectValue(string)
+      .serializationDataFormat("application/json")
+      .objectTypeName(Offertantrag.class.getName())
+      .create();
+    runtimeService().setVariable(pi.getId(), "foo", foo);
+    Offertantrag bar = (Offertantrag) runtimeService().getVariable(pi.getId(), "foo");
   }
 
-  /**
-   * Helper to delete all running process instances, which might disturb our Arquillian Test case
-   * Better run test cases in a clean environment, but this is pretty handy for demo purposes
-   */
-  private void cleanUpRunningProcessInstances() {
-    List<ProcessInstance> runningInstances = processInstanceQuery().processDefinitionKey(PROCESS_DEFINITION_KEY).list();
-    for (ProcessInstance processInstance : runningInstances) {
-      runtimeService().deleteProcessInstance(processInstance.getId(), "deleted to have a clean environment for Arquillian");
-    }
-  }  
 }
