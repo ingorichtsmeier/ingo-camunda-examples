@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({  
   @Type(value = Basispaket.class, name = "basispaket"),  
   @Type(value = Sorglospaket.class, name = "sorglospaket") })  
-public abstract class Paket {
+public class Paket { // TODO make abstract
   
   String type;
   public Paket() {

@@ -41,6 +41,21 @@
   </script>
 
   <div class="control-group">
+    <label class="control-label"></label>
+    <div class="controls">
+    <label>
+        <input type="radio" name="anzahlreiseTeilnehmer"
+               value="Einzelperson" ng-model="offertantrag.anzahlreiseTeilnehmer" />
+        Einzelperson
+    </label>
+    <label>
+        <input type="radio" name="anzahlreiseTeilnehmer"
+               value="Haushaltsgemeinschaft" ng-model="offertantrag.anzahlreiseTeilnehmer"  />
+        Haushaltsgemeinschaft
+    </label>
+    </div>
+  </div>
+  <div class="control-group">
     <label class="control-label">Versicherungsbeginn</label>
     <div class="controls">
       <input type="text" 
@@ -61,12 +76,12 @@
     <label class="control-label">Paketvarianten</label>
     <div class="controls">
     <label>
-        <input type="radio" name="project"
+        <input type="radio" name="enthaltenesPaket"
                value="basispaket" ng-model="offertantrag.enthaltenesPaket.type" />
         Basis-Paket
     </label>
     <label>
-        <input type="radio" name="project"
+        <input type="radio" name="enthaltenesPaket"
                value="sorglospaket" ng-model="offertantrag.enthaltenesPaket.type"  />
         Sorglos-Paket
     </label>
