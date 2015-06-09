@@ -8,6 +8,8 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.variable.value.ObjectValue;
+import org.camunda.bpm.engine.variable.value.TypedValue;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,8 +34,8 @@ public class InMemoryH2Test {
 
   // enable more detailed logging
   static {
-    LogUtil.readJavaUtilLoggingConfigFromClasspath(); // process engine
-    LogFactory.useJdkLogging(); // MyBatis
+//    LogUtil.readJavaUtilLoggingConfigFromClasspath(); // process engine
+//    LogFactory.useJdkLogging(); // MyBatis
   }
   
   @Before
@@ -61,7 +63,12 @@ public class InMemoryH2Test {
     Task offertantragErfassen = taskQuery().singleResult();
     complete(offertantragErfassen, withVariables("offertantrag", offertantrag));
     
+    ObjectValue variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", false);
+    System.out.println("Offerte als XML? " + variableTyped.getValueSerialized());
     
+    variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", true);
+    Offertantrag offertantragAusgelesen = (Offertantrag) variableTyped.getValue();
+    assertThat(offertantragAusgelesen.getEnthaltenesPaket()).isInstanceOf(Basispaket.class);
   }
 
 }
