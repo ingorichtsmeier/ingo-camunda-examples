@@ -13,17 +13,17 @@ import spinjar.com.fasterxml.jackson.annotation.JsonTypeInfo;
   @Type(value = Sorglospaket.class, name = "sorglospaket") })  
 public abstract class Paket {
   
-  String paketTyp;
+  String type;
   public Paket() {
     super();
   }
 
-  public String getPaketTyp() {
-    return paketTyp;
+  public String getType() {
+    return type;
   }
 
-  public void setPaketTyp(String type) {
-    this.paketTyp = type;
+  public void setType(String type) {
+    this.type = type;
   }
 
 }
