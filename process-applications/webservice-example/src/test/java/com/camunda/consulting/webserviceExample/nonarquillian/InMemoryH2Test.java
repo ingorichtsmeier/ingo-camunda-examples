@@ -2,6 +2,7 @@ package com.camunda.consulting.webserviceExample.nonarquillian;
 
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.impl.util.LogUtil;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Before;
@@ -39,6 +40,14 @@ public class InMemoryH2Test {
   @Deployment(resources = "process.bpmn")
   public void testParsingAndDeployment() {
     // nothing is done here, as we just want to check for exceptions during deployment
+  }
+  
+  @Test
+  @Deployment(resources = "Offerterstellung.bpmn")
+  public void testStartProcessInstance() {
+    ProcessInstance pi = runtimeService().startProcessInstanceByKey("offerterstellung");
+    
+    assertThat(pi).isWaitingAt("offertantrag_erfassen");
   }
 
 }
