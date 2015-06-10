@@ -1,19 +1,15 @@
 package com.camunda.consulting.webserviceExample;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
-import static org.junit.Assert.*;
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.init;
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.runtimeService;
 
 import java.io.File;
-import java.util.Date;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -26,14 +22,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.camunda.consulting.webservice.offertantrag.Basispaket;
 import com.camunda.consulting.webservice.offertantrag.Offertantrag;
-import com.camunda.consulting.webservice.offertantrag.VersicherungsdauerEnum;
-import com.camunda.consulting.webservice.offertantrag.VersicherungsdeckungEnum;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(Arquillian.class)
 public class ArquillianTest {
-  
+
   private static final String PROCESS_DEFINITION_KEY = "webservice-example";
 
   @Deployment
@@ -58,6 +52,7 @@ public class ArquillianTest {
             .addPackages(true, "com.camunda.consulting") // not recursive to skip package 'nonarquillian'
             // add process definition
             .addAsResource("Offerterstellung.bpmn")
+            .addAsManifestResource("META-INF/MANIFEST.MF", "MANIFEST.MF")
     ;
   }
 
@@ -73,15 +68,16 @@ public class ArquillianTest {
    * Tests that the process is executable and reaches its end.
    */
   @Test
+
   public void testProcessExecution() throws Exception {
     ProcessInstance pi = runtimeService().startProcessInstanceByKey("offerterstellung");
-    
+
     assertThat(pi).isWaitingAt("offertantrag_erfassen");
-    
+
 //    Offertantrag offertantrag = new Offertantrag(VersicherungsdeckungEnum.Einzelperson, new Date(), VersicherungsdauerEnum.Kurzfristversicherung31Tage, new Basispaket());
 //    Task offertantragErfassen = taskQuery().processInstanceId(pi.getId()).singleResult();
 //    complete(offertantragErfassen, withVariables("offertantrag", offertantrag));
-    
+
 //    ObjectValue variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", false);
 //    System.out.println("Offerte als XML? " + variableTyped.getValueSerialized());
 //    variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", true);
@@ -95,6 +91,7 @@ public class ArquillianTest {
       .create();
     runtimeService().setVariable(pi.getId(), "foo", foo);
     Offertantrag bar = (Offertantrag) runtimeService().getVariable(pi.getId(), "foo");
+
   }
 
 }
