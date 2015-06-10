@@ -4,16 +4,16 @@ import java.util.Date;
 
 public class Offertantrag {
   
-  private VersicherungsdeckungEnum anzahlreiseTeilnehmer;
-  private Date versicherungsbeginn;
+  private VersicherungsdeckungEnum anzahlReiseTeilnehmer;
+  private Date versicherungsBeginn;
   private VersicherungsdauerEnum versicherungsDauer;
   private Paket enthaltenesPaket;
   
-  public Offertantrag(VersicherungsdeckungEnum anzahlreiseTeilnehmer, Date versicherungsbeginn, VersicherungsdauerEnum versicherungsDauer,
+  public Offertantrag(VersicherungsdeckungEnum anzahlReiseTeilnehmer, Date versicherungsBeginn, VersicherungsdauerEnum versicherungsDauer,
       Paket enthaltenesPaket) {
     super();
-    this.anzahlreiseTeilnehmer = anzahlreiseTeilnehmer;
-    this.versicherungsbeginn = versicherungsbeginn;
+    this.anzahlReiseTeilnehmer = anzahlReiseTeilnehmer;
+    this.versicherungsBeginn = versicherungsBeginn;
     this.versicherungsDauer = versicherungsDauer;
     this.enthaltenesPaket = enthaltenesPaket;
   }
@@ -22,20 +22,20 @@ public class Offertantrag {
     super();
   }
 
-  public VersicherungsdeckungEnum getAnzahlreiseTeilnehmer() {
-    return anzahlreiseTeilnehmer;
+  public VersicherungsdeckungEnum getAnzahlReiseTeilnehmer() {
+    return anzahlReiseTeilnehmer;
   }
 
-  public void setAnzahlreiseTeilnehmer(VersicherungsdeckungEnum anzahlreiseTeilnehmer) {
-    this.anzahlreiseTeilnehmer = anzahlreiseTeilnehmer;
+  public void setAnzahlReiseTeilnehmer(VersicherungsdeckungEnum anzahlReiseTeilnehmer) {
+    this.anzahlReiseTeilnehmer = anzahlReiseTeilnehmer;
   }
 
-  public Date getVersicherungsbeginn() {
-    return versicherungsbeginn;
+  public Date getVersicherungsBeginn() {
+    return versicherungsBeginn;
   }
 
-  public void setVersicherungsbeginn(Date versicherungsbeginn) {
-    this.versicherungsbeginn = versicherungsbeginn;
+  public void setVersicherungsBeginn(Date versicherungsBeginn) {
+    this.versicherungsBeginn = versicherungsBeginn;
   }
 
   public VersicherungsdauerEnum getVersicherungsDauer() {

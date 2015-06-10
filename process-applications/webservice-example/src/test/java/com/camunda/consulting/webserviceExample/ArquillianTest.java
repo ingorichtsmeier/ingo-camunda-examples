@@ -88,7 +88,7 @@ public class ArquillianTest {
 //    Offertantrag offertantragAusgelesen = (Offertantrag) variableTyped.getValue();
 //    assertThat(offertantragAusgelesen.getEnthaltenesPaket()).isInstanceOf(Basispaket.class);
 
-    String string = "{\"enthaltenesPaket\":{\"type\":\"basispaket\"},\"versicherungsbeginn\":\"2015-06-10T22:00:00.000Z\"}";
+    String string = "{\"enthaltenesPaket\":{\"type\":\"basispaket\"},\"versicherungsBeginn\":\"2015-06-10T22:00:00.000Z\"}";
     ObjectValue foo = Variables.serializedObjectValue(string)
       .serializationDataFormat("application/json")
       .objectTypeName(Offertantrag.class.getName())

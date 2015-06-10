@@ -10,7 +10,7 @@ public class OfferteErstellenDelegate implements JavaDelegate {
   @Override
   public void execute(DelegateExecution execution) throws Exception {
     Offertantrag offertantrag = (Offertantrag) execution.getVariable("offertantrag");
-    System.out.println("" + offertantrag.getVersicherungsbeginn());
+    System.out.println("" + offertantrag.getVersicherungsBeginn());
   }
 
 }
