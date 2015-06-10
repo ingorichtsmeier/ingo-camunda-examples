@@ -1,0 +1,20 @@
+<soapenv:Envelope xmlns:ns="http://www.css.ch/bs/partner/BSPartnerQuery/38" xmlns:par="http://www.css.ch/bs/partner/38" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Header>
+      <wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <wsse:UsernameToken wsu:Id="UsernameToken-1">
+            <wsse:Username>p16295</wsse:Username>
+            <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">Process1,</wsse:Password>
+            <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">elv/iGgNyvbTp3WPYbaOLg==</wsse:Nonce>
+            <wsu:Created>2015-06-09T15:09:28.173Z</wsu:Created>
+         </wsse:UsernameToken>
+      </wsse:Security>
+   </soapenv:Header>
+   <soapenv:Body>
+      <ns:searchPerson>
+         <ns:in xsi:type="par:BSPartnerQuerySearchPersonIn">
+            <par:name>bern*</par:name>
+            <!--par:stichdatum>2006-05-04</par:stichdatum-->
+         </ns:in>
+      </ns:searchPerson>
+   </soapenv:Body>
+</soapenv:Envelope>
