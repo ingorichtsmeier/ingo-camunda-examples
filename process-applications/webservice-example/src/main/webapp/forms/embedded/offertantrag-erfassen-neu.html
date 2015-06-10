@@ -1,0 +1,157 @@
+<strong>Ferien- und Reiseversicherung</strong>
+
+<p>Passen Sie Ihre Ferien- und Reiseversicherung individuell Ihren W&uuml;nschen an. Vervollst&auml;ndigen Sie die Angaben und lassen Sie sich Ihre Versicherung genau so offerieren, wie Sie sie ben&ouml;tigen.</p>
+
+<form class="form-horizontal">
+
+  <script cam-script type="text/form-script">
+
+    // {
+    //   "anzahlReiseTeilnehmer":"Einzelperson",
+    //   "versicherungsBeginn":1433883862583,
+    //   "versicherungsDauer":"Kurzfristversicherung31Tage",
+    //   "enthaltenesPaket":{"type":"basispaket"}
+    //  }
+
+    var offertantrag = $scope.offertantrag = { "enthaltenesPaket": {}, "einzelrisiken": [] };
+
+    camForm.on('form-loaded', function() {
+
+      // declare variable 'offertantrag' incuding metadata for serialization
+      camForm.variableManager.createVariable({
+        name: 'offertantrag',
+        type: 'Object',
+        value: offertantrag,
+        valueInfo: {
+          // indicate that object is serialized as json
+          serializationDataFormat: 'application/json',
+          // provide classname of java object
+          objectTypeName: 'com.camunda.consulting.frv_oap_process.offertantrag.Offertantrag'
+        }
+      });
+
+    });
+
+  $scope.open = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+
+    $scope.dateFieldOpened = true;
+  };
+
+  // einzelrisiken
+  $scope.einzelrisiken = ['Personen-Assistance', 'Auslandsrechtsschutz-Versicherung', 'Annullierungskosten-Versicherung', 'Reisegepaeck-Versicherung'];
+
+  // selected einzelrisiken
+  $scope.selectedEinzelrisiken = [];
+
+  // toggle selection for a given einzelrisiko by name
+  $scope.toggleSelection = function toggleSelection(einzelrisiko) {
+    var idx = $scope.selectedEinzelrisiken.indexOf(einzelrisiko);
+
+    // is currently selected
+    if (idx > -1) {
+      $scope.selectedEinzelrisiken.splice(idx, 1);
+    }
+
+    // is newly selected
+    else {
+      $scope.selectedEinzelrisiken.push(einzelrisiko);
+    }
+  };
+
+    camForm.on('submit', function() {
+      angular.forEach($scope.selectedEinzelrisiken, function(einzelrisiko) {
+        offertantrag.einzelrisiken.push({"type":einzelrisiko});
+      });
+    });
+
+  </script>
+
+  <div class="control-group">
+    <label class="control-label">Reiseteilnehmer</label>
+    <div class="controls">
+    <label>
+        <input type="radio" name="anzahlReiseTeilnehmer"
+               value="Einzelperson" ng-model="offertantrag.anzahlReiseTeilnehmer" />
+        Einzelperson
+    </label>
+    <label>
+        <input type="radio" name="anzahlReiseTeilnehmer"
+               value="Haushaltsgemeinschaft" ng-model="offertantrag.anzahlReiseTeilnehmer"  />
+        Haushaltsgemeinschaft
+    </label>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">Versicherungsbeginn</label>
+    <div class="controls">
+      <input type="text" 
+             ng-model="offertantrag.versicherungsBeginn"
+             datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
+             is-open="dateFieldOpened"
+             />
+	  <span class="input-group-btn">
+	    <button type="button"
+	            class="btn btn-default"
+	            ng-click="open($event)">
+	      <i class="glyphicon glyphicon-calendar"></i>
+	    </button>
+	  </span>      
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">Versicherungsdauer</label>
+    <div class="controls">
+    <label>
+        <input type="radio" name="versicherungsDauer"
+               value="Kurzfristversicherung17Tage" ng-model="offertantrag.versicherungsDauer" />
+        Kurzfristversicherung (bis 17 Tage)
+    </label>
+    <label>
+        <input type="radio" name="versicherungsDauer"
+               value="Kurzfristversicherung31Tage" ng-model="offertantrag.versicherungsDauer" />
+        Monatsversicherung (bis 31 Tage)
+    </label>
+    <label>
+        <input type="radio" name="versicherungsDauer"
+               value="Langfristversicherung1Jahr" ng-model="offertantrag.versicherungsDauer"  />
+        Langfristversicherung (bis 1 Jahr)
+    </label>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">Paketvarianten</label>
+    <div class="controls">
+    <label>
+        <input type="radio" name="enthaltenesPaket"
+               value="basispaket" ng-model="offertantrag.enthaltenesPaket.type" />
+        Basis-Paket
+    </label>
+    <label>
+        <input type="radio" name="enthaltenesPaket"
+               value="standardpaket" ng-model="offertantrag.enthaltenesPaket.type"  />
+        Standard-Paket
+    </label>
+    <label>
+        <input type="radio" name="enthaltenesPaket"
+               value="sorglospaket" ng-model="offertantrag.enthaltenesPaket.type"  />
+        Sorglos-Paket
+    </label>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">Einzelrisiken versichern</label>
+	  <div class="checkbox" ng-repeat="einzelrisiko in einzelrisiken">
+		  <label>
+		  <input
+		    type="checkbox"
+		    name="selectedEinzelrisiken[]"
+		    value="{{einzelrisiko}}"
+		    ng-checked="selectedEinzelrisiken.indexOf(einzelrisiko) > -1"
+		    ng-click="toggleSelection(einzelrisiko)"
+		  > {{einzelrisiko}}
+		  </label>
+	  </div>
+  </div>
+</form>
