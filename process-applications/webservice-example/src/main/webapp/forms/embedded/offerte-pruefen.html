@@ -1,0 +1,85 @@
+<strong>Ihre Wunschversicherung</strong>
+
+<form class="form-horizontal">
+
+  <script cam-script type="text/form-script">
+  camForm.on('form-loaded', function() {
+    // tell the form SDK to fetch the variable named 'offerte'
+    camForm.variableManager.fetchVariable('offerte');
+  });
+  camForm.on('variables-fetched', function() {
+    // work with the variable (bind it to the current AngularJS $scope)
+    $scope.offerte = camForm.variableManager.variableValue('offerte');
+  });
+
+    // Example Document
+//    {
+//	  "anzahlReiseTeilnehmer": "Einzelperson",
+//	  "versicherungsBeginn": 1433973600000,
+//	  "versicherungsDauer": "Kurzfristversicherung17Tage",
+//	  "enthaltenesPaket": {
+//	    "type": "basispaket"
+//	  },
+//	  "einzelrisiken": [
+//	    {
+//	      "type": "Personen-Assistance"
+//	    },
+//	    {
+//	      "type": "Annullierungskosten-Versicherung"
+//	    }
+//	  ],
+//	  "praemie": 113,
+//	  "offertenNummer": 3261421,
+//	  "paketpraemieOfferte": {
+//	    "praemie": 13,
+//	    "paket": {
+//	      "type": "basispaket"
+//	    }
+//	  },
+//	  "einzelrisikenPraemieOfferte": [
+//	    {
+//	      "praemie": 50,
+//	      "einzelrisiko": {
+//	        "type": "Personen-Assistance"
+//	      }
+//	    },
+//	    {
+//	      "praemie": 50,
+//	      "einzelrisiko": {
+//	        "type": "Annullierungskosten-Versicherung"
+//	      }
+//	    }
+//	  ]
+//	}
+
+  </script>
+  
+  <p>{{offerte.anzahlReiseTeilnehmer}}, {{offerte.versicherungsBeginn}}, {{offerte.versicherungsDauer}}</p>
+  <table class="table table-hover">
+    <tr>
+      <th align="left">Versicherungsdeckung</th>
+      <th align="right">Pr&auml;mie in CHF</th>
+    </tr>
+  	<tr>
+  	  <td>{{offerte.paketpraemieOfferte.paket.type}}</td>
+  	  <td align="right">{{offerte.paketpraemieOfferte.praemie}}.00</td>
+  	</tr>
+  	<tr ng-repeat="einzelrisikoPraemieOfferte in offerte.einzelrisikenPraemieOfferte">
+  	  <td>{{einzelrisikoPraemieOfferte.einzelrisiko.type}}</td>
+  	  <td align="right">{{einzelrisikoPraemieOfferte.praemie}}.00</td>
+  	</tr>
+  	<tr>
+  	  <td colspan="2" align="right"><strong>Ihre Gesamtpr&auml;ie in CHF {{offerte.praemie}}.00</strong></td>
+  	</tr>
+  </table>
+  <div class="control-group">
+    <label class="control-label">Ich akzeptiere diese Offerte.</label>
+    <div class="controls">
+      <input type="checkbox"
+             cam-variable-name="offerteOK"
+		         cam-variable-type="Boolean"
+             name="approved"
+		         class="form-control" />
+    </div>
+  </div>
+</form>
