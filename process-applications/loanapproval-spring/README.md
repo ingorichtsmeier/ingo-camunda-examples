@@ -28,4 +28,8 @@ catalina-log shows, that the old application is called to be destroyed:
     INFORMATION: Deploying web application archive C:\Arbeit\camunda\camunda-bpm-ee-tomcat-7.3.1-ee\server\apache-tomcat-7.0.62\webapps\loanapproval-spring-0.0.1-SNAPSHOT.war
 
 but how? 
+
+Useful links
+------------
+[http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-java](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-java)
     
