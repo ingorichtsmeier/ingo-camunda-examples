@@ -2,8 +2,6 @@ package com.camunda.consulting.springexample.config;
 
 import java.util.logging.Logger;
 
-import javax.annotation.PreDestroy;
-
 import org.camunda.bpm.BpmPlatform;
 import org.camunda.bpm.ProcessEngineService;
 import org.camunda.bpm.engine.AuthorizationService;
@@ -40,28 +38,11 @@ public class CamundaConfig {
    */
   @Bean
   public SpringServletProcessApplication processApplication() {
-    SpringServletProcessApplication application = new SpringServletProcessApplication() {
-
-      // to provide multiple deployments of the same application, we have to set a unique id for
-      // bean. the use of the expression language seams not to work on bean name property. so
-      // we have to override the default bean naming behavior a little.
-      // TODO search a better solution for this hack
-
-      @Override
-      public String getName() {
-        return "MyProcessApplication";
-      }
-
-      @PreDestroy
-      public void annotatedUndeploy() throws Exception {
-        System.out.println("#######################################################");
-        super.destroy();
-      }
-
-    };
-    return application;
+    log.info("create bean for process application");
+    return new ProcessApplicationBean();
   }
-
+  
+  
   /**
    * the process engine
    * 

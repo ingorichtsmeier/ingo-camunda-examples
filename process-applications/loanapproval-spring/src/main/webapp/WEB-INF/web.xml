@@ -3,16 +3,6 @@
                         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 
-<!-- settings from the camunda getting started guide
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/applicationContext.xml</param-value>
-	</context-param>
-
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>  -->
-
     <!-- Configure ContextLoaderListener to use AnnotationConfigWebApplicationContext
         instead of the default XmlWebApplicationContext -->
     <context-param>
@@ -29,11 +19,5 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>com.camunda.consulting.springexample.config.CamundaApplicationInitializer</param-value>
     </context-param>
-
-    <!-- Bootstrap the root application context as usual using ContextLoaderListener -->
-    <!-- 
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>  -->
 
 </web-app>
