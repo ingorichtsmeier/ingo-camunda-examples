@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://activiti.org/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="Definitions_1" exporter="camunda modeler" exporterVersion="2.7.0" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="contract_handling" name="Contract Handling" isExecutable="true">
+    <bpmn:startEvent id="payment_and_documents_expected" name="payment and documents expected">
+      <bpmn:outgoing>SequenceFlow_0orakhh</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0orakhh" sourceRef="payment_and_documents_expected" targetRef="ParallelGateway_1bk9f9g"/>
+    <bpmn:parallelGateway id="ParallelGateway_1bk9f9g">
+      <bpmn:incoming>SequenceFlow_0orakhh</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12o19cg</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1yxts3z</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_12o19cg" sourceRef="ParallelGateway_1bk9f9g" targetRef="Document_processing"/>
+    <bpmn:sequenceFlow id="SequenceFlow_1yxts3z" sourceRef="ParallelGateway_1bk9f9g" targetRef="Payment_processing"/>
+    <bpmn:callActivity id="Document_processing" name="Document processing" calledElement="document_handling">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_12o19cg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_08liy9d</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Payment_processing" name="Payment processing" calledElement="payment_handling">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1yxts3z</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1p4gp27</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="Payment_processed" name="Payment processed">
+      <bpmn:incoming>SequenceFlow_1p4gp27</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1p4gp27" sourceRef="Payment_processing" targetRef="Payment_processed"/>
+    <bpmn:endEvent id="Document_processed" name="Document processed">
+      <bpmn:incoming>SequenceFlow_08liy9d</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_08liy9d" sourceRef="Document_processing" targetRef="Document_processed"/>
+    <bpmn:boundaryEvent id="BoundaryEvent_13bn16c" name="payment canceled" attachedToRef="Payment_processing">
+      <bpmn:outgoing>SequenceFlow_0mow52r</bpmn:outgoing>
+      <bpmn:errorEventDefinition/>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0mow52r" sourceRef="BoundaryEvent_13bn16c" targetRef="Do_cleanup"/>
+    <bpmn:sequenceFlow id="SequenceFlow_16jy848" sourceRef="Do_cleanup" targetRef="contract_cleaned"/>
+    <bpmn:endEvent id="contract_cleaned" name="contract cleaned">
+      <bpmn:incoming>SequenceFlow_16jy848</bpmn:incoming>
+      <bpmn:terminateEventDefinition/>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Do_cleanup" camunda:delegateExpression="${logger}" name="Do cleanup" implementation="##WebService">
+      <bpmn:incoming>SequenceFlow_0mow52r</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_149o3j3</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16jy848</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="BoundaryEvent_17purgs" name="document canceled" attachedToRef="Document_processing">
+      <bpmn:outgoing>SequenceFlow_149o3j3</bpmn:outgoing>
+      <bpmn:errorEventDefinition/>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_149o3j3" sourceRef="BoundaryEvent_17purgs" targetRef="Do_cleanup"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="contract_handling">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="payment_and_documents_expected">
+        <dc:Bounds height="36.0" width="36.0" x="99.0" y="130.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="72.0" y="166.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0orakhh_di" bpmnElement="SequenceFlow_0orakhh">
+        <di:waypoint xsi:type="dc:Point" x="135.0" y="148.0"/>
+        <di:waypoint xsi:type="dc:Point" x="204.0" y="148.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="124.5" y="138.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_1bk9f9g_di" bpmnElement="ParallelGateway_1bk9f9g">
+        <dc:Bounds height="50.0" width="50.0" x="204.0" y="123.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="184.0" y="173.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_12o19cg_di" bpmnElement="SequenceFlow_12o19cg">
+        <di:waypoint xsi:type="dc:Point" x="229.0" y="123.0"/>
+        <di:waypoint xsi:type="dc:Point" x="229.0" y="80.0"/>
+        <di:waypoint xsi:type="dc:Point" x="278.0" y="80.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="184.0" y="91.5"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yxts3z_di" bpmnElement="SequenceFlow_1yxts3z">
+        <di:waypoint xsi:type="dc:Point" x="229.0" y="173.0"/>
+        <di:waypoint xsi:type="dc:Point" x="229.0" y="239.0"/>
+        <di:waypoint xsi:type="dc:Point" x="392.0" y="239.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="184.0" y="196.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_129icra_di" bpmnElement="Document_processing">
+        <dc:Bounds height="80.0" width="100.0" x="278.0" y="40.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1ivq67q_di" bpmnElement="Payment_processing">
+        <dc:Bounds height="80.0" width="100.0" x="392.0" y="199.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0y3jl30_di" bpmnElement="Payment_processed">
+        <dc:Bounds height="36.0" width="36.0" x="540.0" y="221.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="513.0" y="257.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1p4gp27_di" bpmnElement="SequenceFlow_1p4gp27">
+        <di:waypoint xsi:type="dc:Point" x="492.0" y="239.0"/>
+        <di:waypoint xsi:type="dc:Point" x="540.0" y="239.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="443.5" y="229.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0awubi2_di" bpmnElement="Document_processed">
+        <dc:Bounds height="36.0" width="36.0" x="540.0" y="62.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="513.0" y="98.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_08liy9d_di" bpmnElement="SequenceFlow_08liy9d">
+        <di:waypoint xsi:type="dc:Point" x="378.0" y="80.0"/>
+        <di:waypoint xsi:type="dc:Point" x="540.0" y="80.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="443.5" y="70.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_13bn16c_di" bpmnElement="BoundaryEvent_13bn16c">
+        <dc:Bounds height="36.0" width="36.0" x="437.0" y="261.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="355.0" y="297.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mow52r_di" bpmnElement="SequenceFlow_0mow52r">
+        <di:waypoint xsi:type="dc:Point" x="455.0" y="297.0"/>
+        <di:waypoint xsi:type="dc:Point" x="455.0" y="378.0"/>
+        <di:waypoint xsi:type="dc:Point" x="508.0" y="378.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="355.0" y="327.5"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_16jy848_di" bpmnElement="SequenceFlow_16jy848">
+        <di:waypoint xsi:type="dc:Point" x="608.0" y="378.0"/>
+        <di:waypoint xsi:type="dc:Point" x="672.0" y="378.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="595.0" y="368.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1ywk9li_di" bpmnElement="contract_cleaned">
+        <dc:Bounds height="36.0" width="36.0" x="672.0" y="360.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="645.0" y="396.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_034mlq8_di" bpmnElement="Do_cleanup">
+        <dc:Bounds height="80.0" width="100.0" x="508.0" y="338.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_17purgs_di" bpmnElement="BoundaryEvent_17purgs">
+        <dc:Bounds height="36.0" width="36.0" x="324.0" y="102.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="333.0" y="129.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_149o3j3_di" bpmnElement="SequenceFlow_149o3j3">
+        <di:waypoint xsi:type="dc:Point" x="342.0" y="138.0"/>
+        <di:waypoint xsi:type="dc:Point" x="342.0" y="378.0"/>
+        <di:waypoint xsi:type="dc:Point" x="508.0" y="378.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="20.0" width="90.0" x="297.0" y="248.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
