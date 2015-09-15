@@ -30,6 +30,7 @@ The JUnit tests show how to use it with the Java API.
 * Throwing error end event to use a separate exit from the subprocesses
 * catching error boundary event to handle the separate exit
 * event subprocess to react on the cancel event over the complete lifetime
+* terminate end event to consume all tokens.
 
 
 ## How to use it?
