@@ -13,16 +13,12 @@ The process engine plugin [XstreamVariableSerializerProcessEnginePlugin](src/mai
 
 Have a look at the tests to see how it works.
 
+For tomcat: Just put the jar file from the target directory together with xstream-1.4.8.jar, xpp_-min-1.1.4c.jar and xmlpull-1.1.3.1.jar into the lib folder of the camunda tomcat distribution. Restart the server and start a process instance with a complex object as process variable.
+
+Inspect the variable in cockpit and on the console.
+
 ## Environment Restrictions
 Built and tested against Camunda BPM version 7.3.0.
-
-## Known Limitations
-
-If you just put the jar file from the target directory together with xstream-1.4.8.jar, xpp_-min-1.1.4c.jar and xmlpull-1.1.3.1.jar into the lib folder of the camunda tomcat distribution, you will get an exception 
-
-    com.thoughtworks.xstream.mapper.CannotResolveClassException: com.camunda.consulting.complexObjectProcess.data.Customer
-    
-Maybe a classloading problem.
 
 ## License
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
