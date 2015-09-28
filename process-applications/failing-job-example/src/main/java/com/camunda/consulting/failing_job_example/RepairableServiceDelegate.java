@@ -13,8 +13,8 @@ public class RepairableServiceDelegate implements JavaDelegate {
   @Override
   public void execute(DelegateExecution execution) throws Exception {
     log.info("delegate started");
-    log.info("wait 19 seconds");
-    Thread.sleep(19000);
+    log.info("wait 60 seconds");
+    Thread.sleep(60000);
     log.info("service finished");
     String continue_ = (String) execution.getVariable("continue");
     if (continue_ != null && "continue".equals(continue_)) {
