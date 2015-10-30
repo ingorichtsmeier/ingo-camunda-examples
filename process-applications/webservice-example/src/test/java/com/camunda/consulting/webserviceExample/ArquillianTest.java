@@ -6,16 +6,11 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.Date;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.task.Task;
-import org.camunda.bpm.engine.variable.Variables;
-import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -25,11 +20,6 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import com.camunda.consulting.webservice.offertantrag.Basispaket;
-import com.camunda.consulting.webservice.offertantrag.Offertantrag;
-import com.camunda.consulting.webservice.offertantrag.VersicherungsdauerEnum;
-import com.camunda.consulting.webservice.offertantrag.VersicherungsdeckungEnum;
 
 @RunWith(Arquillian.class)
 public class ArquillianTest {
@@ -74,27 +64,10 @@ public class ArquillianTest {
    */
   @Test
   public void testProcessExecution() throws Exception {
-    ProcessInstance pi = runtimeService().startProcessInstanceByKey("offerterstellung");
+    ProcessInstance pi = runtimeService().startProcessInstanceByKey("webservice-example");
     
     assertThat(pi).isWaitingAt("offertantrag_erfassen");
     
-//    Offertantrag offertantrag = new Offertantrag(VersicherungsdeckungEnum.Einzelperson, new Date(), VersicherungsdauerEnum.Kurzfristversicherung31Tage, new Basispaket());
-//    Task offertantragErfassen = taskQuery().processInstanceId(pi.getId()).singleResult();
-//    complete(offertantragErfassen, withVariables("offertantrag", offertantrag));
-    
-//    ObjectValue variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", false);
-//    System.out.println("Offerte als XML? " + variableTyped.getValueSerialized());
-//    variableTyped = runtimeService().getVariableTyped(pi.getProcessInstanceId(), "offertantrag", true);
-//    Offertantrag offertantragAusgelesen = (Offertantrag) variableTyped.getValue();
-//    assertThat(offertantragAusgelesen.getEnthaltenesPaket()).isInstanceOf(Basispaket.class);
-
-    String string = "{\"enthaltenesPaket\":{\"type\":\"basispaket\"},\"versicherungsBeginn\":\"2015-06-10T22:00:00.000Z\"}";
-    ObjectValue foo = Variables.serializedObjectValue(string)
-      .serializationDataFormat("application/json")
-      .objectTypeName(Offertantrag.class.getName())
-      .create();
-    runtimeService().setVariable(pi.getId(), "foo", foo);
-    Offertantrag bar = (Offertantrag) runtimeService().getVariable(pi.getId(), "foo");
   }
 
 }

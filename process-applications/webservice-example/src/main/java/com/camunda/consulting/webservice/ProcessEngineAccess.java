@@ -46,5 +46,12 @@ public class ProcessEngineAccess {
     variables.put("price", price);
     processEngine.getTaskService().complete(taskId, variables);
   }
+  
+  @WebMethod
+  public void correlateMessage(String messageName, String documentId) {
+    Map<String, Object> correlationKeys = new HashMap<String, Object>();
+    correlationKeys.put("documentId", documentId);
+    processEngine.getRuntimeService().correlateMessage(messageName, correlationKeys);
+  }
 
 }
