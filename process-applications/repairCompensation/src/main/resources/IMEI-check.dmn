@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn11.xsd" id="definitions" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="IMEI-check" name="IMEI Check">
+    <decisionTable id="decisionTable" hitPolicy="FIRST">
+      <input id="input1" label="IMEI-Number">
+        <inputExpression id="inputExpression1" typeRef="string">        <text>claim.IMEI</text>
+</inputExpression>
+      </input>
+      <output id="output1" label="IMEI-valid" name="data-result" typeRef="boolean" />
+      <rule id="row-617400497-1">
+        <inputEntry id="UnaryTests_0deut2n" expressionLanguage="juel">        <text><![CDATA[claim.IMEI.length() > 15]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_0kyse3l">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-617400497-2">
+        <inputEntry id="UnaryTests_1fjoedm">        <text></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_10s5cjc">        <text>false</text>
+</outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

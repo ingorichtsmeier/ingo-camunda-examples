@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn11.xsd" id="definitions" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="action_code_checking" name="Action code checking">
+    <decisionTable id="decisionTable" hitPolicy="FIRST">
+      <input id="input1" label="action code">
+        <inputExpression id="inputExpression1" typeRef="string">        <text>action.code</text>
+</inputExpression>
+      </input>
+      <output id="output1" label="is valid" name="action_code_result" typeRef="boolean" />
+      <rule id="row-617400497-15">
+        <inputEntry id="UnaryTests_0h3bl8j">        <text><![CDATA["10"]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_1hplc15">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-617400497-16">
+        <inputEntry id="UnaryTests_1q0dsee">        <text><![CDATA["20"]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_1v8e2c4">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-617400497-17">
+        <inputEntry id="UnaryTests_0mzzdih">        <text><![CDATA["30"]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_0gih3uu">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-617400497-18">
+        <inputEntry id="UnaryTests_1ajgoya">        <text><![CDATA["40"]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_0ydqxsa">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-617400497-19">
+        <inputEntry id="UnaryTests_0c5d6ua">        <text><![CDATA["50"]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_0x4gdqd">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-617400497-20">
+        <description>complete claim</description>
+        <inputEntry id="UnaryTests_1acxm9c">        <text><![CDATA["53"]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_0ve03nq">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-617400497-21">
+        <inputEntry id="UnaryTests_1cnhvuf">        <text><![CDATA["60"]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_1h0lx2g">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-617400497-22">
+        <inputEntry id="UnaryTests_1b0gobr">        <text><![CDATA["70"]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_1m7ppcm">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-617400497-23">
+        <inputEntry id="UnaryTests_1haht43">        <text></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_1n80dta">        <text>false</text>
+</outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>
