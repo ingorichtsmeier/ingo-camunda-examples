@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn11.xsd" id="definitions" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="example-decision" name="example decision table">
+    <decisionTable id="decisionTable">
+      <input id="input1" label="inputValue">
+        <inputExpression id="inputExpression1" typeRef="integer">        <text>inputValue</text>
+</inputExpression>
+      </input>
+      <output id="output1" label="decisionResult" name="decisionResult" typeRef="integer" />
+      <rule id="row-94525320-1">
+        <inputEntry id="UnaryTests_1buvm0r">        <text>1</text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_04zsdzp">        <text>10</text>
+</outputEntry>
+      </rule>
+      <rule id="row-94525320-2">
+        <inputEntry id="UnaryTests_0fvd5fj">        <text>2</text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_0b2f1gy">        <text>20</text>
+</outputEntry>
+      </rule>
+      <rule id="row-94525320-3">
+        <description></description>
+        <inputEntry id="UnaryTests_0uixxpj">        <text>3</text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_045zewj">        <text>30</text>
+</outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>
