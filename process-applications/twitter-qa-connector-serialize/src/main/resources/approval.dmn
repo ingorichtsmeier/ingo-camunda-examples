@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn11.xsd" id="definitions" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="tweet_approval" name="Tweet approval">
+    <decisionTable id="decisionTable" hitPolicy="FIRST">
+      <input id="input1" label="Tweet">
+        <inputExpression id="inputExpression1" typeRef="string">        <text>content</text>
+</inputExpression>
+      </input>
+      <input id="InputClause_0owqiv5" label="Email">
+        <inputExpression id="LiteralExpression_1912x8u" typeRef="string">        <text>email</text>
+</inputExpression>
+      </input>
+      <output id="output1" label="Approved?" name="approved" typeRef="boolean" />
+      <rule id="row-538677343-3">
+        <inputEntry id="UnaryTests_00zf6dj" expressionLanguage="juel">        <text><![CDATA[content.contains("Camunda") and not content.contains("nicht")]]></text>
+</inputEntry>
+        <inputEntry id="UnaryTests_00copu0">        <text></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_12birf8">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-538677343-4">
+        <inputEntry id="UnaryTests_1fjfxsv" expressionLanguage="juel">        <text><![CDATA[content.contains("IBM")]]></text>
+</inputEntry>
+        <inputEntry id="UnaryTests_1bz4qul">        <text></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_1fs3f6y">        <text>false</text>
+</outputEntry>
+      </rule>
+      <rule id="row-538677343-5">
+        <inputEntry id="UnaryTests_10tqaeb">        <text></text>
+</inputEntry>
+        <inputEntry id="UnaryTests_16eaexs">        <text><![CDATA["jakob.freund@camunda.com"]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_0us1eti">        <text>true</text>
+</outputEntry>
+      </rule>
+      <rule id="row-538677343-7">
+        <inputEntry id="UnaryTests_0rqcsbw" expressionLanguage="juel">        <text><![CDATA[content.contains("Jim")]]></text>
+</inputEntry>
+        <inputEntry id="UnaryTests_1ydxpwd">        <text></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_0hxoisb">        <text>false</text>
+</outputEntry>
+      </rule>
+      <rule id="row-538677343-6">
+        <inputEntry id="UnaryTests_00kwcwh">        <text></text>
+</inputEntry>
+        <inputEntry id="UnaryTests_0l6vflf">        <text></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_1onnica">        <text>false</text>
+</outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

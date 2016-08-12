@@ -1,0 +1,39 @@
+<strong>Here you would put the actual form to work on the task</strong>
+
+<p>
+  You can use this form through Camunda Tasklist
+  by setting the formKey of a BPMN User Task to:
+  <code>embedded:app:forms/embedded/task-form.html</code>
+</p>
+
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label">Name</label>
+    <div class="controls">
+      <input type="text" 
+             ng-model="tweet.content"
+             readonly="true" 
+             class="form-control" />      
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">Approve?</label>
+    <div class="controls">
+      <input type="checkbox"
+             ng-model="tweet.approved"
+             cam-variable-type="Boolean"
+             name="approved"
+             class="form-control" />
+    </div>
+  </div>
+
+  <script cam-script type="text/form-script">
+  camForm.on('form-loaded', function() {
+    // tell the form SDK to fetch the variable named 'invoiceData'
+    camForm.variableManager.fetchVariable('tweet');
+  });
+  camForm.on('variables-fetched', function() {
+    // work with the variable (bind it to the current AngularJS $scope)
+    $scope.tweet = camForm.variableManager.variableValue('tweet');
+  });  </script>
+</form>
