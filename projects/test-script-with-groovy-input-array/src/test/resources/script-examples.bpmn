@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.2.1">
+  <bpmn:process id="ScriptExamplesProcess" name="Script Examples" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="script demo wanted">
+      <bpmn:outgoing>SequenceFlow_0umd9gn</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0umd9gn" sourceRef="StartEvent_1" targetRef="scriptCountNumbers" />
+    <bpmn:scriptTask id="scriptCountNumbers" name="count numbers" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0umd9gn</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0dhro3u</bpmn:outgoing>
+      <bpmn:script><![CDATA[sum = 0
+for( i in inputArray ) {
+  sum += i
+}
+sum]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0dhro3u" sourceRef="scriptCountNumbers" targetRef="scriptSaveVariable" />
+    <bpmn:scriptTask id="scriptSaveVariable" name="save variable" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0dhro3u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0oooigt</bpmn:outgoing>
+      <bpmn:script><![CDATA[def scriptVar = "123"
+execution.setVariable("myVar", scriptVar)]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0oooigt" sourceRef="scriptSaveVariable" targetRef="scriptSetResultVariable" />
+    <bpmn:scriptTask id="scriptSetResultVariable" name="set result variable" scriptFormat="juel" camunda:resultVariable="resultVar">
+      <bpmn:incoming>SequenceFlow_0oooigt</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1sp0670</bpmn:outgoing>
+      <bpmn:script>${processVar}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="EndEvent_1ryauuv" name="script demo finished">
+      <bpmn:incoming>SequenceFlow_1sp0670</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1sp0670" sourceRef="scriptSetResultVariable" targetRef="EndEvent_1ryauuv" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ScriptExamplesProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0umd9gn_di" bpmnElement="SequenceFlow_0umd9gn">
+        <di:waypoint xsi:type="dc:Point" x="209" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="263" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="191" y="95" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_12zeydo_di" bpmnElement="scriptCountNumbers">
+        <dc:Bounds x="263" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0dhro3u_di" bpmnElement="SequenceFlow_0dhro3u">
+        <di:waypoint xsi:type="dc:Point" x="363" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="422" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="347.5" y="95" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_064ggkr_di" bpmnElement="scriptSaveVariable">
+        <dc:Bounds x="422" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0oooigt_di" bpmnElement="SequenceFlow_0oooigt">
+        <di:waypoint xsi:type="dc:Point" x="522" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="581" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="506.5" y="95" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0o88fpp_di" bpmnElement="scriptSetResultVariable">
+        <dc:Bounds x="581" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1ryauuv_di" bpmnElement="EndEvent_1ryauuv">
+        <dc:Bounds x="734" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="707" y="138" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1sp0670_di" bpmnElement="SequenceFlow_1sp0670">
+        <di:waypoint xsi:type="dc:Point" x="681" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="734" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="662.5" y="95" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
