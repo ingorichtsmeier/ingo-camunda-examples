@@ -25,7 +25,7 @@ execution.setVariable("myVar", scriptVar)]]></bpmn:script>
     <bpmn:scriptTask id="scriptSetResultVariable" name="set result variable" scriptFormat="juel" camunda:resultVariable="resultVar">
       <bpmn:incoming>SequenceFlow_0oooigt</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1sp0670</bpmn:outgoing>
-      <bpmn:script>${processVar}</bpmn:script>
+      <bpmn:script>${myVar}</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_1ryauuv" name="script demo finished">
       <bpmn:incoming>SequenceFlow_1sp0670</bpmn:incoming>
