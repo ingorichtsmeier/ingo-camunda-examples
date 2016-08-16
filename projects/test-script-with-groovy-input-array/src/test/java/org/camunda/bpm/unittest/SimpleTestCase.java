@@ -15,6 +15,7 @@ package org.camunda.bpm.unittest;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
+import org.camunda.bpm.engine.variable.Variables;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
@@ -38,14 +39,15 @@ public class SimpleTestCase {
   @Test
   @Deployment(resources = "script-examples.bpmn")
   public void testHappyPath() {
+    Integer[] inputArray = new Integer[] {1, 3, 5, 7};
     ProcessInstance pi = runtimeService()
-        .startProcessInstanceByKey("ScriptExamplesProcess");
+        .startProcessInstanceByKey("ScriptExamplesProcess", Variables.createVariables().putValue("inputArray", inputArray));
 
     assertThat(pi).isEnded();
-    
+
     List<HistoricVariableInstance> variablesList = historyService().createHistoricVariableInstanceQuery().list();
-    assertThat(variablesList).hasSize(2);
-    System.out.println("vars" + variablesList);    
+    assertThat(variablesList).hasSize(3);
+    System.out.println("vars" + variablesList);
   }
 
 }
