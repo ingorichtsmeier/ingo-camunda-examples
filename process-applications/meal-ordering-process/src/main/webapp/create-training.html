@@ -1,0 +1,101 @@
+<!doctype html>
+<html ng-app="createTrainingApp">
+<head>
+  <title>Create Training</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="webjars/bootstrap/3.3.6/css/bootstrap.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script src="webjars/angularjs/1.4.8/angular.min.js"></script>
+  <script src="webjars/angularjs/1.4.8/angular-animate.min.js"></script>
+  <script src="webjars/angularjs/1.4.8/angular-sanitize.min.js"></script>
+      <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.1.2.js"></script>
+
+  <script src="create-training.js"></script>
+</head>
+<body ng-controller="CreateTrainingCtrl">
+<style>
+  .full button span {
+    background-color: limegreen;
+    border-radius: 32px;
+    color: black;
+  }
+  .partially button span {
+    background-color: orange;
+    border-radius: 32px;
+    color: black;
+  }
+</style>
+<div class="container">
+  <h1>Create Training</h1>
+  <form class="form-horizontal">
+  <div class="row">
+  <div class="col-sm-6">
+    <h3>Parameter</h3>
+    <div class="form-group">
+      <label class="col-sm-4 control-label">Training ID</label>
+      <div class="col-sm-8">
+        <input type="text" ng-model="training.trainingID" id="trainingID" class="form-control" >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-4 control-label">Start Date</label>
+      <div class="col-sm-8">
+        <input type="text" ng-model="training.startDate" id="startDate" class="form-control" >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-4 control-label">End Date</label>
+      <div class="col-sm-8">
+        <input type="text" ng-model="training.endDate" id="endDate" class="form-control" >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-4 control-label">Start Date</label>
+      <div class="col-sm-8">
+        <p class="input-group">
+          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" 
+		    ng-model="dp" is-open="popup1.opened" datepicker-options="dateOptions" 
+			close-text="Close" alt-input-formats="altInputFormats" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-sm-6">
+    <h3>Participants</h3>
+    <div ng-repeat="participant in participants">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-4">
+         <input id="participantName" name="participantName" placeholder="Name" 
+            class="form-control input-md" required="" type="text" ng-model="participant.name">
+        </div>
+        <div class="col-sm-6">
+          <input id="participantEmail" name="participantEmail" placeholder="Email" 
+            class="form-control input-md" required="" type="text" ng-model="participant.email">
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-md-2 control-label" for="addParticipant"></label>
+      <div class="col-md-4">
+    <button id="addParticipant" name="addParticipant" class="btn btn-default">Add Participant</button>
+  </div>
+</div>
+
+  </div>
+  <div class="col-sm-4 col-sm-offset-5">
+    <button type="submit" class="btn btn-primary" ng-click="startMealOrderingProcess()">Start meal ordering</button>
+  </div>    
+</div>
+
+</form>
+</div>
+</body>
+</html>

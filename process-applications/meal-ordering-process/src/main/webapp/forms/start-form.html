@@ -1,0 +1,93 @@
+<strong>Create new Training Course</strong>
+
+<p>
+  Create a Training to feed the participants
+</p>
+
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label">Training ID</label>
+    <div class="controls">
+      <input type="text" 
+             ng-model="training.trainingID"
+             cam-variable-type="String"
+             required
+             class="form-control" />
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label">Start Date</label>
+    <div class="controls">
+      <input type="text" 
+             ng-model="training.startDate"
+             cam-variable-type="Date"
+             required
+             datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
+             is-open="startDateFieldOpened" 
+             class="form-control" />
+      <span class="input-group-btn">
+        <button type="button"
+                class="btn btn-default"
+                ng-click="openStart($event)">
+          <i class="glyphicon glyphicon-calendar"></i>
+        </button>
+      </span>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label">End Date</label>
+    <div class="controls">
+      <input type="text" 
+             ng-model="training.endDate"
+             cam-variable-type="Date"
+             required
+             datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
+             is-open="endDateFieldOpened" 
+             class="form-control" />
+      <span class="input-group-btn">
+        <button type="button"
+                class="btn btn-default"
+                ng-click="openEnd($event)">
+          <i class="glyphicon glyphicon-calendar"></i>
+        </button>
+      </span>
+    </div>
+  </div>
+
+  <script cam-script type="text/form-script">
+    $scope.openStart = function($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+
+      $scope.startDateFieldOpened = true;
+    };  
+
+    $scope.openEnd = function($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+
+      $scope.endDateFieldOpened = true;
+    };  
+
+    var training = $scope.training = {};
+
+    camForm.on('form-loaded', function() {
+
+        // declare a 'json' variable 'training'
+        camForm.variableManager.createVariable({
+            name: 'training',
+            type: 'Object',
+            value: training,
+            valueInfo: {
+                // indicate that object is serialized as json
+                serializationDataFormat: 'application/json',
+                // provide classname of java object to map to
+                objectTypeName: 'com.camunda.consulting.meal_ordering_process.data.Training'
+            }
+        });
+    });
+
+  </script>
+</form>
