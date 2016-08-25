@@ -2,40 +2,41 @@ var createTrainingApp = angular.module('createTrainingApp', []);
 
 createTrainingApp.controller('CreateTrainingCtrl', function ($scope, $http) {
 
-   var participants = [{"name":"Jakob Freund", "email":"Jakob.Freund@camunda.com"}, 
-	   {"name":"Bernd Rücker", "email":"bernd.ruecker@Camunda.com"}];
+  var participants = [{"name":"Jakob Freund", "email":"Jakob.Freund@camunda.com"}, 
+                      {"name":"Bernd Rücker", "email":"bernd.ruecker@Camunda.com"}];
   $scope.participants = participants;
 
   $scope.startMealOrderingProcess = function() {
-	  console.log("start a process");
-	  console.log($scope.training);
-	  var postdata = {'variables': {
-		'training' : {
-			 'value':angular.toJson($scope.training), 
-			 'type':'Object',
-			 'valueInfo': {
-				 'serializationDataFormat' : 'application/json',
-				 'objectTypeName' : 'com.camunda.consulting.meal_ordering_process.data.Training'
-			 }
-		},
-		'participants' : {
-			'value':angular.toJson(participants),
-			'type':'Object',
-			'valueInfo' : {
-				 'serializationDataFormat' : 'application/json',
-				 'objectTypeName' : 'java.util.ArrayList<com.camunda.consulting.meal_ordering_process.data.Participant>'
-			}
-		}
-	  }};
-	  console.log(JSON.stringify(postdata));
-	  $http.post('/engine-rest/process-definition/key/MealOrderingProcess/start', postdata)
-	    .then(function(response) {
-			$scope.antwort = response.data[0];
-		},
-		function(response) {
-			alert("error: " + response.data.message);
-		});
-		
+      console.log("start a process");
+      console.log($scope.training);
+      var postdata = {'variables': {
+          'training' : {
+             'value':angular.toJson($scope.training), 
+             'type':'Object',
+             'valueInfo': {
+                 'serializationDataFormat' : 'application/json',
+                 'objectTypeName' : 'com.camunda.consulting.meal_ordering_process.data.Training'
+             }
+          },
+          'participants' : {
+              'value':angular.toJson(participants),
+              'type':'Object',
+              'valueInfo' : {
+                   'serializationDataFormat' : 'application/json',
+                   'objectTypeName' : 'java.util.ArrayList<com.camunda.consulting.meal_ordering_process.data.Participant>'
+              }
+          }
+      }, 
+      'businessKey': $scope.training.trainingID 
+      };
+      console.log(JSON.stringify(postdata));
+      $http.post('/engine-rest/process-definition/key/MealOrderingProcess/start', postdata)
+        .then(function(response) {
+          $scope.antwort = response.data[0];
+        },
+        function(response) {
+          alert("error: " + response.data.message);
+        });
   };
   
   $scope.today = function() {

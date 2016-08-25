@@ -9,8 +9,8 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow1" sourceRef="StartEventProcessStarted" targetRef="checkParticipantsUserTask" />
     <bpmn:sequenceFlow id="SequenceFlow_11bi5my" sourceRef="checkParticipantsUserTask" targetRef="createUsersServiceTask" />
-    <bpmn:sequenceFlow id="SequenceFlow_0ix25bk" sourceRef="Task_0vfzg1s" targetRef="trainingFinishedTimerEvent" />
-    <bpmn:subProcess id="Task_0vfzg1s" name="daily work">
+    <bpmn:sequenceFlow id="SequenceFlow_0ix25bk" sourceRef="dailyWorkSubprocess" targetRef="trainingFinishedTimerEvent" />
+    <bpmn:subProcess id="dailyWorkSubprocess" name="daily work">
       <bpmn:extensionElements>
         <camunda:executionListener class="com.camunda.consulting.meal_ordering_process.listener.CleanUpMealsListener" event="end" />
       </bpmn:extensionElements>
@@ -50,7 +50,7 @@
         <bpmn:outgoing>SequenceFlow_0ndelwe</bpmn:outgoing>
       </bpmn:userTask>
     </bpmn:subProcess>
-    <bpmn:sequenceFlow id="SequenceFlow_09fyz3b" sourceRef="createUsersServiceTask" targetRef="Task_0vfzg1s" />
+    <bpmn:sequenceFlow id="SequenceFlow_09fyz3b" sourceRef="createUsersServiceTask" targetRef="dailyWorkSubprocess" />
     <bpmn:serviceTask id="createUsersServiceTask" name="Create users" camunda:class="com.camunda.consulting.meal_ordering_process.delegates.CreateUsersDelegate">
       <bpmn:incoming>SequenceFlow_11bi5my</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_09fyz3b</bpmn:outgoing>
@@ -75,7 +75,23 @@
       <bpmn:incoming>SequenceFlow_0xvqamk</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_03vmx2r</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:subProcess id="SubProcess_1o6com5" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_01sg0rn" name="Participant left" isInterrupting="false">
+        <bpmn:outgoing>SequenceFlow_0eo4g3c</bpmn:outgoing>
+        <bpmn:messageEventDefinition messageRef="Message_1tj98m7" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0eo4g3c" sourceRef="StartEvent_01sg0rn" targetRef="Task_1m7br78" />
+      <bpmn:endEvent id="EndEvent_1543cxl" name="Participant removed">
+        <bpmn:incoming>SequenceFlow_1bwk1ju</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1bwk1ju" sourceRef="Task_1m7br78" targetRef="EndEvent_1543cxl" />
+      <bpmn:serviceTask id="Task_1m7br78" name="Remove partcipant" camunda:class="com.camunda.consulting.meal_ordering_process.delegates.RemoveParticipantDelegate">
+        <bpmn:incoming>SequenceFlow_0eo4g3c</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1bwk1ju</bpmn:outgoing>
+      </bpmn:serviceTask>
+    </bpmn:subProcess>
   </bpmn:process>
+  <bpmn:message id="Message_1tj98m7" name="removeParticipantMessage" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="MealOrderingProcess">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEventProcessStarted">
@@ -111,7 +127,7 @@
           <dc:Bounds x="1135.5" y="106" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="SubProcess_11kw79u_di" bpmnElement="Task_0vfzg1s" isExpanded="true">
+      <bpmndi:BPMNShape id="SubProcess_11kw79u_di" bpmnElement="dailyWorkSubprocess" isExpanded="true">
         <dc:Bounds x="403" y="31" width="753" height="200" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_0v19m1m_di" bpmnElement="StartEvent_0v19m1m">
@@ -208,6 +224,38 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1b7ua4j_di" bpmnElement="Task_0ldax66">
         <dc:Bounds x="1282" y="91" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1bl694a_di" bpmnElement="SubProcess_1o6com5" isExpanded="true">
+        <dc:Bounds x="107" y="259" width="343" height="131" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_119hx6f_di" bpmnElement="StartEvent_01sg0rn">
+        <dc:Bounds x="149" y="310" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="122" y="346" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0eo4g3c_di" bpmnElement="SequenceFlow_0eo4g3c">
+        <di:waypoint xsi:type="dc:Point" x="185" y="328" />
+        <di:waypoint xsi:type="dc:Point" x="235" y="328" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="165" y="303" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1543cxl_di" bpmnElement="EndEvent_1543cxl">
+        <dc:Bounds x="394" y="310" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="367" y="346" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bwk1ju_di" bpmnElement="SequenceFlow_1bwk1ju">
+        <di:waypoint xsi:type="dc:Point" x="335" y="328" />
+        <di:waypoint xsi:type="dc:Point" x="394" y="328" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="319.5" y="303" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1w2tctq_di" bpmnElement="Task_1m7br78">
+        <dc:Bounds x="235" y="288" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

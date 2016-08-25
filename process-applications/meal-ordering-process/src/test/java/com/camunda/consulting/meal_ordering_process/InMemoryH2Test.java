@@ -75,6 +75,7 @@ public class InMemoryH2Test {
     Training training = new Training("cam-ca051 Berlin", dateFormat.parse("05.09.2016 10:00"), dateFormat.parse("07.09.2016 16:00"));
 
     ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
+        training.getTrainingID(),
         withVariables("training", training, "participants", participants));
 
     // Now: Drive the process by API and assert correct behavior by
@@ -150,6 +151,87 @@ public class InMemoryH2Test {
     
     assertThat(identityService().createUserQuery().list()).isEmpty();
     assertThat(authorizationService().createAuthorizationQuery().userIdIn(bernd.getEmail().toLowerCase()).list()).isEmpty();
+  }
+  
+  @Deployment(resources = {"meal-ordering.bpmn"})
+  @Test
+  public void testRemovePartcipant() throws ParseException {
+    Participant jakob = new Participant("Jakob Freund", "jakob.freund@camunda.com");
+    Participant bernd = new Participant("Bernd Rücker", "bernd.ruecker@camunda.com");
+    Participant robert = new Participant("Robert Gimbel", "robert.gimbel@camunda.com");
+    Participant tobias = new Participant("Tobias Knisch", "tobias.knisch@generail.com");
+
+    List<Participant> participants = new ArrayList<Participant>();
+    participants.add(jakob);
+    participants.add(bernd);
+    participants.add(robert);
+    participants.add(tobias);
+
+    Training training = new Training("cam-ca051 Berlin", dateFormat.parse("05.09.2016 10:00"), dateFormat.parse("07.09.2016 16:00"));
+
+    ProcessInstance processInstance = runtimeService()
+        .createProcessInstanceByKey(PROCESS_DEFINITION_KEY)
+        .startAfterActivity("selectLocationUserTask")
+        .setVariables(withVariables(
+            "training", training, 
+            "participants", participants))
+        .businessKey(training.getTrainingID())
+        .execute();
+    
+    assertThat(processInstance).isWaitingAt("selectMealUserTask");
+    
+    assertThat(taskQuery().list()).hasSize(4);
+    
+    runtimeService()
+      .createMessageCorrelation("removeParticipantMessage")
+      .setVariables(withVariables("removeParticipant", jakob.getEmail().toLowerCase()))
+      .processInstanceBusinessKey(training.getTrainingID())
+      .correlate();
+    
+    assertThat(taskQuery().list()).hasSize(3);
+    List<Participant> remainingParticipants = (List<Participant>) runtimeService().getVariable(processInstance.getId(), "participants");
+    assertThat(remainingParticipants).hasSize(3);
+  }
+  
+  @Deployment(resources = {"meal-ordering.bpmn"})
+  @Test
+  public void testRemovePartcipantAtPreparation() throws ParseException {
+    Participant jakob = new Participant("Jakob Freund", "jakob.freund@camunda.com");
+    Participant bernd = new Participant("Bernd Rücker", "bernd.ruecker@camunda.com");
+    Participant robert = new Participant("Robert Gimbel", "robert.gimbel@camunda.com");
+    Participant tobias = new Participant("Tobias Knisch", "tobias.knisch@generail.com");
+
+    List<Participant> participants = new ArrayList<Participant>();
+    participants.add(jakob);
+    participants.add(bernd);
+    participants.add(robert);
+    participants.add(tobias);
+
+    Training training = new Training("cam-ca051 Berlin", dateFormat.parse("05.09.2016 10:00"), dateFormat.parse("07.09.2016 16:00"));
+
+    ProcessInstance processInstance = runtimeService()
+        .createProcessInstanceByKey(PROCESS_DEFINITION_KEY)
+        .startBeforeActivity("createUsersServiceTask")
+        .setVariables(withVariables(
+            "training", training, 
+            "participants", participants))
+        .businessKey(training.getTrainingID())
+        .execute();
+    
+    assertThat(processInstance).isWaitingAt("selectLocationUserTask");
+    
+    assertThat(taskQuery().list()).hasSize(1);
+    
+    runtimeService()
+      .createMessageCorrelation("removeParticipantMessage")
+      .setVariables(withVariables("removeParticipant", jakob.getEmail().toLowerCase()))
+      .processInstanceBusinessKey(training.getTrainingID())
+      .correlate();
+    
+    assertThat(taskQuery().list()).hasSize(1);
+    List<Participant> remainingParticipants = (List<Participant>) runtimeService().getVariable(processInstance.getId(), "participants");
+    assertThat(remainingParticipants).hasSize(3);
+    assertThat(authorizationService().createAuthorizationQuery().userIdIn(jakob.getEmail().toLowerCase()).list()).isEmpty();
   }
   
   @Test

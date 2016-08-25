@@ -1,0 +1,58 @@
+<!doctype html>
+<html ng-app="removeParticipantApp">
+<head>
+  <title>Remove Participant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="webjars/bootstrap/3.3.6/css/bootstrap.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script src="webjars/angularjs/1.4.8/angular.min.js"></script>
+  <script src="webjars/angularjs/1.4.8/angular-animate.min.js"></script>
+  <script src="webjars/angularjs/1.4.8/angular-sanitize.min.js"></script>
+  <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.1.2.js"></script>
+
+  <script src="remove-participant.js"></script>
+</head>
+<body ng-controller="RemoveParticipantCtrl">
+<style>
+  .full button span {
+    background-color: limegreen;
+    border-radius: 32px;
+    color: black;
+  }
+  .partially button span {
+    background-color: orange;
+    border-radius: 32px;
+    color: black;
+  }
+</style>
+<div class="container">
+  <h1>Remove Participant from Training</h1>
+  <form class="form-horizontal">
+  <div class="col-sm-6">
+    <h3>Parameter</h3>
+    <div class="form-group">
+      <label class="col-sm-4 control-label">Training ID</label>
+      <div class="col-sm-8">
+        <input type="text" ng-model="trainingID" id="trainingID" class="form-control" >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-4 control-label">Email</label>
+      <div class="col-sm-8">
+        <input type="text" ng-model="removeParticipantEmail" id="removeParticipantEmail" class="form-control" >
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+  <div class="col-sm-4 col-sm-offset-5">
+    <button type="submit" class="btn btn-primary" ng-click="removeParticipant()">remove participant from training</button>
+  </div>    
+</div>
+
+</form>
+</div>
+</body>
+</html>
