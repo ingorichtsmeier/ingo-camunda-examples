@@ -1,33 +1,40 @@
-<strong>Here you would put the actual form to work on the task</strong>
-
-<p>
-  You can use this form through Camunda Tasklist
-  by setting the formKey of a BPMN User Task to:
-  <code>embedded:app:forms/print-list-form.html</code>
-</p>
-
 <form class="form-horizontal">
+<h3>{{training.trainingID}} from {{training.startDate | date : "dd.MM.y" }} to {{training.endDate | date : "dd.MM.y" }}</h3>
+<h3>Meals for {{weekday}} at {{location}}</h3>
+  <input type="hidden" cam-variable-name="weekday">
+  <input type="hidden" cam-variable-name="location">
+
   <div class="control-group">
-    <label class="control-label">Name</label>
+    <div ng-repeat="mealSelection in mealSelections">
     <div class="controls">
       <input type="text" 
-             cam-variable-name="name"
+             ng-model="mealSelection.participantName"
              readonly="true" 
-             class="form-control" />      
+             class="form-control input-md" />      
+      <input type="text" 
+             ng-model="mealSelection.meal"
+             readonly="true" 
+             class="form-control input-md" />      
     </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label">Approve?</label>
-    <div class="controls">
-      <input type="checkbox"
-             cam-variable-name="approved"
-             cam-variable-type="Boolean"
-             name="approved"
-             class="form-control" />
     </div>
   </div>
 
   <script cam-script type="text/form-script">
-  // custom JavaScript goes here
+  camForm.on('form-loaded', function() {
+    // tell the form SDK to fetch the variable named 'training'
+    camForm.variableManager.fetchVariable('training');
+    camForm.variableManager.fetchVariable('mealSelections');
+  });
+  camForm.on('variables-fetched', function() {
+    // work with the variable (bind it to the current AngularJS $scope)
+    $scope.training = camForm.variableManager.variableValue('training');
+    $scope.mealSelections = camForm.variableManager.variableValue('mealSelections');
+  });
+  camForm.on('submit', function() {
+    // remove '$$hashKey' properties from address objects
+    angular.forEach($scope.mealSelections, function(mealSelection) {
+        delete mealSelection.$$hashKey;
+    });
+  });
   </script>
 </form>

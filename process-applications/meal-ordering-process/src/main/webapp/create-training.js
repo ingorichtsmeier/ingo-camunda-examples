@@ -2,8 +2,8 @@ var createTrainingApp = angular.module('createTrainingApp', []);
 
 createTrainingApp.controller('CreateTrainingCtrl', function ($scope, $http) {
 
-   var participants = [{"name":"Jakob Freund", "email":"jakob.freund@camunda.com"}, 
-	   {"name":"Bernd Rücker", "email":"bernd.ruecker@camunda.com"}];
+   var participants = [{"name":"Jakob Freund", "email":"Jakob.Freund@camunda.com"}, 
+	   {"name":"Bernd Rücker", "email":"bernd.ruecker@Camunda.com"}];
   $scope.participants = participants;
 
   $scope.startMealOrderingProcess = function() {

@@ -56,6 +56,9 @@
       <bpmn:outgoing>SequenceFlow_09fyz3b</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:userTask id="checkParticipantsUserTask" name="Check participants" camunda:formKey="embedded:app:forms/check-participants-form.html" camunda:candidateGroups="backoffice, trainer">
+      <bpmn:extensionElements>
+        <camunda:taskListener class="com.camunda.consulting.meal_ordering_process.listener.LoginStandardizationListener" event="complete" />
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_11bi5my</bpmn:outgoing>
     </bpmn:userTask>

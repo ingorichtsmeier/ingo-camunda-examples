@@ -2,6 +2,7 @@ package com.camunda.consulting.meal_ordering_process;
 
 import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
+import org.camunda.bpm.engine.authorization.Permissions;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.runtime.VariableInstance;
 import org.camunda.bpm.engine.task.Task;
@@ -28,10 +29,8 @@ import org.camunda.bpm.consulting.process_test_coverage.ProcessTestCoverage;
 
 /**
  * Test case starting an in-memory database-backed Process Engine.
- * 
- * @param <E>
  */
-public class InMemoryH2Test<E> {
+public class InMemoryH2Test {
 
   @Rule
   public ProcessEngineRule rule = new ProcessEngineRule();
@@ -83,6 +82,8 @@ public class InMemoryH2Test<E> {
     assertThat(processInstance).isWaitingAt("checkParticipantsUserTask").task().hasCandidateGroup("backoffice");
 
     complete(task());
+    
+    assertThat(identityService().createUserQuery().list()).hasSize(4);
 
     for (String weekday : training.getWeekdays()) {
       
@@ -100,28 +101,32 @@ public class InMemoryH2Test<E> {
       
       assertThat(selectMealTasks).hasSize(4);
 
-      Task taskOfBernd = taskQuery().taskAssignee(bernd.getEmail()).singleResult();
+      assertThat(identityService().checkPassword(bernd.getEmail().toLowerCase(), "ca051")).isTrue();
+      assertThat(authorizationService().createAuthorizationQuery().userIdIn(bernd.getEmail().toLowerCase()).hasPermission(Permissions.ACCESS).resourceId("tasklist").singleResult()).isNotNull();
+      identityService().setAuthenticatedUserId(bernd.getEmail().toLowerCase());
+      Task taskOfBernd = taskQuery().taskAssignee(bernd.getEmail().toLowerCase()).singleResult();
       assertThat(taskOfBernd).isNotNull(); // .hasDueDate(dateFormat.parse("05.09.2016
                                            // 11:00:00"));
-
       runtimeService().setVariableLocal(taskOfBernd.getExecutionId(), "meal", "Pasta primavera");
       complete(taskOfBernd);
+      identityService().clearAuthentication();
 
       assertThat(processInstance).hasVariables("mealSelections");
 
-      Task taskOfJakob = taskQuery().taskAssignee(jakob.getEmail()).singleResult();
+      assertThat(identityService().checkPassword(jakob.getEmail().toLowerCase(), "ca051")).isTrue();
+      Task taskOfJakob = taskQuery().taskAssignee(jakob.getEmail().toLowerCase()).singleResult();
       assertThat(taskOfJakob).isNotNull();
 
       runtimeService().setVariableLocal(taskOfJakob.getExecutionId(), "meal", "Steak medium");
       complete(taskOfJakob);
 
-      Task taskOfRobert = taskQuery().taskAssignee(robert.getEmail()).singleResult();
+      Task taskOfRobert = taskQuery().taskAssignee(robert.getEmail().toLowerCase()).singleResult();
       assertThat(taskOfRobert).isNotNull();
 
       runtimeService().setVariableLocal(taskOfRobert.getExecutionId(), "meal", "Wiener Schnitzel");
       complete(taskOfRobert);
 
-      Task taskOfTobias = taskQuery().taskAssignee(tobias.getEmail()).singleResult();
+      Task taskOfTobias = taskQuery().taskAssignee(tobias.getEmail().toLowerCase()).singleResult();
       assertThat(taskOfTobias).isNotNull();
 
       runtimeService().setVariableLocal(taskOfTobias.getExecutionId(), "meal", "Salat mit Putenbrust");
@@ -136,13 +141,15 @@ public class InMemoryH2Test<E> {
 
       assertThat(processInstance).isWaitingAt("printListUserTask").task().hasCandidateGroup("trainer");
       complete(task());
-
     }
 
     assertThat(processInstance).isWaitingAt("trainingFinishedTimerEvent");
     execute(job());
     
     assertThat(processInstance).isEnded();
+    
+    assertThat(identityService().createUserQuery().list()).isEmpty();
+    assertThat(authorizationService().createAuthorizationQuery().userIdIn(bernd.getEmail().toLowerCase()).list()).isEmpty();
   }
   
   @Test

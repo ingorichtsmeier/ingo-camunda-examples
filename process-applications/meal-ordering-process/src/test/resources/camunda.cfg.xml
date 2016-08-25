@@ -16,6 +16,7 @@
       </list>
     </property>
     <property name="defaultSerializationFormat" value="application/json"/>
+    <property name="authorizationEnabled" value="true"/>
   </bean>
 
 </beans>

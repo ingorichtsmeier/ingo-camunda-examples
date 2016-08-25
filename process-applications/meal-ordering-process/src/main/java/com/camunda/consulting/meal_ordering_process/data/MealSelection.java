@@ -29,4 +29,10 @@ public class MealSelection implements Serializable {
   public void setMeal(String meal) {
     this.meal = meal;
   }
+  
+  @Override
+  public String toString() {
+    return "MealSelection [participantName=" + participantName + ", meal=" + meal + "]";
+  }
+  
 }
