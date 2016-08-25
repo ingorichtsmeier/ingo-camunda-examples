@@ -1,0 +1,46 @@
+<strong>Here you would put the actual form to work on the task</strong>
+
+<p>
+  You can use this form through Camunda Tasklist
+  by setting the formKey of a BPMN User Task to:
+  <code>embedded:app:forms/check-participants-form.html</code>
+</p>
+
+<form class="form-horizontal">
+<h3>Training: {{training.trainingID}} start: {{training.startDate}} end: {{training.endDate}}</h3>
+
+  <div ng-repeat="participant in participants">
+    <div class="control-group">
+      <label class="control-label">Name</label>
+      <div class="controls">
+        <input type="text" 
+               ng-model="participant.name"
+               class="form-control" />
+        <input type="text" 
+               ng-model="participant.email"
+               class="form-control" />
+               
+      </div>
+    </div>
+  </div>
+
+  <script cam-script type="text/form-script">
+  camForm.on('form-loaded', function() {
+    // tell the form SDK to fetch the variable named 'training'
+    camForm.variableManager.fetchVariable('training');
+    camForm.variableManager.fetchVariable('participants');
+  });
+  camForm.on('variables-fetched', function() {
+    // work with the variable (bind it to the current AngularJS $scope)
+    $scope.training = camForm.variableManager.variableValue('training');
+    $scope.participants = camForm.variableManager.variableValue('participants');
+  });
+  camForm.on('submit', function() {
+    // remove '$$hashKey' properties from address objects
+    angular.forEach($scope.participants, function(participant) {
+        delete participant.$$hashKey;
+    });
+  });
+
+  </script>
+</form>

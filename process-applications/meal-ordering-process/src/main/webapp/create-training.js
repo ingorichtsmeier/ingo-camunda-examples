@@ -11,7 +11,7 @@ createTrainingApp.controller('CreateTrainingCtrl', function ($scope, $http) {
 	  console.log($scope.training);
 	  var postdata = {'variables': {
 		'training' : {
-			 'value':JSON.stringify($scope.training), 
+			 'value':angular.toJson($scope.training), 
 			 'type':'Object',
 			 'valueInfo': {
 				 'serializationDataFormat' : 'application/json',
@@ -19,11 +19,11 @@ createTrainingApp.controller('CreateTrainingCtrl', function ($scope, $http) {
 			 }
 		},
 		'participants' : {
-			'value':JSON.stringify(participants),
+			'value':angular.toJson(participants),
 			'type':'Object',
 			'valueInfo' : {
 				 'serializationDataFormat' : 'application/json',
-				 'objectTypeName' : 'java.util.List'
+				 'objectTypeName' : 'java.util.ArrayList<com.camunda.consulting.meal_ordering_process.data.Participant>'
 			}
 		}
 	  }};

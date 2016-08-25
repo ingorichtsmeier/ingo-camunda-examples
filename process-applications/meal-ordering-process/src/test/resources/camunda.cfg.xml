@@ -15,6 +15,7 @@
         <bean class="org.camunda.connect.plugin.impl.ConnectProcessEnginePlugin" />
       </list>
     </property>
+    <property name="defaultSerializationFormat" value="application/json"/>
   </bean>
 
 </beans>

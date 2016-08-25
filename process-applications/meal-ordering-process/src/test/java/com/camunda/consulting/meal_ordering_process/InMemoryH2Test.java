@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,7 +67,11 @@ public class InMemoryH2Test<E> {
     Participant robert = new Participant("Robert Gimbel", "Robert.gimbel@Camunda.com");
     Participant tobias = new Participant("Tobias Knisch", "tobias.knisch@generail.com");
 
-    List<Participant> participants = Arrays.asList(jakob, bernd, robert, tobias);
+    List<Participant> participants = new ArrayList<Participant>();
+    participants.add(jakob);
+    participants.add(bernd);
+    participants.add(robert);
+    participants.add(tobias);
 
     Training training = new Training("cam-ca051 Berlin", dateFormat.parse("05.09.2016 10:00"), dateFormat.parse("07.09.2016 16:00"));
 
@@ -85,20 +90,21 @@ public class InMemoryH2Test<E> {
       assertThat(weekdayVar.getValue()).isEqualTo(weekday);
 
       assertThat(processInstance).isWaitingAt("selectLocationUserTask").task().hasCandidateGroup("backoffice");
-
-      complete(task());
+      Task selectLocationTask = task();
+      runtimeService().setVariableLocal(selectLocationTask.getExecutionId(), "location", "Matzbach");
+      complete(selectLocationTask);
 
       assertThat(processInstance).isWaitingAt("selectMealUserTask");
 
       List<Task> selectMealTasks = taskQuery().processDefinitionKey(PROCESS_DEFINITION_KEY).list();
-
+      
       assertThat(selectMealTasks).hasSize(4);
 
       Task taskOfBernd = taskQuery().taskAssignee(bernd.getEmail()).singleResult();
       assertThat(taskOfBernd).isNotNull(); // .hasDueDate(dateFormat.parse("05.09.2016
                                            // 11:00:00"));
 
-      runtimeService().setVariableLocal(taskOfBernd.getExecutionId(), "meal", new MealSelection(bernd.getName(), "Pasta primavera"));
+      runtimeService().setVariableLocal(taskOfBernd.getExecutionId(), "meal", "Pasta primavera");
       complete(taskOfBernd);
 
       assertThat(processInstance).hasVariables("mealSelections");
@@ -106,19 +112,19 @@ public class InMemoryH2Test<E> {
       Task taskOfJakob = taskQuery().taskAssignee(jakob.getEmail()).singleResult();
       assertThat(taskOfJakob).isNotNull();
 
-      runtimeService().setVariableLocal(taskOfJakob.getExecutionId(), "meal", new MealSelection(jakob.getName(), "Steak medium"));
+      runtimeService().setVariableLocal(taskOfJakob.getExecutionId(), "meal", "Steak medium");
       complete(taskOfJakob);
 
       Task taskOfRobert = taskQuery().taskAssignee(robert.getEmail()).singleResult();
       assertThat(taskOfRobert).isNotNull();
 
-      runtimeService().setVariableLocal(taskOfRobert.getExecutionId(), "meal", new MealSelection(robert.getName(), "Wiener Schnitzel"));
+      runtimeService().setVariableLocal(taskOfRobert.getExecutionId(), "meal", "Wiener Schnitzel");
       complete(taskOfRobert);
 
       Task taskOfTobias = taskQuery().taskAssignee(tobias.getEmail()).singleResult();
       assertThat(taskOfTobias).isNotNull();
 
-      runtimeService().setVariableLocal(taskOfTobias.getExecutionId(), "meal", new MealSelection(tobias.getName(), "Salat mit Putenbrust"));
+      runtimeService().setVariableLocal(taskOfTobias.getExecutionId(), "meal", "Salat mit Putenbrust");
       complete(taskOfTobias);
 
       assertThat(processInstance).isWaitingAt("reserveAndOrderMealUserTask").task().hasCandidateGroup("backoffice");

@@ -2,7 +2,7 @@ package com.camunda.consulting.meal_ordering_process.data;
 
 import java.io.Serializable;
 
-public class MealSelection implements Serializable{
+public class MealSelection implements Serializable {
   
   private static final long serialVersionUID = 1L;
   

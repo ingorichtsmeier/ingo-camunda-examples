@@ -1,0 +1,63 @@
+<strong>Here you would put the actual form to work on the task</strong>
+
+<p>
+  You can use this form through Camunda Tasklist
+  by setting the formKey of a BPMN User Task to:
+  <code>embedded:app:forms/select-location-form.html</code>
+</p>
+
+<form class="form-horizontal">
+<h3>Training: {{training.trainingID}} start: {{training.startDate}} end: {{training.endDate}}</h3>
+
+  <div class="control-group">
+    <label class="control-label">Location</label>
+    <div class="controls">
+      <select ng-model="location" class="form-control"
+        cam-variable-type="String">
+        <option>Matzbach</option>
+        <option>San Viet</option>
+        <option>Mocca Bar</option>
+      </select>
+    </div>
+  </div>
+
+  <script cam-script type="text/form-script">
+  inject(['$http', 'Uri', function($http, Uri) {
+    console.log("inject");
+    camForm.on('form-loaded', function() {
+      $http.get(Uri.appUri("engine://engine/:engine/task/" + camForm.taskId)).success(function(result){
+        console.log(result.executionId);
+        $scope.executionId = result.executionId;
+      });
+    });
+    camForm.on('submit', function(evt) {
+      console.log("submit");
+      var req = {
+        method: 'PUT',
+        url: Uri.appUri("engine://engine/:engine/execution/" + $scope.executionId 
+            + "/localVariables/location"),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {"value": $scope.location, "type":"String"}
+      };
+      console.log(req);
+      $http(req)
+        .success(function(response) {})
+        .error(function(response) {
+            alert("error: " + response.data.message);
+        });
+      });
+  }]);
+
+  camForm.on('form-loaded', function() {
+    // tell the form SDK to fetch the variable named 'training'
+    camForm.variableManager.fetchVariable('training');
+    console.log(camForm);
+  });
+  camForm.on('variables-fetched', function() {
+    // work with the variable (bind it to the current AngularJS $scope)
+    $scope.training = camForm.variableManager.variableValue('training');
+  });
+  </script>
+</form>

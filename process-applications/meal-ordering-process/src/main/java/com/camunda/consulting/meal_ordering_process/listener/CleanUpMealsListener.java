@@ -1,4 +1,4 @@
-package com.camunda.consulting.meal_ordering_process.delegates;
+package com.camunda.consulting.meal_ordering_process.listener;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.ExecutionListener;
