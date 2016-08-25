@@ -4,21 +4,13 @@
   <input type="hidden" cam-variable-name="weekday">
   <input type="hidden" cam-variable-name="location">
 
-  <div class="control-group">
-    <div ng-repeat="mealSelection in mealSelections">
-    <div class="controls">
-      <input type="text" 
-             ng-model="mealSelection.participantName"
-             readonly="true" 
-             class="form-control input-md" />      
-      <input type="text" 
-             ng-model="mealSelection.meal"
-             readonly="true" 
-             class="form-control input-md" />      
-    </div>
-    </div>
-  </div>
-
+  <table class="table">
+    <tr ng-repeat="mealSelection in mealSelections">
+      <td>{{mealSelection.participantName}}</td>
+      <td>{{mealSelection.meal}}</td>
+    </tr>
+  </table>
+  
   <script cam-script type="text/form-script">
   camForm.on('form-loaded', function() {
     // tell the form SDK to fetch the variable named 'training'
