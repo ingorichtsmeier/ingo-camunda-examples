@@ -73,35 +73,41 @@ public class Training implements Serializable {
     start.setTime(startDate);
     Calendar end = Calendar.getInstance();
     end.setTime(endDate);
+    
+    int startday = start.get(Calendar.DAY_OF_YEAR);
+    int endday = end.get(Calendar.DAY_OF_YEAR);
+    
+    if (startday == endday) {
+      weekdays.add(calculateWeekday(start));
+      return weekdays;
+    }
 
     for (Calendar date = start; start.before(end); date.add(Calendar.DATE, 1)) {
-      switch (date.get(Calendar.DAY_OF_WEEK)) {
-      case Calendar.SUNDAY:
-        weekdays.add("Sunday");
-        break;
-      case Calendar.MONDAY:
-        weekdays.add("Monday");
-        break;
-      case Calendar.TUESDAY:
-        weekdays.add("Tuesday");
-        break;
-      case Calendar.WEDNESDAY:
-        weekdays.add("Wednesday");
-        break;
-      case Calendar.THURSDAY:
-        weekdays.add("Thursday");
-        break;
-      case Calendar.FRIDAY:
-        weekdays.add("Friday");
-        break;
-      case Calendar.SATURDAY:
-        weekdays.add("Saturday");
-        break;
-      default:
-        break;
-      }
+      weekdays.add(calculateWeekday(date));
     }
     return weekdays;
+  }
+
+  private String calculateWeekday(Calendar date) {
+    switch (date.get(Calendar.DAY_OF_WEEK)) {
+    case Calendar.SUNDAY:
+      return "Sunday";
+    case Calendar.MONDAY:
+      return "Monday";
+    case Calendar.TUESDAY:
+      return "Tuesday";
+    case Calendar.WEDNESDAY:
+      return "Wednesday";
+    case Calendar.THURSDAY:
+      return "Thursday";
+    case Calendar.FRIDAY:
+      return "Friday";
+    case Calendar.SATURDAY:
+      return "Saturday";
+    default:
+      break;
+    }
+    return null;
   }
 
 }

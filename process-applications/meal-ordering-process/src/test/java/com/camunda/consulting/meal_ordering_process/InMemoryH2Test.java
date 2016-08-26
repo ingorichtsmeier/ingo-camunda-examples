@@ -104,10 +104,14 @@ public class InMemoryH2Test {
 
       assertThat(identityService().checkPassword(bernd.getEmail().toLowerCase(), "ca051")).isTrue();
       assertThat(authorizationService().createAuthorizationQuery().userIdIn(bernd.getEmail().toLowerCase()).hasPermission(Permissions.ACCESS).resourceId("tasklist").singleResult()).isNotNull();
+      
       identityService().setAuthenticatedUserId(bernd.getEmail().toLowerCase());
       Task taskOfBernd = taskQuery().taskAssignee(bernd.getEmail().toLowerCase()).singleResult();
       assertThat(taskOfBernd).isNotNull(); // .hasDueDate(dateFormat.parse("05.09.2016
                                            // 11:00:00"));
+      // Check diagram
+      assertThat(repositoryService().createProcessDefinitionQuery().processDefinitionId(taskOfBernd.getProcessDefinitionId()).list()).hasSize(1);
+      
       runtimeService().setVariableLocal(taskOfBernd.getExecutionId(), "meal", "Pasta primavera");
       complete(taskOfBernd);
       identityService().clearAuthentication();
@@ -234,6 +238,28 @@ public class InMemoryH2Test {
     assertThat(authorizationService().createAuthorizationQuery().userIdIn(jakob.getEmail().toLowerCase()).list()).isEmpty();
   }
   
+  @Deployment(resources = {"meal-ordering.bpmn"})
+  @Test
+  public void testOneDayTraining() throws ParseException {
+    Participant jakob = new Participant("Jakob Freund", "Jakob.Freund@camunda.com");
+
+    List<Participant> participants = new ArrayList<Participant>();
+    participants.add(jakob);
+
+    Training training = new Training("dmn", dateFormat.parse("24.08.2016 10:00"), dateFormat.parse("24.08.2016 10:00"));
+
+    ProcessInstance processInstance = runtimeService()
+        .createProcessInstanceByKey(PROCESS_DEFINITION_KEY)
+        .startAfterActivity("createUsersServiceTask")
+        .setVariables(withVariables(
+            "training", training, 
+            "participants", participants))
+        .businessKey(training.getTrainingID())
+        .execute();
+    
+    assertThat(processInstance).isWaitingAt("selectLocationUserTask");    
+  }
+  
   @Test
   public void testIsoFormatting() throws ParseException {
     Training training = new Training("doesntMatter", dateFormat.parse("05.09.2016 10:00"), dateFormat.parse("07.09.2016 16:00"));
@@ -245,6 +271,14 @@ public class InMemoryH2Test {
   public void getWeekdays() throws ParseException {
     List<String> weekdays = Arrays.asList("Monday", "Tuesday", "Wednesday");
     Training training = new Training("doesntMatter", dateFormat.parse("05.09.2016 10:00"), dateFormat.parse("07.09.2016 16:00"));
+    
+    assertThat(training.getWeekdays()).isEqualTo(weekdays);
+  }
+
+  @Test
+  public void getWeekdayOneDayTraining() throws ParseException {
+    List<String> weekdays = Arrays.asList("Tuesday");
+    Training training = new Training("doesntMatter", dateFormat.parse("06.09.2016 10:00"), dateFormat.parse("06.09.2016 10:00"));
     
     assertThat(training.getWeekdays()).isEqualTo(weekdays);
   }

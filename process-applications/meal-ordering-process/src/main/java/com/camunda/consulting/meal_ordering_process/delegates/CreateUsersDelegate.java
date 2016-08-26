@@ -39,12 +39,13 @@ public class CreateUsersDelegate implements JavaDelegate {
       taskListAccess.addPermission(Permissions.ACCESS);
       authorizationService.saveAuthorization(taskListAccess);
       
-      Authorization processInstanceUpdate = authorizationService.createNewAuthorization(Authorization.AUTH_TYPE_GRANT);
-      processInstanceUpdate.setUserId(participant.getEmail());
-      processInstanceUpdate.setResource(Resources.PROCESS_DEFINITION);
-      processInstanceUpdate.setResourceId("MealOrderingProcess");
-      processInstanceUpdate.addPermission(Permissions.UPDATE_INSTANCE);
-      authorizationService.saveAuthorization(processInstanceUpdate);
+      Authorization processInstanceWork = authorizationService.createNewAuthorization(Authorization.AUTH_TYPE_GRANT);
+      processInstanceWork.setUserId(participant.getEmail());
+      processInstanceWork.setResource(Resources.PROCESS_DEFINITION);
+      processInstanceWork.setResourceId("MealOrderingProcess");
+      processInstanceWork.addPermission(Permissions.UPDATE_INSTANCE);
+      processInstanceWork.addPermission(Permissions.READ);
+      authorizationService.saveAuthorization(processInstanceWork);
     }
     
   }
