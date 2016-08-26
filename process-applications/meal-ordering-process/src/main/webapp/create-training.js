@@ -1,4 +1,4 @@
-var createTrainingApp = angular.module('createTrainingApp', []);
+﻿var createTrainingApp = angular.module('createTrainingApp', ['ngAnimate', 'ngSanitize', 'ui.bootstrap']);
 
 createTrainingApp.controller('CreateTrainingCtrl', function ($scope, $http) {
 
@@ -32,7 +32,8 @@ createTrainingApp.controller('CreateTrainingCtrl', function ($scope, $http) {
       console.log(JSON.stringify(postdata));
       $http.post('/engine-rest/process-definition/key/MealOrderingProcess/start', postdata)
         .then(function(response) {
-          $scope.antwort = response.data[0];
+            console.log(response);
+          $scope.answer = "Process started!";
         },
         function(response) {
           alert("error: " + response.data.message);
@@ -85,11 +86,10 @@ createTrainingApp.controller('CreateTrainingCtrl', function ($scope, $http) {
   };
 
   $scope.setDate = function(year, month, day) {
-    $scope.dp = new Date(year, month, day);
+    $scope.training.startDate = new Date(year, month, day);
   };
 
-  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-  $scope.format = $scope.formats[0];
+  $scope.format = 'dd.MM.yyyy hh:mm';
   $scope.altInputFormats = ['M!/d!/yyyy'];
 
   $scope.popup1 = {

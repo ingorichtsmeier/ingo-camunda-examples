@@ -41,32 +41,32 @@
     <div class="form-group">
       <label class="col-sm-4 control-label">Start Date</label>
       <div class="col-sm-8">
-        <input type="text" ng-model="training.startDate" id="startDate" class="form-control" >
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="col-sm-4 control-label">End Date</label>
-      <div class="col-sm-8">
-        <input type="text" ng-model="training.endDate" id="endDate" class="form-control" >
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="col-sm-4 control-label">Start Date</label>
-      <div class="col-sm-8">
         <p class="input-group">
           <input type="text" class="form-control" uib-datepicker-popup="{{format}}" 
-		    ng-model="dp" is-open="popup1.opened" datepicker-options="dateOptions" 
-			close-text="Close" alt-input-formats="altInputFormats" />
+		    ng-model="training.startDate" is-open="popup1.opened" datepicker-options="dateOptions" 
+			close-text="Close" alt-input-formats="altInputFormats"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
           </span>
         </p>
       </div>
     </div>
-
+    
+    <div class="form-group">
+      <label class="col-sm-4 control-label">End Date</label>
+      <div class="col-sm-8">
+        <p class="input-group">
+          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" 
+		    ng-model="training.endDate" is-open="popup2.opened" datepicker-options="dateOptions" 
+			close-text="Close" alt-input-formats="altInputFormats" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+      </div>
+    </div>
   </div>
+  
   <div class="col-sm-6">
     <h3>Participants</h3>
     <div ng-repeat="participant in participants">
@@ -85,16 +85,21 @@
     <div class="form-group">
       <label class="col-md-2 control-label" for="addParticipant"></label>
       <div class="col-md-4">
-    <button id="addParticipant" name="addParticipant" class="btn btn-default">Add Participant</button>
+        <button id="addParticipant" name="addParticipant" class="btn btn-default">Add Participant</button>
+      </div>
+    </div>
   </div>
-</div>
-
-  </div>
+  
   <div class="col-sm-4 col-sm-offset-5">
     <button type="submit" class="btn btn-primary" ng-click="startMealOrderingProcess()">Start meal ordering</button>
   </div>    
 </div>
-
+<div class="row">
+  <div class="col-sm-12">
+    <h3 class="text-center">{{answer}}</h3>
+  </div>    
+  
+</div>
 </form>
 </div>
 </body>

@@ -4,12 +4,28 @@
  <div class="control-group">
     <label class="control-label">Your choice</label>
     <div class="controls">
-      <select ng-model="meal" class="form-control"
-        cam-variable-type="String">
-        <option>Wiener Schnitzel</option>
-        <option>Martktsalat</option>
-        <option>Spätzle</option>
-      </select>
+      <table class="table">
+        <tr>
+          <td><input type="radio" name="meal-ws" value="Wiener Schnitzel" ng-model="meal"></td>
+          <td>Wiener Schnitzel</td>
+        </tr>
+        <tr>
+          <td><input type="radio" name="meal-ws" value="Marktsalat" ng-model="meal"></td>
+          <td>Marktsalat</td>
+        </tr>
+        <tr>
+          <td><input type="radio" name="meal-ws" value="Spätzle" ng-model="meal"></td>
+          <td>Spätzle</td>
+        </tr>
+        <tr>
+          <td><input type="radio" name="meal-ws" value="Pizza Margarita" ng-model="meal"></td>
+          <td>Pizza Margarita</td>
+        </tr>
+        <tr>
+          <td><input type="radio" name="meal-ws" value="Pizza Funghi" ng-model="meal"></td>
+          <td>Pizza Funghi</td>
+        </tr>
+      </table>
     </div>
   </div>
   <input type="hidden" cam-variable-name="weekday">
