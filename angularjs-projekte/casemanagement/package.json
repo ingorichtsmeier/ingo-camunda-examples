@@ -1,0 +1,45 @@
+{
+  "name": "bpmn-js-example-commonjs",
+  "version": "0.0.0",
+  "description": "An example how to use bpmn-js with CommonJS + npm + browserify",
+  "main": "app/app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bpmn-io/bpmn-js-examples"
+  },
+  "keywords": [
+    "bpmnjs-example"
+  ],
+  "author": {
+    "name": "Nico Rehwaldt",
+    "url": "https://github.com/nikku"
+  },
+  "contributors": [
+    {
+      "name": "bpmn.io contributors",
+      "url": "https://github.com/bpmn-io"
+    }
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "~1.0.1",
+    "brfs": "^1.2.0",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-watch": "~1.0.0",
+    "grunt-contrib-connect": "~1.0.2",
+    "grunt-contrib-jshint": "~1.0.0",
+    "grunt-contrib-less": "^1.0.1",
+    "grunt-contrib-copy": "~1.0.0",
+    "grunt-war": "~0.5.1",
+    "load-grunt-tasks": "~3.5.0"
+  },
+  "dependencies": {
+    "angular-data-depend": "git://github.com/camunda-third-party/angular-data-depend#8e3b66914c611069e3698fd5d4275e6cf8055d01",
+    "angular-moment": "0.9.0",
+    "angular-route": "1.2.29",
+    "camunda-commons-ui": "git://github.com/camunda/camunda-commons-ui#master",
+    "events": "1.1.0",
+    "jquery": "2.1.1",
+    "jquery-ui": "1.10.5"
+  }
+}

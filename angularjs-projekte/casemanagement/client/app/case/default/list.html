@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        alle Fälle
+      </div>
+      <div class="panel-body">
+        See the list here:
+        <table class="table">
+          <tr ng-repeat="procInst in processInstances">
+            <td><span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+              <a href="app/case/default/#/case/{{procInst.id}}"> {{procInst.id}}</a></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <base href="/case-ui/"
+          admin-api="http://localhost:8080/camunda/api/admin/"
+          tasklist-api="/api/tasklist/"
+          engine-api="http://localhost:8080/camunda/api/engine/"
+          app-root="/"
+          app-name="tasklist" />
+  <link rel="stylesheet"  href="app/case/default/css/app.css"/>
+  <title></title>
+</head>
+<body ng-controller="headerCtrl">
+  <div cam-widget-header
+       authentication="authentication"
+       user-name="userFullName"
+       current-app="tasklist"
+       toggle-navigation="{{ 'TOGGLE_NAVIGATION' | translate }}"
+       sign-out="{{ 'SIGN_OUT_ACTION' | translate }}"
+       my-profile="{{ 'MY_PROFILE' | translate }}"
+       brand-name="Falldossier"
+       ng-cloak>
+   <ul cam-if-logged-in>
+      <li ng-repeat="actionProvider in navbarActions"
+          ng-class="actionProvider.id">
+        <view ng-cloak
+              provider="actionProvider"
+              vars="navbarVars">
+        </view>
+      </li>
+    </ul>
+  </div>
+  <br />
+  <div class="container-fluid"
+       ng-view></div>
+
+  <div cam-widget-footer
+       version=""></div>
+  <script src="app/case/default/js/app.js"></script>
+</body>
+</html>

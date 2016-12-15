@@ -1,0 +1,61 @@
+  <div class="row">
+    <div class="col-md-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+          Fallinformationen
+        </div>
+        <div class="panel-body">
+          <div cam-widget-variables-table
+            cam-variables="vars"
+            cam-editable="[]" cam-headers="{name: 'Name', value: 'Wert'}">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+          Dokumente
+        </div>
+        <div class="panel-body">
+          <!-- List of documents associated with the currently selected process instance -->
+          <!--Number of process instances: {{processInstances.length}}-->
+          <!--
+          <table class="table">
+            <tr ng-repeat="procInst in processInstances">
+              <td><span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{procInst.id}}</td>
+            </tr>
+          </table>
+          -->
+          <table class="table">
+            <tr ng-repeat="doc in docs">
+              <td>
+                <span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+                <a href="" ng-click="viewDoc(doc)">{{doc.valueInfo.filename}} ({{doc.valueInfo.mimeType}})</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+          Dokumentenansicht {{currentDoc.valueInfo.filename}}
+        </div>
+        <div class="panel-body">
+          <object data="http://localhost:8080/case-ui-backend/file-variable?variableId={{currentDoc.id}}" type="application/pdf" style="width:100%; height:775px;">
+           <p>
+            It appears you don't have a PDF plugin for this browser. No biggie... you can
+            <a href="http://localhost:8080/camunda/api/engine/engine/default/variable-instance/{{currentDoc.id}}/data"> click here to download the PDF file.</a>
+           </p>
+          </object>
+        </div>
+      </div>
+    </div>
+  </div>
