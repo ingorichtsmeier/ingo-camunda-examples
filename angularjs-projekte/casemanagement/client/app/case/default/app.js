@@ -21,13 +21,12 @@ caseModule.controller('headerCtrl', ['$scope', 'Uri', function($scope, Uri) {
 
 // get the camClient
 caseModule.factory('camClient', ['Uri', function(Uri) {
-    var conf = {
-      apiUri: Uri.appUri('engine://'),
-      engine: Uri.appUri(':engine')
-    };
-    return new CamSDK.Client(conf);
-  }]);
-
+  var conf = {
+    apiUri: Uri.appUri('engine://'),
+    engine: Uri.appUri(':engine')
+  };
+  return new CamSDK.Client(conf);
+}]);
 
 caseModule.controller('listCtrl', ['$scope', '$routeParams', 'camClient', function($scope, $routeParams, camClient) {
   console.log("listCtrl");
@@ -37,7 +36,9 @@ caseModule.controller('listCtrl', ['$scope', '$routeParams', 'camClient', functi
   ProcessInstance.list({}, function(err, results) {
     console.log(err);
     console.log("results from ProcessInstance.list", results);
-    $scope.processInstances = results;
+    $scope.$apply(function () {
+      $scope.processInstances = results;
+    });
   });
 }]);
 
@@ -48,33 +49,33 @@ caseModule.controller('detailCtrl', ['$scope', '$routeParams', 'camClient', func
 
   var Variables = camClient.resource('variable');
   Variables.instances({'processInstanceIdIn': [procInstId]}, function(err, results) {
-    $scope.docs = results
-      .filter(function(variable) {
+    $scope.$apply(function() {
+      $scope.docs = results.filter(function(variable) {
         return variable.type == 'File';
       });
-    $scope.vars = results
-      .filter(function(variable) {
-        return variable.type != 'File';
-      })
-      .map(function(item) {
-        return {
-          variable: {
-            id:           item.id,
-            name:         item.name,
-            type:         item.type,
-            value:        item.value,
-            valueInfo:    item.valueInfo,
-            executionId:  item.executionId
-          },
-          original: item
-        };
-      });
-    $scope.currentDoc = $scope.docs[0];
-    $scope.viewDoc = function(doc) {
-      $scope.currentDoc = doc;
-    }
+      $scope.vars = results
+        .filter(function(variable) {
+          return variable.type != 'File';
+        })
+        .map(function(item) {
+          return {
+            variable: {
+              id:           item.id,
+              name:         item.name,
+              type:         item.type,
+              value:        item.value,
+              valueInfo:    item.valueInfo,
+              executionId:  item.executionId
+            },
+            original: item
+          };
+        });
+      $scope.currentDoc = $scope.docs[0];
+      $scope.viewDoc = function(doc) {
+        $scope.currentDoc = doc;
+      }
+    });
   });
-
 }]);
 
 // bootstrap without ng-app
@@ -87,7 +88,6 @@ function getUri(id) {
   if (!id) {
     throw new Error('Uri base for ' + id + ' could not be resolved');
   }
-
   return uri;
 }
 
