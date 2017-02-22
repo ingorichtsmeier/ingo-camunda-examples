@@ -59,6 +59,8 @@ public class InMemoryH2Test {
 	  Job jobForBackend = jobQuery().processDefinitionKey(BUSINESS_PROCESS_BACKEND).singleResult();
 	  execute(jobForBackend);
 	  assertThat(processInstanceBE).isWaitingAt("completed_UI");
+	  
+	  assertThat(processInstance).isWaitingAt("ui_get_credentials");
   }
 
 }
