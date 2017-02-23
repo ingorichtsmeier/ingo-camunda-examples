@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="definitions_0ypyumm" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="precheck_approval" name="Approval Check">
+    <decisionTable id="decisionTable">
+      <input id="input1" label="Approved" camunda:inputVariable="">
+        <inputExpression id="inputExpression1" typeRef="boolean">        <text>approved</text>
+</inputExpression>
+      </input>
+      <output id="output1" label="OK" name="approvalResult" typeRef="string" />
+      <rule id="row-775046925-23">
+        <inputEntry id="UnaryTests_1wxtay5">        <text>true</text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_1y4e6h9">        <text><![CDATA["YES"]]></text>
+</outputEntry>
+      </rule>
+      <rule id="row-775046925-24">
+        <inputEntry id="UnaryTests_19gnwgf">        <text>false</text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_04ic7dc">        <text><![CDATA["NO"]]></text>
+</outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

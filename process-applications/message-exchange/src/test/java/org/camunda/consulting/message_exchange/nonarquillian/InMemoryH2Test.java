@@ -46,12 +46,12 @@ public class InMemoryH2Test {
   }
 
   @Test
-  @Deployment(resources = "messageing_issue.bpmn")
+  @Deployment(resources = {"messageing_issue.bpmn", "approval_check.dmn"})
   public void testHappyPath() {
-	  ProcessInstance processInstance = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, withVariables("UI_ID", "15"));
+	  ProcessInstance processInstanceUI = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, withVariables("UI_ID", "15"));
 	  
 	  // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
-	  assertThat(processInstance).isWaitingAt("start_UI").hasPassed("start_backend");
+	  assertThat(processInstanceUI).isWaitingAt("start_UI").hasPassed("start_backend");
 	  
 	  ProcessInstance processInstanceBE = processInstanceQuery().processDefinitionKey(BUSINESS_PROCESS_BACKEND).singleResult();
 	  assertThat(processInstanceBE).isWaitingAt("startEvent");
@@ -60,7 +60,45 @@ public class InMemoryH2Test {
 	  execute(jobForBackend);
 	  assertThat(processInstanceBE).isWaitingAt("completed_UI");
 	  
-	  assertThat(processInstance).isWaitingAt("ui_get_credentials");
+	  assertThat(processInstanceUI).isWaitingAt("ui_get_credentials");
+	  
+	  complete(task(), withVariables("approved", true));
+	  
+	  assertThat(processInstanceUI).isWaitingAt("start_UI");
+	  
+	  assertThat(processInstanceBE).isWaitingAt("approvalFinishedEvent");
+  }
+
+  @Test
+  @Deployment(resources = {"messageing_issue.bpmn", "approval_check.dmn"})
+  public void testUiRejectOnceAndApproveOnSecondRound() {
+    ProcessInstance processInstanceUI = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, withVariables("UI_ID", "15"));
+    
+    // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
+    assertThat(processInstanceUI).isWaitingAt("start_UI").hasPassed("start_backend");
+    
+    ProcessInstance processInstanceBE = processInstanceQuery().processDefinitionKey(BUSINESS_PROCESS_BACKEND).singleResult();
+    assertThat(processInstanceBE).isWaitingAt("startEvent");
+    
+    Job jobForBackend = jobQuery().processDefinitionKey(BUSINESS_PROCESS_BACKEND).singleResult();
+    execute(jobForBackend);
+    
+    assertThat(processInstanceBE).isWaitingAt("completed_UI");
+    assertThat(processInstanceUI).isWaitingAt("ui_get_credentials");
+    
+    complete(task(), withVariables("approved", false));
+    
+    assertThat(processInstanceUI).isWaitingAt("start_UI");
+    
+    assertThat(processInstanceBE).isWaitingAt("timerEvent");
+    execute(job());
+    
+    assertThat(processInstanceBE).isWaitingAt("completed_UI");
+    assertThat(processInstanceUI).isWaitingAt("ui_get_credentials");
+    
+    complete(task(), withVariables("approved", true));
+    
+    assertThat(processInstanceBE).isWaitingAt("approvalFinishedEvent");
   }
 
 }
