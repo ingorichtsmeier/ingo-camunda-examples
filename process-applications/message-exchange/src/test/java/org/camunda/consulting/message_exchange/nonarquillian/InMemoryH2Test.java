@@ -4,7 +4,11 @@ import org.apache.ibatis.logging.LogFactory;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
+import org.camunda.bpm.engine.test.mock.Mocks;
 import org.camunda.bpm.extension.process_test_coverage.junit.rules.TestCoverageProcessEngineRuleBuilder;
+import org.camunda.consulting.message_exchange.SendOnboardingMessageDelegate;
+import org.camunda.consulting.message_exchange.SendStopUiMessageDelegate;
+import org.camunda.consulting.message_exchange.SendUiMessageDelegate;
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -34,6 +38,9 @@ public class InMemoryH2Test {
   @Before
   public void setup() {
     init(rule.getProcessEngine());
+    Mocks.register("startOnboarding", new SendOnboardingMessageDelegate());
+    Mocks.register("startUI", new SendUiMessageDelegate());
+    Mocks.register("stopUI", new SendStopUiMessageDelegate());
   }
 
   /**
@@ -51,7 +58,9 @@ public class InMemoryH2Test {
 	  ProcessInstance processInstanceUI = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, withVariables("UI_ID", "15"));
 	  
 	  // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
-	  assertThat(processInstanceUI).isWaitingAt("start_UI").hasPassed("start_backend");
+	  assertThat(processInstanceUI).isWaitingAt("start_UI", "start_backend");
+	  execute(job());
+	  assertThat(processInstanceUI).hasPassed("start_backend");
 	  
 	  ProcessInstance processInstanceBE = processInstanceQuery().processDefinitionKey(BUSINESS_PROCESS_BACKEND).singleResult();
 	  assertThat(processInstanceBE).isWaitingAt("startEvent");
@@ -75,7 +84,9 @@ public class InMemoryH2Test {
     ProcessInstance processInstanceUI = runtimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, withVariables("UI_ID", "15"));
     
     // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
-    assertThat(processInstanceUI).isWaitingAt("start_UI").hasPassed("start_backend");
+    assertThat(processInstanceUI).isWaitingAt("start_UI", "start_backend");
+    execute(job());
+    assertThat(processInstanceUI).hasPassed("start_backend");
     
     ProcessInstance processInstanceBE = processInstanceQuery().processDefinitionKey(BUSINESS_PROCESS_BACKEND).singleResult();
     assertThat(processInstanceBE).isWaitingAt("startEvent");
