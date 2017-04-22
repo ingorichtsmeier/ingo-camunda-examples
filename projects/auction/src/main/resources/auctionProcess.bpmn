@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.2">
+  <bpmn:process id="AuctionProcess" name="Auction Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Auction wanted">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="title" label="Title" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_0jzna8l</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0jzna8l" sourceRef="StartEvent_1" targetRef="AuthorizeAuction_Task" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_02c2dp7" name="Auction authorized?">
+      <bpmn:incoming>SequenceFlow_1p39azo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0zexlwq</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0nkcene</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1p39azo" sourceRef="AuthorizeAuction_Task" targetRef="ExclusiveGateway_02c2dp7" />
+    <bpmn:sequenceFlow id="SequenceFlow_0zexlwq" name="yes" sourceRef="ExclusiveGateway_02c2dp7" targetRef="Task_0juhupf">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${authorized}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_18251a0" sourceRef="Task_0juhupf" targetRef="AuctionEnded_TimerEvent" />
+    <bpmn:sequenceFlow id="SequenceFlow_1s2248s" sourceRef="AuctionEnded_TimerEvent" targetRef="ExclusiveGateway_170t95p" />
+    <bpmn:intermediateCatchEvent id="AuctionEnded_TimerEvent" name="Auction ended">
+      <bpmn:incoming>SequenceFlow_18251a0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1s2248s</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${endDate}</bpmn:timeDate>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_170t95p" name="Auction successful?">
+      <bpmn:incoming>SequenceFlow_1s2248s</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0809a10</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_01og7xx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0809a10" name="yes" sourceRef="ExclusiveGateway_170t95p" targetRef="PrepareBilling_Task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${numberOfBids > 0}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="AuctionDeclined_EndEvent" name="Auction declined">
+      <bpmn:incoming>SequenceFlow_0nkcene</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0nkcene" name="no" sourceRef="ExclusiveGateway_02c2dp7" targetRef="AuctionDeclined_EndEvent">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${not authorized}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="AuctionFinished_EndEvent" name="Auction finished">
+      <bpmn:incoming>SequenceFlow_1ytznp6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1ytznp6" sourceRef="PrepareBilling_Task" targetRef="AuctionFinished_EndEvent" />
+    <bpmn:endEvent id="NoBids_EndEvent" name="No bids arrived">
+      <bpmn:incoming>SequenceFlow_01og7xx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_01og7xx" name="no" sourceRef="ExclusiveGateway_170t95p" targetRef="NoBids_EndEvent">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${numberOfBids < 1}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="AuthorizeAuction_Task" name="Authorize auction">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="title" label="Title" type="string" />
+          <camunda:formField id="endDate" label="End Date" type="date" />
+          <camunda:formField id="authorized" label="Authorized?" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0jzna8l</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1p39azo</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Task_0juhupf" name="Publish auction on twitter" camunda:delegateExpression="${createTweetDelegate}">
+      <bpmn:incoming>SequenceFlow_0zexlwq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_18251a0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="PrepareBilling_Task" name="Prepare billing and shipping">
+      <bpmn:incoming>SequenceFlow_0809a10</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ytznp6</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="AuctionProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="19" y="43" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="0" y="79" width="74" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jzna8l_di" bpmnElement="SequenceFlow_0jzna8l">
+        <di:waypoint xsi:type="dc:Point" x="55" y="61" />
+        <di:waypoint xsi:type="dc:Point" x="118" y="61" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="86.5" y="40" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_02c2dp7_di" bpmnElement="ExclusiveGateway_02c2dp7" isMarkerVisible="true">
+        <dc:Bounds x="287" y="36" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="283" y="0" width="57" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1p39azo_di" bpmnElement="SequenceFlow_1p39azo">
+        <di:waypoint xsi:type="dc:Point" x="218" y="61" />
+        <di:waypoint xsi:type="dc:Point" x="287" y="61" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="252.5" y="40" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zexlwq_di" bpmnElement="SequenceFlow_0zexlwq">
+        <di:waypoint xsi:type="dc:Point" x="337" y="61" />
+        <di:waypoint xsi:type="dc:Point" x="418" y="61" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="369" y="40" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_18251a0_di" bpmnElement="SequenceFlow_18251a0">
+        <di:waypoint xsi:type="dc:Point" x="518" y="61" />
+        <di:waypoint xsi:type="dc:Point" x="605" y="61" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="561.5" y="40" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1s2248s_di" bpmnElement="SequenceFlow_1s2248s">
+        <di:waypoint xsi:type="dc:Point" x="641" y="61" />
+        <di:waypoint xsi:type="dc:Point" x="711" y="61" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="676" y="40" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1xztobx_di" bpmnElement="AuctionEnded_TimerEvent">
+        <dc:Bounds x="605" y="43" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="589" y="83" width="69" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_170t95p_di" bpmnElement="ExclusiveGateway_170t95p" isMarkerVisible="true">
+        <dc:Bounds x="711" y="36" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="706" y="4" width="59" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0809a10_di" bpmnElement="SequenceFlow_0809a10">
+        <di:waypoint xsi:type="dc:Point" x="761" y="61" />
+        <di:waypoint xsi:type="dc:Point" x="833" y="61" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="788" y="40" width="18" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1y7872y_di" bpmnElement="AuctionDeclined_EndEvent">
+        <dc:Bounds x="368" y="168" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="347" y="208" width="79" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0nkcene_di" bpmnElement="SequenceFlow_0nkcene">
+        <di:waypoint xsi:type="dc:Point" x="312" y="86" />
+        <di:waypoint xsi:type="dc:Point" x="312" y="186" />
+        <di:waypoint xsi:type="dc:Point" x="368" y="186" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="321" y="130" width="12" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1svfsjk_di" bpmnElement="AuctionFinished_EndEvent">
+        <dc:Bounds x="1004" y="43" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="984" y="83" width="76" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ytznp6_di" bpmnElement="SequenceFlow_1ytznp6">
+        <di:waypoint xsi:type="dc:Point" x="933" y="61" />
+        <di:waypoint xsi:type="dc:Point" x="1004" y="61" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="968.5" y="40" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_11o90qz_di" bpmnElement="NoBids_EndEvent">
+        <dc:Bounds x="805" y="168" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="786" y="208" width="74" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01og7xx_di" bpmnElement="SequenceFlow_01og7xx">
+        <di:waypoint xsi:type="dc:Point" x="736" y="86" />
+        <di:waypoint xsi:type="dc:Point" x="736" y="186" />
+        <di:waypoint xsi:type="dc:Point" x="805" y="186" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="745" y="130" width="12" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0r25yyp_di" bpmnElement="AuthorizeAuction_Task">
+        <dc:Bounds x="118" y="21" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_04dt2i1_di" bpmnElement="Task_0juhupf">
+        <dc:Bounds x="418" y="21" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1etjmzy_di" bpmnElement="PrepareBilling_Task">
+        <dc:Bounds x="833" y="21" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
