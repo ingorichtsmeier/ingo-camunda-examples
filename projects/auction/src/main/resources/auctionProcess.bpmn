@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.2">
   <bpmn:process id="AuctionProcess" name="Auction Process" isExecutable="true">
-    <bpmn:startEvent id="StartEvent_1" name="Auction wanted">
+    <bpmn:startEvent id="StartEvent_1" name="Auction wanted" camunda:formKey="embedded:app:forms/start-form.html">
       <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="title" label="Title" type="string" />
-        </camunda:formData>
+        <camunda:formData />
       </bpmn:extensionElements>
       <bpmn:outgoing>SequenceFlow_0jzna8l</bpmn:outgoing>
     </bpmn:startEvent>
@@ -17,7 +15,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1p39azo" sourceRef="AuthorizeAuction_Task" targetRef="ExclusiveGateway_02c2dp7" />
     <bpmn:sequenceFlow id="SequenceFlow_0zexlwq" name="yes" sourceRef="ExclusiveGateway_02c2dp7" targetRef="Task_0juhupf">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${authorized}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${auction.authorized}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_18251a0" sourceRef="Task_0juhupf" targetRef="AuctionEnded_TimerEvent" />
     <bpmn:sequenceFlow id="SequenceFlow_1s2248s" sourceRef="AuctionEnded_TimerEvent" targetRef="ExclusiveGateway_170t95p" />
@@ -25,7 +23,7 @@
       <bpmn:incoming>SequenceFlow_18251a0</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1s2248s</bpmn:outgoing>
       <bpmn:timerEventDefinition>
-        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${endDate}</bpmn:timeDate>
+        <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${auction.endDate}</bpmn:timeDate>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:exclusiveGateway id="ExclusiveGateway_170t95p" name="Auction successful?">
@@ -40,7 +38,7 @@
       <bpmn:incoming>SequenceFlow_0nkcene</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0nkcene" name="no" sourceRef="ExclusiveGateway_02c2dp7" targetRef="AuctionDeclined_EndEvent">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${not authorized}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${not auction.authorized}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="AuctionFinished_EndEvent" name="Auction finished">
       <bpmn:incoming>SequenceFlow_1ytznp6</bpmn:incoming>
@@ -52,13 +50,9 @@
     <bpmn:sequenceFlow id="SequenceFlow_01og7xx" name="no" sourceRef="ExclusiveGateway_170t95p" targetRef="NoBids_EndEvent">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${numberOfBids < 1}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="AuthorizeAuction_Task" name="Authorize auction">
+    <bpmn:userTask id="AuthorizeAuction_Task" name="Authorize auction" camunda:formKey="embedded:app:forms/authorize-auction.html">
       <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="title" label="Title" type="string" />
-          <camunda:formField id="endDate" label="End Date" type="date" />
-          <camunda:formField id="authorized" label="Authorized?" type="boolean" />
-        </camunda:formData>
+        <camunda:formData />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0jzna8l</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1p39azo</bpmn:outgoing>

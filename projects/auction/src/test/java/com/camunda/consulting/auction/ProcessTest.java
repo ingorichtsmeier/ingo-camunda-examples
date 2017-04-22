@@ -12,7 +12,6 @@ import org.camunda.bpm.engine.test.mock.Mocks;
 import org.camunda.bpm.extension.process_test_coverage.junit.rules.TestCoverageProcessEngineRuleBuilder;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +19,7 @@ import org.mockito.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.camunda.consulting.auction.delegate.CreateTweetDelegate;
+import com.camunda.consulting.auction.domain.Auction;
 import com.camunda.consulting.auction.service.TweetService;
 
 @RunWith(PowerMockRunner.class)
@@ -52,19 +52,24 @@ public class ProcessTest {
   @Deployment(resources = "auctionProcess.bpmn")
   @Test
   public void testHappyPath() throws Exception {
+    Auction auction = new Auction();
+    auction.setTitle("test auction object");
+    auction.setDescription("some test description");
+    
     ProcessInstance processInstance = runtimeService()
         .startProcessInstanceByKey("AuctionProcess", withVariables(
-            AuctionProcessVariables.TITLE, "test auction", 
-            AuctionProcessVariables.END_DATE, new Date(),
+            AuctionProcessVariables.AUCTION, auction,
             AuctionProcessVariables.NUMBER_OF_BIDS, 0));
     
     assertThat(processInstance).isWaitingAt("AuthorizeAuction_Task");
     
-    complete(task(), withVariables(AuctionProcessVariables.AUTHORIZED, true));
+    auction.setAuthorized(true);
+    auction.setEndDate(new Date());
+    complete(task(), withVariables(AuctionProcessVariables.AUCTION, auction));
     
     assertThat(processInstance).isWaitingAt("AuctionEnded_TimerEvent").hasVariables(AuctionProcessVariables.TWEET_ID);
     
-    verify(tweetService).publish("test auction");
+    verify(tweetService).publish("test auction object");
     
     runtimeService().setVariable(processInstance.getId(), AuctionProcessVariables.NUMBER_OF_BIDS, 13);
     
@@ -92,10 +97,12 @@ public class ProcessTest {
   @Deployment(resources = "auctionProcess.bpmn")
   @Test
   public void testNotAuthorized() {
+    Auction auction = new Auction();
+    auction.setAuthorized(false);
     ProcessInstance processInstance = runtimeService()
         .createProcessInstanceByKey("AuctionProcess")
         .startAfterActivity("AuthorizeAuction_Task")
-        .setVariable(AuctionProcessVariables.AUTHORIZED, false)
+        .setVariable(AuctionProcessVariables.AUCTION, auction)
         .executeWithVariablesInReturn();
     
     assertThat(processInstance).isEnded().hasPassed("AuctionDeclined_EndEvent");    
