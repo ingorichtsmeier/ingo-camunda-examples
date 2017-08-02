@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="definitions_01ffem8" name="definitions" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="receiptCheck" name="Receipt check">
+    <decisionTable id="decisionTable">
+      <input id="input1" label="Receipt value" camunda:inputVariable="">
+        <inputExpression id="inputExpression1" typeRef="integer">        <text>receiptValue</text>
+</inputExpression>
+      </input>
+      <output id="output1" label="New receipt needed?" name="newReceiptNeeded" typeRef="boolean" />
+      <rule id="row-100815457-15">
+        <inputEntry id="UnaryTests_1t2j38o">        <text><![CDATA[< 5]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_0h3c78u">        <text>false</text>
+</outputEntry>
+      </rule>
+      <rule id="row-100815457-16">
+        <inputEntry id="UnaryTests_1f5vitw">        <text><![CDATA[>= 5]]></text>
+</inputEntry>
+        <outputEntry id="LiteralExpression_18z0qwe">        <text>true</text>
+</outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>
