@@ -5,6 +5,8 @@ import javax.inject.Named;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.camunda.consulting.auction.AuctionProcessVariables;
 import com.camunda.consulting.auction.service.TweetService;
@@ -12,8 +14,15 @@ import com.camunda.consulting.auction.service.TweetService;
 @Named
 public class CreateTweetDelegate implements JavaDelegate {
   
-  @Inject
   private TweetService tweetService;
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(CreateTweetDelegate.class);
+  
+  @Inject
+  public CreateTweetDelegate(TweetService aTweetService) {
+    LOGGER.info("using tweet service {}", aTweetService.getClass().getName());
+    this.tweetService = aTweetService;
+  }
 
   @Override
   public void execute(DelegateExecution execution) throws Exception {
@@ -22,13 +31,4 @@ public class CreateTweetDelegate implements JavaDelegate {
     long tweetId = tweetService.publish(content);
     auctionProcessVariables.setTweetId(tweetId);
   }
-
-  /**
-   * setter to test in JUnit without CDI
-   * @param mockedService
-   */
-  public void setTweetService(TweetService mockedService) {
-    this.tweetService = mockedService;
-  }
-
 }

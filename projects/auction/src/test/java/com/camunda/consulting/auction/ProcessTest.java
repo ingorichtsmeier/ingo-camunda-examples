@@ -15,7 +15,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.camunda.consulting.auction.delegate.CreateTweetDelegate;
@@ -28,15 +27,11 @@ public class ProcessTest {
   @Rule
   public ProcessEngineRule rule = TestCoverageProcessEngineRuleBuilder.create().build();
   
-  @Mock 
-  TweetService tweetService; 
+  TweetService tweetService = mock(TweetService.class);
   
   @Before
   public void setup() {
-    CreateTweetDelegate createTweetDelegate = new CreateTweetDelegate();
-    createTweetDelegate.setTweetService(tweetService);
-    
-    Mocks.register("createTweetDelegate", createTweetDelegate);
+    Mocks.register("createTweetDelegate", new CreateTweetDelegate(tweetService));
   }
   
   @After
@@ -58,8 +53,7 @@ public class ProcessTest {
     
     ProcessInstance processInstance = runtimeService()
         .startProcessInstanceByKey("AuctionProcess", withVariables(
-            AuctionProcessVariables.AUCTION, auction,
-            AuctionProcessVariables.NUMBER_OF_BIDS, 0));
+            AuctionProcessVariables.AUCTION, auction));
     
     assertThat(processInstance).isWaitingAt("AuthorizeAuction_Task");
     
@@ -71,7 +65,8 @@ public class ProcessTest {
     
     verify(tweetService).publish("test auction object");
     
-    runtimeService().setVariable(processInstance.getId(), AuctionProcessVariables.NUMBER_OF_BIDS, 13);
+    auction.setNumberOfBids(13L);
+    runtimeService().setVariable(processInstance.getId(), AuctionProcessVariables.AUCTION, auction);
     
     execute(job());
     
@@ -85,10 +80,12 @@ public class ProcessTest {
   @Deployment(resources = "auctionProcess.bpmn")
   @Test
   public void testNoBids() {
+    Auction auction = new Auction();
+    auction.setNumberOfBids(0L);
     ProcessInstance processInstance = runtimeService()
         .createProcessInstanceByKey("AuctionProcess")
         .startAfterActivity("AuctionEnded_TimerEvent")
-        .setVariable(AuctionProcessVariables.NUMBER_OF_BIDS, 0)
+        .setVariable(AuctionProcessVariables.AUCTION, auction)
         .executeWithVariablesInReturn();
     
     assertThat(processInstance).isEnded().hasPassed("NoBids_EndEvent");

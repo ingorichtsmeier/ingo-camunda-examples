@@ -2,8 +2,11 @@ package com.camunda.consulting.auction.arquillian;
 
 import java.io.File;
 import java.util.Date;
-import javax.inject.Inject;
+import java.util.List;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -16,6 +19,8 @@ import org.junit.runner.RunWith;
 import com.camunda.consulting.auction.domain.Auction;
 import com.camunda.consulting.auction.domain.Bid;
 import com.camunda.consulting.auction.service.AuctionService;
+
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 @RunWith(Arquillian.class)
 public class ArquillianTest {
@@ -47,15 +52,18 @@ public class ArquillianTest {
   @Inject 
   private AuctionService auctionService;
   
+  @PersistenceContext
+  EntityManager em;
+  
   @Test
-  public void test() {
+  public void testEntities() {
     Auction auction = new Auction();
     auction.setTitle("my test auction");
     auction.setDescription("Aweful");
     auction.setEndDate(new Date());
-    System.out.println("add action to service");
+    System.out.println("add auction to service");
     auction = auctionService.saveAuction(auction);
-    System.out.println("action added");
+    System.out.println("auction added");
     
     Bid bid = new Bid();
     bid.setBidderName("Joe");
@@ -70,6 +78,12 @@ public class ArquillianTest {
     bid.setAuction(auction);
     auctionService.saveBid(bid);
     System.out.println("bid " + bid.getId() + " added to auction " + auction.getId());
+    
+    String selectBidJPQL = "select b from Bid b where b.id = " + bid.getId();
+    
+    List<Bid> bidList = em.createQuery(selectBidJPQL, Bid.class).getResultList();
+    
+    assertThat(bidList.get(0).getAuction().getId()).isEqualTo(auction.getId());
   }
 
 }

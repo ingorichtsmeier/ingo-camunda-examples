@@ -29,6 +29,7 @@ public class Auction implements Serializable {
   private List<Bid> bids = new ArrayList<Bid>();
   @OneToOne
   private Bid highestBid;
+  private Long numberOfBids;
   
   public Long getId() {
     return id;
@@ -77,6 +78,12 @@ public class Auction implements Serializable {
   }
   public void setHighestBid(Bid highestBid) {
     this.highestBid = highestBid;
+  }
+  public Long getNumberOfBids() {
+    return numberOfBids;
+  }
+  public void setNumberOfBids(Long numberOfBids) {
+    this.numberOfBids = numberOfBids;
   }
   public String getEndDateIso() {
     return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(endDate);

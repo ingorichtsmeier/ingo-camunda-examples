@@ -7,7 +7,7 @@
    <persistence-unit name="primary">
       <!-- in production environments the your application should run against its own
         datasource -->
-      <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+      <jta-data-source>java:jboss/datasources/ProcessEngine</jta-data-source>
       <properties>
          <!-- Properties for Hibernate -->
          <property name="hibernate.hbm2ddl.auto" value="update" />
