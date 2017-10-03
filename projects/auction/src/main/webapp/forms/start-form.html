@@ -1,0 +1,43 @@
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label">Titel</label>
+    <div class="controls">
+      <input type="text" 
+             ng-model="auction.title"
+             cam-variable-type="String"
+             required
+             class="form-control" />
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">Beschreibung</label>
+    <div class="controls">
+      <textarea 
+             ng-model="auction.description"
+             cam-variable-type="String"
+             class="form-control" ></textarea>
+    </div>
+  </div>
+
+  <script cam-script type="text/form-script">
+  var auction = $scope.auction = {};
+
+  camForm.on('form-loaded', function() {
+
+    // declare variable 'auction' incuding metadata for serialization
+    camForm.variableManager.createVariable({
+      name: 'auction',
+      type: 'Object',
+      value: auction,
+      valueInfo: {
+        // indicate that object is serialized as json
+        serializationDataFormat: 'application/json',
+        // provide classname of java object to map to
+        objectTypeName: 'com.camunda.consulting.auction.domain.Auction'
+      }
+    });
+
+  });
+  </script>
+</form>

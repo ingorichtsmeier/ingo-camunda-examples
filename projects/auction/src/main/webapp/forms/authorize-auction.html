@@ -1,0 +1,70 @@
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label">Titel</label>
+    <div class="controls">
+      <input type="text" 
+             ng-model="auction.title"
+             class="form-control" />
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">Beschreibung</label>
+    <div class="controls">
+      <textarea 
+             ng-model="auction.description"
+             class="form-control" ></textarea>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">Enddatum</label>
+    <div class="controls">
+      <p class="input-group">
+        <input type="text" 
+               ng-model="auction.endDate"
+               cam-variable-type="Date" 
+               datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
+               is-open="dateFieldOpened"
+               class="form-control" />
+        <span class="input-group-btn">
+          <button type="button"
+              class="btn btn-default"
+              ng-click="open($event)">
+             <i class="glyphicon glyphicon-calendar"></i>
+          </button>
+        </span>
+      </p>             
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">Freigegeben?</label>
+    <div class="controls">
+      <input type="checkbox" 
+             ng-model="auction.authorized"
+             cam-variable-type="Boolean"
+             class="form-control" />
+    </div>
+  </div>
+
+  <script cam-script type="text/form-script">
+  $scope.open = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+
+    $scope.dateFieldOpened = true;
+  };
+
+  var auction = $scope.auction = {};
+
+  camForm.on('form-loaded', function() {
+    // tell the form SDK to fetch the variable named 'auction'
+    camForm.variableManager.fetchVariable('auction');
+  });
+  camForm.on('variables-fetched', function() {
+    // work with the variable (bind it to the current AngularJS $scope)
+    $scope.auction = camForm.variableManager.variableValue('auction');
+  });
+  </script>
+</form>
