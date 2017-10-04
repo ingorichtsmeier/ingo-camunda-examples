@@ -47,6 +47,9 @@ public class ProcessTest {
   @Deployment(resources = "auctionProcess.bpmn")
   @Test
   public void testHappyPath() throws Exception {
+    // Mock the TweetService
+    when(tweetService.publish("test auction object")).thenReturn(15L);
+    
     Auction auction = new Auction();
     auction.setTitle("test auction object");
     auction.setDescription("some test description");
@@ -61,7 +64,8 @@ public class ProcessTest {
     auction.setEndDate(new Date());
     complete(task(), withVariables(AuctionProcessVariables.AUCTION, auction));
     
-    assertThat(processInstance).isWaitingAt("AuctionEnded_TimerEvent").hasVariables(AuctionProcessVariables.TWEET_ID);
+    assertThat(processInstance).isWaitingAt("AuctionEnded_TimerEvent")
+      .variables().containsEntry(AuctionProcessVariables.TWEET_ID, 15L);
     
     verify(tweetService).publish("test auction object");
     
