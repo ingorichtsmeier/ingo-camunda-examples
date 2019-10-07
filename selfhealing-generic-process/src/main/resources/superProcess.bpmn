@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0di80wr" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.3.2">
+  <bpmn:process id="SuperProcess" name="Super Process" isExecutable="true">
+    <bpmn:startEvent id="SuperProcessStartedStartEvent" name="Super process started">
+      <bpmn:outgoing>SequenceFlow_0ef7u2t</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0ef7u2t" sourceRef="SuperProcessStartedStartEvent" targetRef="N1ServiceInvocationCallActivity" />
+    <bpmn:callActivity id="N1ServiceInvocationCallActivity" name="1. Service Invocation" calledElement="GenericSubProcess">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0ef7u2t</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ziseem</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0ziseem" sourceRef="N1ServiceInvocationCallActivity" targetRef="N2ServiceInvocationCallActivity" />
+    <bpmn:callActivity id="N2ServiceInvocationCallActivity" name="2. Service Invocation" calledElement="GenericSubProcess">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0ziseem</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_01t3s91</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="SuperProcessFinishedEndEvent" name="Super process finished">
+      <bpmn:incoming>SequenceFlow_01t3s91</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_01t3s91" sourceRef="N2ServiceInvocationCallActivity" targetRef="SuperProcessFinishedEndEvent" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="SuperProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="SuperProcessStartedStartEvent">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="161" y="142" width="72" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ef7u2t_di" bpmnElement="SequenceFlow_0ef7u2t">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_06jzvby_di" bpmnElement="N1ServiceInvocationCallActivity">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ziseem_di" bpmnElement="SequenceFlow_0ziseem">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="430" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1bw5lx4_di" bpmnElement="N2ServiceInvocationCallActivity">
+        <dc:Bounds x="430" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1erdfgi_di" bpmnElement="SuperProcessFinishedEndEvent">
+        <dc:Bounds x="592" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="574" y="142" width="72" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01t3s91_di" bpmnElement="SequenceFlow_01t3s91">
+        <di:waypoint x="530" y="117" />
+        <di:waypoint x="592" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
