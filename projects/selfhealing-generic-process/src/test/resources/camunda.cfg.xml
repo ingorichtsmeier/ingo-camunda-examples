@@ -9,6 +9,7 @@
     <property name="expressionManager">
         <bean class="org.camunda.bpm.engine.test.mock.MockExpressionManager"/>
     </property>
+    <property name="enableExceptionsAfterUnhandledBpmnError" value="true"/>
     <property name="processEnginePlugins">
       <list>
         <bean class="org.camunda.spin.plugin.impl.SpinProcessEnginePlugin" />

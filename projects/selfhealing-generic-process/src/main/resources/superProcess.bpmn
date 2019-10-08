@@ -24,7 +24,18 @@
       <bpmn:incoming>SequenceFlow_01t3s91</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_01t3s91" sourceRef="N2ServiceInvocationCallActivity" targetRef="SuperProcessFinishedEndEvent" />
+    <bpmn:subProcess id="SubProcess_1u99dce" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_0tn6vxi" name="service invocation aborted">
+        <bpmn:outgoing>SequenceFlow_0eg66xo</bpmn:outgoing>
+        <bpmn:errorEventDefinition errorRef="Error_0qqljsj" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_0qhobll" name="ended with errors">
+        <bpmn:incoming>SequenceFlow_0eg66xo</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0eg66xo" sourceRef="StartEvent_0tn6vxi" targetRef="EndEvent_0qhobll" />
+    </bpmn:subProcess>
   </bpmn:process>
+  <bpmn:error id="Error_0qqljsj" name="Service Invocation aborted" errorCode="serviceInvocationAbortedError" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="SuperProcess">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="SuperProcessStartedStartEvent">
@@ -56,6 +67,25 @@
       <bpmndi:BPMNEdge id="SequenceFlow_01t3s91_di" bpmnElement="SequenceFlow_01t3s91">
         <di:waypoint x="530" y="117" />
         <di:waypoint x="592" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_1qs3eqi_di" bpmnElement="SubProcess_1u99dce" isExpanded="true">
+        <dc:Bounds x="180" y="220" width="210" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_19xc0hl_di" bpmnElement="StartEvent_0tn6vxi">
+        <dc:Bounds x="220" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="194" y="285" width="88" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0qhobll_di" bpmnElement="EndEvent_0qhobll">
+        <dc:Bounds x="312" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="287" y="285" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0eg66xo_di" bpmnElement="SequenceFlow_0eg66xo">
+        <di:waypoint x="256" y="260" />
+        <di:waypoint x="312" y="260" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

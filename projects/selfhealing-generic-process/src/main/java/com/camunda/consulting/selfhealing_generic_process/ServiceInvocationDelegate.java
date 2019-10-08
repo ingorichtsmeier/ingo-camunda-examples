@@ -19,7 +19,8 @@ public class ServiceInvocationDelegate implements JavaDelegate {
     order.setFirstAddition("My first addition");
     execution.getSuperExecution().setVariable("order", order);
     
-    execution.setVariable("service_completed", true);
+    Boolean shouldComplete = (Boolean) execution.getVariable("shouldComplete");
+    execution.setVariable("service_completed", shouldComplete);
   }
 
 }
