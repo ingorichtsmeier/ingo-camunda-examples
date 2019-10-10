@@ -44,9 +44,6 @@
       <bpmn:incoming>ErrorSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0obw47v</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="ErrorKeptAndProcessAbortedEndEvent" name="error kept and process aborted">
-      <bpmn:incoming>NoSequenceFlow1</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0obw47v" sourceRef="HandleErrorTask" targetRef="ErrorCorrectedGateway" />
     <bpmn:exclusiveGateway id="ErrorCorrectedGateway" name="error corrected?">
       <bpmn:incoming>SequenceFlow_0obw47v</bpmn:incoming>
@@ -54,7 +51,7 @@
       <bpmn:outgoing>YesSequenceFlow1</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="NoSequenceFlow1" name="no" sourceRef="ErrorCorrectedGateway" targetRef="ErrorKeptAndProcessAbortedEndEvent">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${error_corrected == false}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${error_clarified == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="ExclusiveGateway_0livuop">
       <bpmn:incoming>YesSequenceFlow</bpmn:incoming>
@@ -63,7 +60,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_0f3h3qd" sourceRef="ExclusiveGateway_0livuop" targetRef="GenericSubprocessFinishedEndEvent" />
     <bpmn:sequenceFlow id="YesSequenceFlow1" name="yes" sourceRef="ErrorCorrectedGateway" targetRef="ExclusiveGateway_0livuop">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${error_corrected == true}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${error_clarified == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="RetrySequenceFlow" name="retry" sourceRef="SelfhealingResultGateway" targetRef="N10SecondsEvent">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${self_healing == "retry"}</bpmn:conditionExpression>
@@ -76,7 +73,12 @@
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0xateik" sourceRef="N10SecondsEvent" targetRef="DoTheRealServiceInvocationTask" />
+    <bpmn:endEvent id="ErrorKeptAndProcessAbortedEndEvent" name="error kept and process aborted">
+      <bpmn:incoming>NoSequenceFlow1</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_19iz867" />
+    </bpmn:endEvent>
   </bpmn:process>
+  <bpmn:error id="Error_19iz867" name="Service invocation aborted" errorCode="serviceInvocationAbortedError" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="GenericSubProcess">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="GenericSubprocessStartedStartEvent">
@@ -153,12 +155,6 @@
       <bpmndi:BPMNShape id="ServiceTask_1hflvg0_di" bpmnElement="HandleErrorTask">
         <dc:Bounds x="620" y="370" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_050a0gd_di" bpmnElement="ErrorKeptAndProcessAbortedEndEvent">
-        <dc:Bounds x="912" y="392" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="891" y="435" width="79" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0obw47v_di" bpmnElement="SequenceFlow_0obw47v">
         <di:waypoint x="720" y="410" />
         <di:waypoint x="785" y="410" />
@@ -210,6 +206,12 @@
         <di:waypoint x="240" y="140" />
         <di:waypoint x="270" y="140" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0pujb6u_di" bpmnElement="ErrorKeptAndProcessAbortedEndEvent">
+        <dc:Bounds x="912" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="891" y="435" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
