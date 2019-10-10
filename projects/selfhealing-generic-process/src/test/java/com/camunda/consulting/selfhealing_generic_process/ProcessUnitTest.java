@@ -1,6 +1,7 @@
 package com.camunda.consulting.selfhealing_generic_process;
 
 import org.apache.ibatis.logging.LogFactory;
+import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.ProcessEngineRule;
 import org.camunda.bpm.extension.process_test_coverage.junit.rules.TestCoverageProcessEngineRuleBuilder;
@@ -54,9 +55,95 @@ public class ProcessUnitTest {
 	  
 	  ProcessInstance subProcessInstance = processInstanceQuery().processDefinitionKey("GenericSubProcess").singleResult();
 	  assertThat(subProcessInstance).isWaitingAt("DoTheRealServiceInvocationTask").hasNoVariables();
+	  runtimeService().setVariable(subProcessInstance.getId(), "shouldComplete", true);
 	  execute(job());
 	  
 	  assertThat(processInstance).isWaitingAt("N2ServiceInvocationCallActivity").variables().containsEntry("order", new Order("15", "Ingo Richtsmeier", "My first addition", null));
   }
+  
+  @Test
+  @Deployment(resources = {"superProcess.bpmn", "genericSubProcess.bpmn"})
+  public void testFailingServiceAndIgnore() {
+    Order order = new Order("16", "Failing and Ignore");
+    ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
+        withVariables("order", order));
+    
+    // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
+    assertThat(processInstance).isWaitingAt("N1ServiceInvocationCallActivity");
+    
+    ProcessInstance subProcessInstance = processInstanceQuery().processDefinitionKey("GenericSubProcess").singleResult();
+    assertThat(subProcessInstance).isWaitingAt("DoTheRealServiceInvocationTask").hasNoVariables();
+    runtimeService().setVariable(subProcessInstance.getId(), "shouldComplete", false);
+    runtimeService().setVariable(subProcessInstance.getId(), "self_healing", "ignore");
+    execute(job());
+    assertThat(subProcessInstance).isEnded().hasPassed("ErrorIgnoredEndEvent");
+  }
+  
+  @Test
+  @Deployment(resources = {"superProcess.bpmn", "genericSubProcess.bpmn"})
+  public void testFailingServiceAndRetry() {
+    Order order = new Order("17", "Failing and Retry");
+    ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
+        withVariables("order", order));
+    
+    // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
+    assertThat(processInstance).isWaitingAt("N1ServiceInvocationCallActivity");
+    
+    ProcessInstance subProcessInstance = processInstanceQuery().processDefinitionKey("GenericSubProcess").singleResult();
+    assertThat(subProcessInstance).isWaitingAt("DoTheRealServiceInvocationTask").hasNoVariables();
+    runtimeService().setVariable(subProcessInstance.getId(), "shouldComplete", false);
+    runtimeService().setVariable(subProcessInstance.getId(), "self_healing", "retry");
+    execute(job());
+    assertThat(subProcessInstance).isWaitingAt("N10SecondsEvent");
+    execute(job());
+    assertThat(subProcessInstance).isWaitingAt("DoTheRealServiceInvocationTask");
+    runtimeService().setVariable(subProcessInstance.getId(), "shouldComplete", true);
+    execute(job());
+    assertThat(subProcessInstance).isEnded().hasPassed("GenericSubprocessFinishedEndEvent");
+  }
 
+  @Test
+  @Deployment(resources = {"superProcess.bpmn", "genericSubProcess.bpmn"})
+  public void testFailingServiceAndErrorNotClarified() {
+    Order order = new Order("18", "Failing and Error handling aborting");
+    ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
+        withVariables("order", order));
+    
+    // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
+    assertThat(processInstance).isWaitingAt("N1ServiceInvocationCallActivity");
+    
+    ProcessInstance subProcessInstance = processInstanceQuery().processDefinitionKey("GenericSubProcess").singleResult();
+    assertThat(subProcessInstance).isWaitingAt("DoTheRealServiceInvocationTask").hasNoVariables();
+    runtimeService().setVariable(subProcessInstance.getId(), "shouldComplete", false);
+    runtimeService().setVariable(subProcessInstance.getId(), "self_healing", "error");
+    execute(job());
+    assertThat(subProcessInstance).isWaitingAt("HandleErrorTask").externalTask().hasTopicName("errorHandling");
+    try {
+      complete(externalTask(), withVariables("error_clarified", false));
+    } catch (ProcessEngineException e) {
+      fail("Uncatched error event");
+    }
+    assertThat(subProcessInstance).isEnded().hasPassed("ErrorKeptAndProcessAbortedEndEvent");
+    assertThat(processInstance).isEnded().hasNotPassed("N2ServiceInvocationCallActivity");
+  }
+
+  @Test
+  @Deployment(resources = {"superProcess.bpmn", "genericSubProcess.bpmn"})
+  public void testFailingServiceAndErrorClarified() {
+    Order order = new Order("19", "Failing and Successful error handling");
+    ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
+        withVariables("order", order));
+    
+    // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
+    assertThat(processInstance).isWaitingAt("N1ServiceInvocationCallActivity");
+    
+    ProcessInstance subProcessInstance = processInstanceQuery().processDefinitionKey("GenericSubProcess").singleResult();
+    assertThat(subProcessInstance).isWaitingAt("DoTheRealServiceInvocationTask").hasNoVariables();
+    runtimeService().setVariable(subProcessInstance.getId(), "shouldComplete", false);
+    runtimeService().setVariable(subProcessInstance.getId(), "self_healing", "error");
+    execute(job());
+    assertThat(subProcessInstance).isWaitingAt("HandleErrorTask").externalTask().hasTopicName("errorHandling");
+    complete(externalTask(), withVariables("error_clarified", true));
+    assertThat(subProcessInstance).isEnded().hasPassed("GenericSubprocessFinishedEndEvent");
+  }
 }
