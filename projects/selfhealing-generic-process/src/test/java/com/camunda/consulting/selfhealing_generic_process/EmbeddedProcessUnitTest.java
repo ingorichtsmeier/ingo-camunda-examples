@@ -58,7 +58,7 @@ public class EmbeddedProcessUnitTest {
 	  runtimeService().setVariable(subProcessInstance.getId(), "shouldComplete", true);
 	  execute(job());
 	  
-	  assertThat(processInstance).isWaitingAt("N2ServiceInvocationCallActivity").variables().containsEntry("order", new Order("15", "Ingo Richtsmeier", "My first addition", null));
+	  assertThat(processInstance).isWaitingAt("N2ServiceInvocationCallActivity").variables().containsEntry("order", new Order("25", "Ingo Richtsmeier Embedded", "My first addition", null));
   }
 
   @Test
