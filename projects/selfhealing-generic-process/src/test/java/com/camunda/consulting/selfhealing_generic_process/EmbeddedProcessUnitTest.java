@@ -46,7 +46,7 @@ public class EmbeddedProcessUnitTest {
   @Test
   @Deployment(resources = {"superProcess.bpmn", "genericSubProcessWithEmbeddedSelfHealing.bpmn"})
   public void testHappyPath() {
-    Order order = new Order("15", "Ingo Richtsmeier");
+    Order order = new Order("25", "Ingo Richtsmeier Embedded");
 	  ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
 	      withVariables("order", order));
 	  
@@ -64,7 +64,7 @@ public class EmbeddedProcessUnitTest {
   @Test
   @Deployment(resources = {"superProcess.bpmn", "genericSubProcessWithEmbeddedSelfHealing.bpmn"})
   public void testFailingServiceAndIgnore() {
-    Order order = new Order("16", "Failing and Ignore");
+    Order order = new Order("26", "Failing and Ignore Embedded");
     ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
         withVariables("order", order));
     
@@ -86,7 +86,7 @@ public class EmbeddedProcessUnitTest {
   @Test
   @Deployment(resources = {"superProcess.bpmn", "genericSubProcessWithEmbeddedSelfHealing.bpmn"})
   public void testFailingServiceAndRetry() {
-    Order order = new Order("17", "Failing and Retry");
+    Order order = new Order("27", "Failing and Retry Embedded");
     ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
         withVariables("order", order));
     
@@ -113,7 +113,7 @@ public class EmbeddedProcessUnitTest {
   @Test
   @Deployment(resources = {"superProcess.bpmn", "genericSubProcessWithEmbeddedSelfHealing.bpmn"})
   public void testFailingServiceAndErrorNotClarified() {
-    Order order = new Order("17", "Failing and Error handling aborting");
+    Order order = new Order("28", "Failing and Error handling aborting embedded");
     ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
         withVariables("order", order));
     
@@ -138,10 +138,11 @@ public class EmbeddedProcessUnitTest {
     assertThat(subProcessInstance).isEnded().hasPassed("ErrorKeptAndProcessAbortedEndEvent1");
     assertThat(processInstance).isEnded().hasNotPassed("N2ServiceInvocationCallActivity");
   }
+  
   @Test
   @Deployment(resources = {"superProcess.bpmn", "genericSubProcessWithEmbeddedSelfHealing.bpmn"})
   public void testFailingServiceAndErrorClarified() {
-    Order order = new Order("17", "Failing and Successful error handling");
+    Order order = new Order("29", "Failing and Successful error handling embedded");
     ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY,
         withVariables("order", order));
     
