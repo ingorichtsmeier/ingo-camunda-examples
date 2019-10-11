@@ -12,6 +12,20 @@ The project shows howto invoke subprocesses with a call activity without copying
 Order order = (Order) execution.getSuperExecution().getVariable("order");
 ```
 
+Regarding the error handling, you have to differentiate four situations:
+1. The error can be ignored and the process can continue
+2. The service invocation can be retried
+3. The error can be handled successfully and the process can continue.
+4. The error can not be handled and the process has to be aborted.
+
+Doing the selfhealing error handling in a subprocess, the last point has to abort the subprocess with an error end event.
+
+![subprocess](docs/subprocess.png)
+
+The error has to be catched in the super process to stop it. For this, you need a interrupting event subprocess using an error start event.
+
+![superprocess](docs/superprocess.png)
+
 ## How to use it?
 
 Inspect the Test classes.
