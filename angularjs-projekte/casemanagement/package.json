@@ -39,7 +39,7 @@
     "angular-route": "1.2.29",
     "camunda-commons-ui": "git://github.com/camunda/camunda-commons-ui#master",
     "events": "1.1.0",
-    "jquery": "2.1.1",
+    "jquery": "3.5.0",
     "jquery-ui": "1.10.5"
   }
 }
