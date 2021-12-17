@@ -10,7 +10,6 @@ This project shows how to overcome an issue with json Jackson serialization:
 ```
 Cannot serialize object in variable 'anotherDate': SPIN/JACKSON-JSON-01009 Unable to map object 'DateObjectDTO [someDate=2021-12-17T13:42:20.660731600+01:00]' to json node
 
-
 Caused by: com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.OffsetDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (through reference chain: com.camunda.consulting.java8_datatypes.DateObjectDTO["someDate"])
 ```
 
