@@ -21,7 +21,7 @@ The github homepage from Fasterxml says, that you have to register modules on th
 
 To do this in SPIN, you can provide a custom `DataFormtConfigurator`: [https://docs.camunda.org/manual/7.16/reference/spin/extending-spin/#configuring-data-formats](https://docs.camunda.org/manual/7.16/reference/spin/extending-spin/#configuring-data-formats)
 
-Have a look at [MyDataFormatConfigurator](src/main/java/com/camunda/consulting/java8_datatypes/MadataFormatConfigurator.java) for the details.
+Have a look at [MyDataFormatConfigurator](src/main/java/com/camunda/consulting/java8_datatypes/MyDataFormatConfigurator.java) for the details.
 
 The configurator is wired in the `META-INF/services/org.camunda.spin.spi.DataFormatConfigurator`.  
 
