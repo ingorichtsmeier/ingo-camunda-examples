@@ -10,7 +10,6 @@ This project shows how to overcome an issue with json Jackson serialization:
 ```
 Cannot serialize object in variable 'anotherDate': SPIN/JACKSON-JSON-01009 Unable to map object 'DateObjectDTO [someDate=2021-12-17T13:42:20.660731600+01:00]' to json node
 
-
 Caused by: com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.OffsetDateTime` not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310" to enable handling (through reference chain: com.camunda.consulting.java8_datatypes.DateObjectDTO["someDate"])
 ```
 
@@ -22,7 +21,7 @@ The github homepage from Fasterxml says, that you have to register modules on th
 
 To do this in SPIN, you can provide a custom `DataFormtConfigurator`: [https://docs.camunda.org/manual/7.16/reference/spin/extending-spin/#configuring-data-formats](https://docs.camunda.org/manual/7.16/reference/spin/extending-spin/#configuring-data-formats)
 
-Have a look at [MyDataFormatConfigurator](src/main/java/com/camunda/consulting/java8_datatypes/MadataFormatConfigurator.java) for the details.
+Have a look at [MyDataFormatConfigurator](src/main/java/com/camunda/consulting/java8_datatypes/MyDataFormatConfigurator.java) for the details.
 
 The configurator is wired in the `META-INF/services/org.camunda.spin.spi.DataFormatConfigurator`.  
 
