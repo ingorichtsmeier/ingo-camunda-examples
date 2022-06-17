@@ -16,7 +16,7 @@
     <camunda.version>7.3.0</camunda.version>
     <arquillian.version>1.1.2.Final</arquillian.version>
     <jboss.version>7.2.0.Final</jboss.version>
-    <drools.version>5.3.0.Final</drools.version>
+    <drools.version>7.60.0.Final</drools.version>
   </properties>
 
   <dependencyManagement>
