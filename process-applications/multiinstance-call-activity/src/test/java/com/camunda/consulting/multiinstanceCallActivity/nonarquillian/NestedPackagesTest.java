@@ -8,10 +8,15 @@ import java.util.Map;
 
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class NestedPackagesTest {
+  
+  private static final Logger LOG = LoggerFactory.getLogger(NestedPackagesTest.class);
+
 
   @Test
   public void test5NestedLists() throws InterruptedException {
@@ -26,7 +31,7 @@ public class NestedPackagesTest {
       myPackage.add(myList);
     }
     
-    System.out.println("" + myPackage);
+    LOG.info("my package: {}", myPackage);
     
     ProcessInstance processInstance = runtimeService().startProcessInstanceByKey("PackageHandlingProcess", Map.of("package", myPackage));
     

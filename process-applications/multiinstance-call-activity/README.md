@@ -4,20 +4,21 @@ multiinstance-call-activity
 How to use it?
 --------------
 
-There is no web interface to access the application.
-To get started refer to the `InMemoryH2Test`.
+Two examples for multiinstance sub processes are included here: 
+1. Handling a list of items return a new result list.
+2. Handling a package containing nested lists without returning a value.
 
 Test with spring beans in `SpringProcessTest`. 
 
-There is also an `ArquillianTest`, which by default connects to a
-Camunda BPM platform running locally on a JBoss AS 7.
-You can download a Camunda BPM distribution for JBoss from the
-[Camunda BPM download page](http://camunda.org/download/).
+Test for the nested multiinstance is `NestedPackagesTest`.
 
+Both tests are Spring-Boot integration tests and start a Camunda engine with default configuration and Job executor enabled.
 
 Environment Restrictions
 ------------------------
 
-Built and tested against Camunda BPM version 7.2.2-ee.
+Built and tested against Camunda BPM version 7.18.0-ee.
+
+tested with a postgresql database.
 
 

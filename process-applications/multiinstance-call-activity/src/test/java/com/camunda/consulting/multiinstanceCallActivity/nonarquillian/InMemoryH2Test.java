@@ -17,7 +17,7 @@ public class InMemoryH2Test {
    * Just tests if the process definition is deployable.
    */
   @Test
-  @Deployment(resources = {"process.bpmn", "calledProcess.bpmn"})
+  @Deployment(resources = {"sequential/process.bpmn", "sequential/calledProcess.bpmn"})
   public void testParsingAndDeployment() {
     // nothing is done here, as we just want to check for exceptions during deployment
   }
