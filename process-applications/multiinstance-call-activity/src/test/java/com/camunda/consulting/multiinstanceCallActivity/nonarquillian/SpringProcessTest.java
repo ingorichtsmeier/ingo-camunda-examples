@@ -18,7 +18,7 @@ public class SpringProcessTest {
   @Test
   @Deployment(resources = {"process.bpmn", "calledProcess.bpmn"}) 
   public void testStartProcessWithMultiinstanceAndCheckHistory() throws InterruptedException {
-    List<String> inputList = Arrays.asList("Buenos Aires", "Córdoba", "La Plata", "Brasilia", "Rio de Janero");
+    List<String> inputList = Arrays.asList("Buenos Aires", "Córdoba", "La Plata", "Brasilia", "Rio de Janeiro");
     ProcessInstance pi = runtimeService().startProcessInstanceByKey("multiinstance-call-activity", withVariables("inputList", inputList));
     
     Thread.sleep(5000);
@@ -27,14 +27,19 @@ public class SpringProcessTest {
     
     assertThat(pi).variables()
         .extractingByKey("outputList", as(InstanceOfAssertFactories.LIST))
-        .containsAnyOf("Buenos Aires", "Córdoba", "La Plata");
+        .containsExactly("Buenos Aires", "Córdoba", "La Plata", "Brasilia", "Rio de Janeiro");
+    
+        // For parallel multiinstance
+        //.containsAnyOf("Buenos Aires", "Córdoba", "La Plata");
   }
 
   @Test
   @Deployment(resources = {"process.bpmn", "calledProcess.bpmn", "superProcess.bpmn"}) 
-  public void testStartSuperProcessAndCheckHistoricVariable() {
+  public void testStartSuperProcessAndCheckHistoricVariable() throws InterruptedException {
     List<String> inputList = Arrays.asList("Buenos Aires", "Córdoba", "La Plata");
     ProcessInstance pi = runtimeService().startProcessInstanceByKey("variable-saver", withVariables("inputList", inputList));
+    
+    Thread.sleep(5000);
     
     assertThat(pi).isEnded();
     

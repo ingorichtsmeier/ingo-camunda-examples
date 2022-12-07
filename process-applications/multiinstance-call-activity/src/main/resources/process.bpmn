@@ -22,7 +22,7 @@
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
-      <bpmn2:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="inputList" camunda:elementVariable="input" />
+      <bpmn2:multiInstanceLoopCharacteristics isSequential="true" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="inputList" camunda:elementVariable="input" />
     </bpmn2:callActivity>
     <bpmn2:serviceTask id="ServiceTask_1" name="show outputList" camunda:asyncBefore="true" camunda:expression="${listHandlerBean.showList(&#34;process&#34;, outputList)}">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
