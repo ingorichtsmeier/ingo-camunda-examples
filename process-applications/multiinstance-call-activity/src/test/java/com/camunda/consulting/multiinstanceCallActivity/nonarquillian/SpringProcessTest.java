@@ -1,54 +1,33 @@
 package com.camunda.consulting.multiinstanceCallActivity.nonarquillian;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.ibatis.logging.LogFactory;
-import org.camunda.bpm.engine.history.HistoricVariableInstance;
-import org.camunda.bpm.engine.impl.util.LogUtil;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.spring.impl.test.SpringProcessEngineTestCase;
 import org.camunda.bpm.engine.test.Deployment;
-import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@ContextConfiguration("SpringProcessTest-context.xml")
-public class SpringProcessTest extends SpringProcessEngineTestCase {
-  
-  static {
-    LogUtil.readJavaUtilLoggingConfigFromClasspath();
-    LogFactory.useJdkLogging();
-  }
+@SpringBootTest
+public class SpringProcessTest {
   
   @Test
   @Deployment(resources = {"process.bpmn", "calledProcess.bpmn"}) 
-  public void testStartProcessWithMultiinstanceAndCheckHistory() {
-    List<String> inputList = Arrays.asList("Buenos Aires", "Córdoba", "La Plata");
+  public void testStartProcessWithMultiinstanceAndCheckHistory() throws InterruptedException {
+    List<String> inputList = Arrays.asList("Buenos Aires", "Córdoba", "La Plata", "Brasilia", "Rio de Janero");
     ProcessInstance pi = runtimeService().startProcessInstanceByKey("multiinstance-call-activity", withVariables("inputList", inputList));
+    
+    Thread.sleep(5000);
     
     assertThat(pi).isEnded();
     
-    List<HistoricVariableInstance> outputListVars = historyService
-        .createHistoricVariableInstanceQuery()
-        .variableName("outputList")
-        .list();
-    
-    for (HistoricVariableInstance outputList : outputListVars) {
-      System.out.println(outputList.getProcessInstanceId() + " " + outputList.getValue());
-    }
-    
-    HistoricVariableInstance outputListVar = historyService
-        .createHistoricVariableInstanceQuery()
-        .variableName("outputList")
-        .processInstanceId(pi.getProcessInstanceId())
-        .singleResult();
-    
-    
-    List<String> outputList = (List<String>) outputListVar.getValue();
-    
-    assertThat(outputList).containsExactly("Buenos Aires", "Córdoba", "La Plata");
+    assertThat(pi).variables()
+        .extractingByKey("outputList", as(InstanceOfAssertFactories.LIST))
+        .containsAnyOf("Buenos Aires", "Córdoba", "La Plata");
   }
 
   @Test
@@ -59,15 +38,8 @@ public class SpringProcessTest extends SpringProcessEngineTestCase {
     
     assertThat(pi).isEnded();
     
-    HistoricVariableInstance outputListVar = historyService
-        .createHistoricVariableInstanceQuery()
-        .variableName("outputList")
-        .processInstanceId(pi.getProcessInstanceId())
-        .singleResult();
-    
-    
-    List<String> outputList = (List<String>) outputListVar.getValue();
-    
-    assertThat(outputList).containsExactly("Buenos Aires", "Córdoba", "La Plata");
+    assertThat(pi).variables()
+        .extractingByKey("outputList", as(InstanceOfAssertFactories.LIST))
+        .containsExactly("Buenos Aires", "Córdoba", "La Plata");
   }
 }

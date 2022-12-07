@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql:camunda
+    username: camunda
+    password: camunda
+
+logging:
+  level:
+    "[org.camunda.bpm.engine.jobexecutor]": DEBUG
